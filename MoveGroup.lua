@@ -11,7 +11,9 @@ function init()
   local MoveGroup_method_names = {
     "new",
     "delete",
+    "release",
     "getName",
+    "getJoints",
     "getPlanningFrame",
     "getEndEffectorLink",
     "setGoalTolerance",
@@ -35,28 +37,48 @@ function init()
     "setRandomTarget",
     "setNamedTarget",
     "setPositionTarget",
+    "setPositionTarget_Tensor",
     "setOrientationTarget",
+    "setOrientationTarget_Transform",
     "setRPYTarget",
     "setPoseTarget_Tensor",
     "setPoseTarget_Pose",
-    "setPoseTarget_PoseStamped",
+    "setPoseReferenceFrame",
     "setEndEffectorLink",
     "getEndEffectorlink",
     "clearPoseTarget",
     "clearPoseTargets",
+    "asyncMove",
     "move",
-    "stop"
+    "plan",
+    "asyncExecute",
+    "execute",
+    "computeCartesianPath_Tensor",
+    "attachObject",
+    "detachObject",
+    "stop",
+    "startStateMonitor",
+    "getCurrentState",
+    "getCurrentPose_Transform",
+    "getCurrentPose",
+    "getCurrentPose_Tensors"
   }
 
   f = utils.create_method_table("moveit_MoveGroup_", MoveGroup_method_names)
-  print(f)
 end
 
 init()
 
 function MoveGroup:__init(name)
-  self.f = f
   self.o = f.new(name)
+end
+
+function MoveGroup:release()
+  f.release(self.o)
+end
+
+function MoveGroup:cdata()
+  return self.o
 end
 
 function MoveGroup:getName()
@@ -69,6 +91,12 @@ end
 
 function MoveGroup:getEndEffectorLink()
   return ffi.string(f.getEndEffectorLink(self.o))
+end
+
+function MoveGroup:getJoints(strings)
+  strings = strings or moveit.Strings()
+  f.getJoints(self.o, strings:cdata())
+  return strings
 end
 
 function MoveGroup:setGoalTolerance(tolerance)
@@ -152,23 +180,34 @@ function MoveGroup:setNamedTarget(name)
 end
 
 function MoveGroup:setPositionTarget(x, y, z, end_effector_link)
-  f.setPositionTarget(self.o, x, y, z, end_effector_link or ffi.NULL)
+  if torch.isTensor(x) then
+    return f.setPositionTarget_Tensor(self.o, x:cdata(), y or end_effector_link or ffi.NULL)
+  else
+    return f.setPositionTarget(self.o, x, y, z, end_effector_link or ffi.NULL)
+  end
 end
 
 function MoveGroup:setOrientationTarget(x, y, z, w, end_effector_link)
-  f.setOrientationTarget(self.o, x, y, z, w, end_effector_link or ffi.NULL)
+  if torch.isTensor(x) then
+    return f.setOrientationTarget_Tensor(self.o, x:cdata(), y or end_effector_link or ffi.NULL)
+  else  
+    return f.setOrientationTarget(self.o, x, y, z, w, end_effector_link or ffi.NULL)
+  end
 end
 
 function MoveGroup:setRPYTarget(roll, pitch, yaw, end_effector_link)
-  f.setRPYTarget(self.o, roll, pitch, yaw, end_effector_link or ffi.NULL)
+  return f.setRPYTarget(self.o, roll, pitch, yaw, end_effector_link or ffi.NULL)
 end
 
-function MoveGroup:setPoseTarget(target)
+function MoveGroup:setPoseTarget(target, end_effector_link)
   if torch.isTensor(target) then
-    f.setPoseTarget_Tensor(self.o, target:cdata())
+    return f.setPoseTarget_Transform(self.o, target:cdata(), end_effector_link or ffi.NULL)
   end
   --f.setPoseTarget_Pose(self.o)
-  --f.setPoseTarget_PoseStamped(self.o)
+end
+
+function MoveGroup:setPoseReferenceFrame(frame_name)
+  f.setPoseReferenceFrame(self.o, frame_name)
 end
 
 function MoveGroup:setEndEffectorLink(name)
@@ -187,10 +226,71 @@ function MoveGroup:clearPoseTargets()
   f.clearPoseTargets(self.o)
 end
 
+function MoveGroup:moveAsync()
+  return f.moveAsync(self.o)
+end
+
 function MoveGroup:move()
   return f.move(self.o)
 end
 
+function MoveGroup:plan(plan_output)
+  if not plan_output then
+    plan_output = moveit.Plan()
+  end
+  local status = f.plan(self.o, plan_output:cdata())
+  return status, plan_output
+end
+
+function MoveGroup:asyncExecute(plan)
+  return f.asyncExecute(self.o, plan:cdata())
+end
+
+function MoveGroup:execute(plan)
+  return f.execute(self.o, plan:cdata())
+end
+
+function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
+  local error_code = ffi.new 'int[1]'
+  local r = f.computeCartesianPath_Tensor(self.o, positions:cdata(), orientations:cdata(), eef_step, jump_threshold, avoid_collisions, error_code)
+  return error_code[0], r 
+end
+
+function MoveGroup:attachObject(object, link)
+  return f.attachObject(object, link or ffi.NULL)
+end
+
+function MoveGroup:detachObject(object)
+  return f.detachObject(object)
+end
+
 function MoveGroup:stop()
   f.stop(self.o)
+end
+
+function MoveGroup:startStateMonitor(wait)
+  return f.startStateMonitor(self.o, wait or 1.0)
+end
+
+function MoveGroup:getCurrentState()
+  return moveit.RobotState(f.getCurrentState(self.o))
+end
+
+function MoveGroup:getCurrentPose_Transform(end_effector_link, output)
+  output = output or torch.DoubleTensor()
+  f.getCurrentPose_Transform(self.o, end_effector_link or ffi.NULL, output:cdata())
+  return output
+end
+
+function MoveGroup:getCurrentPose_Tensors(end_effector_link, position, orientation)
+  position = position or torch.DoubleTensor()
+  orientation = orientation or torch.DoubleTensor()
+  f.getCurrentPose_Tensors(self.o, end_effector_link or ffi.NULL, position:cdata(), orientation:cdata())
+  return position, orientation
+end
+
+function MoveGroup:getCurrentPose()
+  local pose = ffi.new 'Pose[1]'
+  f.getCurrentPose(self.o, end_effector_link or ffi.NULL, pose)
+  return pose[0]
 end

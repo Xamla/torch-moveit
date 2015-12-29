@@ -15,6 +15,8 @@ SET(src
   "${SOURCE_DIR}/init.cpp"
   "${SOURCE_DIR}/movegroup.cpp"
   "${SOURCE_DIR}/plan.cpp"
+  "${SOURCE_DIR}/robotstate.cpp"
+  "${SOURCE_DIR}/strings.cpp"
 )
 
 include_directories(

@@ -5,6 +5,30 @@
 #include <Eigen/StdVector>
 #include <Eigen/Geometry>
 
+inline Eigen::Vector4d Tensor2Vec4d(THDoubleTensor *tensor)
+{
+  if (!tensor || THDoubleTensor_nElement(tensor) < 4)
+    throw MoveItWrapperException("A tensor with at least 4 elements was expected.");
+    
+  THDoubleTensor *tensor_ = THDoubleTensor_newContiguous(tensor);
+  double* data = THDoubleTensor_data(tensor_);
+  Eigen::Vector4d v(data[0], data[1], data[2], data[3]);
+  THDoubleTensor_free(tensor_);
+  return v;
+}
+
+inline Eigen::Vector3d Tensor2Vec3d(THDoubleTensor *tensor)
+{
+  if (!tensor || THDoubleTensor_nElement(tensor) < 4)
+    throw MoveItWrapperException("A Tensor with at least 3 elements was expected.");
+    
+  THDoubleTensor *tensor_ = THDoubleTensor_newContiguous(tensor);
+  double* data = THDoubleTensor_data(tensor_);
+  Eigen::Vector3d v(data[0], data[1], data[2]);
+  THDoubleTensor_free(tensor_);
+  return v;
+}
+
 template<int rows, int cols>
 inline Eigen::Matrix<double, rows, cols> Tensor2Mat(THDoubleTensor *tensor)
 {
@@ -26,6 +50,14 @@ template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<double, 
     
   storage->flag = TH_STORAGE_REFCOUNTED;
   THDoubleTensor_setStorage2d(output, storage, 0, rows, m.rowStride(), cols, m.colStride());
+  THDoubleStorage_free(storage);   // tensor took ownership
+}
+
+inline void viewArray(double* array, size_t length, THDoubleTensor *output)
+{
+  THDoubleStorage* storage = THDoubleStorage_newWithData(array, length);
+  storage->flag = TH_STORAGE_REFCOUNTED;
+  THDoubleTensor_setStorage1d(output, storage, 0, length, 1);
   THDoubleStorage_free(storage);   // tensor took ownership
 }
 

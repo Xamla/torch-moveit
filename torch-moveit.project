@@ -97,6 +97,8 @@
       <File Name="src/utils.h"/>
       <File Name="src/plan.cpp"/>
       <File Name="src/init.cpp"/>
+      <File Name="src/robotstate.cpp"/>
+      <File Name="src/strings.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="lua">
       <File Name="init.lua"/>
@@ -104,10 +106,16 @@
       <File Name="utils.lua"/>
       <File Name="MoveGroup.lua"/>
       <File Name="status.lua"/>
+      <File Name="Plan.lua"/>
+      <File Name="Strings.lua"/>
+      <File Name="RobotState.lua"/>
     </VirtualDirectory>
     <VirtualDirectory Name="rocks">
       <File Name="rocks/torch-moveit-scm-1.rockspec"/>
     </VirtualDirectory>
     <File Name="README.md"/>
+    <VirtualDirectory Name="examples">
+      <File Name="examples/move.lua"/>
+    </VirtualDirectory>
   </VirtualDirectory>
 </CodeLite_Project>

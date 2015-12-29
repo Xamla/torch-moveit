@@ -8,5 +8,16 @@ MOVIMP(PlanPtr*, Plan, new)()
 
 MOVIMP(void, Plan, delete)(PlanPtr *ptr)
 {
-  delete ptr;
+  if (ptr)
+    delete ptr;
+}
+
+MOVIMP(void, Plan, release)(PlanPtr *ptr)
+{
+  ptr->reset();
+}
+
+MOVIMP(double, Plan, getPlanningTime)(PlanPtr *ptr)
+{
+  return (*ptr)->planning_time_;
 }
