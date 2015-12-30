@@ -1,7 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="torch-moveit" InternalType="">
+  <Plugins>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+  "name": "Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }]]]>
+    </Plugin>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
+  </Plugins>
   <Description/>
   <Dependencies/>
+  <VirtualDirectory Name="torch-moveit">
+    <File Name="CMakeLists.txt"/>
+    <VirtualDirectory Name="src">
+      <File Name="src/torch-moveit.h"/>
+      <File Name="src/movegroup.cpp"/>
+      <File Name="src/utils.h"/>
+      <File Name="src/plan.cpp"/>
+      <File Name="src/init.cpp"/>
+      <File Name="src/robotstate.cpp"/>
+      <File Name="src/strings.cpp"/>
+      <File Name="src/pose.cpp"/>
+      <File Name="src/torch-tf.h"/>
+      <File Name="src/transform.cpp"/>
+      <File Name="src/quaternion.cpp"/>
+      <File Name="src/transform_broadcaster.cpp"/>
+      <File Name="src/transform_listener.cpp"/>
+      <File Name="src/stamped_transform.cpp"/>
+      <File Name="src/time.cpp"/>
+      <File Name="src/torch-ros.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="lua">
+      <File Name="init.lua"/>
+      <File Name="env.lua"/>
+      <File Name="utils.lua"/>
+      <File Name="MoveGroup.lua"/>
+      <File Name="status.lua"/>
+      <File Name="Plan.lua"/>
+      <File Name="Strings.lua"/>
+      <File Name="RobotState.lua"/>
+      <File Name="Pose.lua"/>
+      <File Name="Transform.lua"/>
+      <File Name="Quaternion.lua"/>
+      <File Name="Time.lua"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="rocks">
+      <File Name="rocks/torch-moveit-scm-1.rockspec"/>
+    </VirtualDirectory>
+    <File Name="README.md"/>
+    <VirtualDirectory Name="examples">
+      <File Name="examples/move.lua"/>
+      <File Name="examples/robot_state.lua"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -15,6 +75,7 @@
     <Configuration Name="Debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="/opt/ros/indigo/include"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
@@ -89,33 +150,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="torch-moveit">
-    <File Name="CMakeLists.txt"/>
-    <VirtualDirectory Name="src">
-      <File Name="src/torch-moveit.h"/>
-      <File Name="src/movegroup.cpp"/>
-      <File Name="src/utils.h"/>
-      <File Name="src/plan.cpp"/>
-      <File Name="src/init.cpp"/>
-      <File Name="src/robotstate.cpp"/>
-      <File Name="src/strings.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="lua">
-      <File Name="init.lua"/>
-      <File Name="env.lua"/>
-      <File Name="utils.lua"/>
-      <File Name="MoveGroup.lua"/>
-      <File Name="status.lua"/>
-      <File Name="Plan.lua"/>
-      <File Name="Strings.lua"/>
-      <File Name="RobotState.lua"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="rocks">
-      <File Name="rocks/torch-moveit-scm-1.rockspec"/>
-    </VirtualDirectory>
-    <File Name="README.md"/>
-    <VirtualDirectory Name="examples">
-      <File Name="examples/move.lua"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
 </CodeLite_Project>

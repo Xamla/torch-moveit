@@ -23,7 +23,7 @@ function init()
     "empty"
   }
   
-  f = utils.create_method_table("moveit_Strings_", Strings_method_names )
+  f = utils.create_method_table("moveit_Strings_", Strings_method_names)
 end
 
 init()

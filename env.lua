@@ -1,6 +1,8 @@
 local ffi = require 'ffi'
 
 local moveit = {}
+moveit.tf = {}
+moveit.ros = {}
 
 local cdef = [[
 
@@ -102,9 +104,90 @@ bool moveit_RobotState_hasEffort(RobotStatePtr *self);
 void moveit_RobotState_getVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setToDefaultValues(RobotStatePtr *self);
 void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
-]];
+
+void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
+void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);
+]]
 
 ffi.cdef(cdef)
+
+local ros_cdef = [[
+typedef struct ros_Time {} ros_Time;
+typedef struct ros_Duration {} ros_Duration;
+
+ros_Time* ros_Time_new();
+void ros_Time_delete(ros_Time *self);
+ros_Time* ros_Time_clone(ros_Time *self);
+bool ros_Time_isZero(ros_Time *self);
+void ros_Time_fromSec(ros_Time *self, double t);
+double ros_Time_toSec(ros_Time *self);
+void ros_Time_set(ros_Time *self, unsigned int sec, unsigned int nsec);
+int ros_Time_get_sec(ros_Time *self);
+void ros_Time_set_sec(ros_Time *self, unsigned int sec);
+int ros_Time_get_nsec(ros_Time *self);
+void ros_Time_set_nesc(ros_Time *self, unsigned int nsec);
+bool ros_Time_lt(ros_Time *self, ros_Time *other);
+bool ros_Time_eq(ros_Time *self, ros_Time *other);
+void ros_Time_add_Duration(ros_Time *self, ros_Duration *duration, ros_Time *result);
+void ros_Time_sub(ros_Time *self, ros_Time *other, ros_Duration *result);
+void ros_Time_sub_Duration(ros_Time *self, ros_Duration *duration, ros_Time *result);
+void ros_Time_sleepUntil(ros_Time *end);
+void ros_Time_getNow(ros_Time *result);
+void ros_Time_setNow(ros_Time* now);
+void ros_Time_waitForValid();
+void ros_Time_init();
+void ros_Time_shutdown();
+bool ros_Time_useSystemTime();
+bool ros_Time_isSimTime();
+bool ros_Time_isSystemTime();
+bool ros_Time_isValid();
+]]
+
+ffi.cdef(ros_cdef)
+
+local tf_cdef = [[
+typedef struct tf_Transform {} tf_Transform;
+typedef struct tf_StampedTransform {} tf_StampedTransform;
+typedef struct tf_Quaternion {} tf_Quaternion;
+
+tf_Quaternion * tf_Quaternion_new();
+tf_Quaternion * tf_Quaternion_clone(tf_Quaternion *self);
+void tf_Quaternion_delete(tf_Quaternion *self);
+void tf_Quaternion_setIdentity(tf_Quaternion *self);
+void tf_Quaternion_setRotation_Tensor(tf_Quaternion *self, THDoubleTensor *axis, double angle);
+void tf_Quaternion_setEuler(tf_Quaternion *self, double yaw, double pitch, double roll);
+void tf_Quaternion_setRPY(tf_Quaternion *self, double roll, double pitch, double yaw);
+void tf_Quaternion_setEulerZYX(tf_Quaternion *self, double yaw, double pitch, double roll);
+double tf_Quaternion_getAngle(tf_Quaternion *self);
+void tf_Quaternion_getAxis_Tensor(tf_Quaternion *self, THDoubleTensor *axis);
+void tf_Quaternion_inverse(tf_Quaternion *self, tf_Quaternion *result);
+double tf_Quaternion_length2(tf_Quaternion *self);
+void tf_Quaternion_normalize(tf_Quaternion *self);
+double tf_Quaternion_angle(tf_Quaternion *self, tf_Quaternion *other);
+double tf_Quaternion_angleShortestPath(tf_Quaternion *self, tf_Quaternion *other);
+void tf_Quaternion_add(tf_Quaternion *self, tf_Quaternion *other, tf_Quaternion *result);
+void tf_Quaternion_sub(tf_Quaternion *self, tf_Quaternion *other, tf_Quaternion *result);
+void tf_Quaternion_mul(tf_Quaternion *self, tf_Quaternion *other, tf_Quaternion *result);
+void tf_Quaternion_mul_scalar(tf_Quaternion *self, double factor, tf_Quaternion *result);
+void tf_Quaternion_div_scalar(tf_Quaternion *self, double divisor, tf_Quaternion *result);
+double tf_Quaternion_dot(tf_Quaternion *self, tf_Quaternion *other);
+void tf_Quaternion_slerp(tf_Quaternion *self, tf_Quaternion *other, double t, tf_Quaternion *result);
+void tf_Quaternion_viewTensor(tf_Quaternion *self, THDoubleTensor* result);
+
+tf_Transform *tf_Transform_new();
+tf_Transform *tf_Transform_clone(tf_Transform *self);
+void tf_Transform_delete(tf_Transform *self);
+void tf_Transform_setIdentity(tf_Transform *self);
+void tf_Transform_mul_Quaternion(tf_Transform *self, tf_Quaternion *rot, tf_Quaternion *result);
+void tf_Transform_mul_Transform(tf_Transform *self, tf_Transform *other, tf_Transform *result);
+void tf_Transform_inverse(tf_Transform *self, tf_Transform *result);
+void tf_Transform_getBasis(tf_Transform *self, THDoubleTensor *basis);
+void tf_Transform_getOrigin(tf_Transform *self, THDoubleTensor *origin);
+void tf_Transform_setRotation(tf_Transform *self, tf_Quaternion *rotation);
+void tf_Transform_getRotation(tf_Transform *self, tf_Quaternion *rotation);
+]]
+
+ffi.cdef(tf_cdef)
 
 moveit.lib = ffi.load(package.searchpath('libmoveit', package.cpath))
 

@@ -19,7 +19,7 @@ inline Eigen::Vector4d Tensor2Vec4d(THDoubleTensor *tensor)
 
 inline Eigen::Vector3d Tensor2Vec3d(THDoubleTensor *tensor)
 {
-  if (!tensor || THDoubleTensor_nElement(tensor) < 4)
+  if (!tensor || THDoubleTensor_nElement(tensor) < 3)
     throw MoveItWrapperException("A Tensor with at least 3 elements was expected.");
     
   THDoubleTensor *tensor_ = THDoubleTensor_newContiguous(tensor);
@@ -66,9 +66,8 @@ template<int rows, int cols> void copyMatrix(const Eigen::Matrix<double, rows, c
   THDoubleTensor_resize2d(output, m.rows(), m.cols());
   THDoubleTensor* output_ = THDoubleTensor_newContiguous(output);
   // there are strange static-asserts in Eigen to disallow specifying RowMajor for vectors...
-  Eigen::Map<Eigen::Matrix<double, rows, cols, (rows == 1 || cols == 1) ? Eigen::ColMajor : Eigen::RowMajor> >(THDoubleTensor_data(output)) = m;
+  Eigen::Map<Eigen::Matrix<double, rows, cols, (rows == 1 || cols == 1) ? Eigen::ColMajor : Eigen::RowMajor> >(THDoubleTensor_data(output_)) = m;
   THDoubleTensor_freeCopyTo(output_, output);
 }
-
 
 #endif //_utils_h

@@ -17,6 +17,10 @@ SET(src
   "${SOURCE_DIR}/plan.cpp"
   "${SOURCE_DIR}/robotstate.cpp"
   "${SOURCE_DIR}/strings.cpp"
+  "${SOURCE_DIR}/pose.cpp"
+  "${SOURCE_DIR}/transform.cpp"
+  "${SOURCE_DIR}/quaternion.cpp"
+  "${SOURCE_DIR}/time.cpp"
 )
 
 include_directories(

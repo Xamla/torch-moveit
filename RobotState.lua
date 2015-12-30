@@ -8,7 +8,7 @@ local RobotState = torch.class('moveit.RobotState', moveit)
 local f
 
 function init()
-  local Strings_method_names = {
+  local RobotState_method_names = {
     "clone",
     "delete",
     "release",
@@ -25,7 +25,7 @@ function init()
     "setToRandomPositions"
   }
   
-  f = utils.create_method_table("moveit_RobotState_", Strings_method_names )
+  f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
 end
 
 init()
