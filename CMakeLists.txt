@@ -17,10 +17,13 @@ SET(src
   "${SOURCE_DIR}/plan.cpp"
   "${SOURCE_DIR}/robotstate.cpp"
   "${SOURCE_DIR}/strings.cpp"
-  "${SOURCE_DIR}/pose.cpp"
-  "${SOURCE_DIR}/transform.cpp"
-  "${SOURCE_DIR}/quaternion.cpp"
-  "${SOURCE_DIR}/time.cpp"
+  "${SOURCE_DIR}/tf/transform.cpp"
+  "${SOURCE_DIR}/tf/quaternion.cpp"
+  "${SOURCE_DIR}/tf/stamped_transform.cpp"
+  "${SOURCE_DIR}/tf/transform_broadcaster.cpp"
+  "${SOURCE_DIR}/tf/transform_listener.cpp"
+  "${SOURCE_DIR}/ros/time.cpp"
+  "${SOURCE_DIR}/ros/duration.cpp"
 )
 
 include_directories(

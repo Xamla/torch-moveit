@@ -39,16 +39,27 @@ end
 
 init()
 
-function Quaternion:__init(x,y,z,w)
+function Quaternion:__init(_1, _2, _3, _4)
   self.o = f.new()
-  if x then
-    if y and z and w then
-      self:fromTensor(torch.DoubleTensor({x,y,z,w}))
-    elseif torch.isTensor(x) then
-      self:fromTensor(x)
+  if _1 then
+    if type(_1) == 'table' then
+      _1 = torch.DoubleTensor(_1)
+    end
+    if torch.isTensor(_1) then
+      if type(_2) == 'number' then
+        self:setRotation(_1, _2)
+      else
+        self:fromTensor(_1)
+      end
     elseif torch.isTypeOf(x, tf.Quaternion) then
       self:fromTensor(x:toTensor())
+    elseif _2 and _3 and _4 then
+      self:fromTensor(torch.DoubleTensor({_1, _2, _3, _4}))
+    else
+      error('Invalid arguments for tf.Quaternion ctor')
     end
+  else
+    self:setIdentity()
   end
 end
 

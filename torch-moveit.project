@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="torch-moveit" InternalType="">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
   "name": "Debug",
@@ -12,9 +15,6 @@
   "arguments": [],
   "parentProject": ""
  }]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -29,15 +29,19 @@
       <File Name="src/init.cpp"/>
       <File Name="src/robotstate.cpp"/>
       <File Name="src/strings.cpp"/>
-      <File Name="src/pose.cpp"/>
-      <File Name="src/torch-tf.h"/>
-      <File Name="src/transform.cpp"/>
-      <File Name="src/quaternion.cpp"/>
-      <File Name="src/transform_broadcaster.cpp"/>
-      <File Name="src/transform_listener.cpp"/>
-      <File Name="src/stamped_transform.cpp"/>
-      <File Name="src/time.cpp"/>
-      <File Name="src/torch-ros.h"/>
+      <VirtualDirectory Name="ros">
+        <File Name="src/ros/torch-ros.h"/>
+        <File Name="src/ros/time.cpp"/>
+        <File Name="src/ros/duration.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="tf">
+        <File Name="src/tf/transform_listener.cpp"/>
+        <File Name="src/tf/transform_broadcaster.cpp"/>
+        <File Name="src/tf/transform.cpp"/>
+        <File Name="src/tf/torch-tf.h"/>
+        <File Name="src/tf/quaternion.cpp"/>
+        <File Name="src/tf/stamped_transform.cpp"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="lua">
       <File Name="init.lua"/>
@@ -52,6 +56,9 @@
       <File Name="Transform.lua"/>
       <File Name="Quaternion.lua"/>
       <File Name="Time.lua"/>
+      <File Name="Duration.lua"/>
+      <File Name="StampedTransform.lua"/>
+      <File Name="TransformBroadcaster.lua"/>
     </VirtualDirectory>
     <VirtualDirectory Name="rocks">
       <File Name="rocks/torch-moveit-scm-1.rockspec"/>

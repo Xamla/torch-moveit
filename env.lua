@@ -122,6 +122,7 @@ bool ros_Time_isZero(ros_Time *self);
 void ros_Time_fromSec(ros_Time *self, double t);
 double ros_Time_toSec(ros_Time *self);
 void ros_Time_set(ros_Time *self, unsigned int sec, unsigned int nsec);
+void ros_Time_assign(ros_Time *self, ros_Time *other);
 int ros_Time_get_sec(ros_Time *self);
 void ros_Time_set_sec(ros_Time *self, unsigned int sec);
 int ros_Time_get_nsec(ros_Time *self);
@@ -141,6 +142,25 @@ bool ros_Time_useSystemTime();
 bool ros_Time_isSimTime();
 bool ros_Time_isSystemTime();
 bool ros_Time_isValid();
+
+ros_Duration* ros_Duration_new();
+void ros_Duration_delete(ros_Duration *self);
+ros_Duration* ros_Duration_clone(ros_Duration *self);
+void ros_Duration_set(ros_Duration *self, int sec, int nsec);
+void ros_Duration_assign(ros_Duration *self, ros_Duration *other);
+int ros_Duration_get_sec(ros_Duration *self);
+void ros_Duration_set_sec(ros_Duration *self, int sec);
+int ros_Duration_get_nsec(ros_Duration *self);
+void ros_Duration_set_nsec(ros_Duration *self, int nsec);
+void ros_Duration_add(ros_Duration *self, ros_Duration *other, ros_Duration *result);
+void ros_Duration_sub(ros_Duration *self, ros_Duration *other, ros_Duration *result);
+void ros_Duration_mul(ros_Duration *self, double scale, ros_Duration *result);
+bool ros_Duration_eq(ros_Duration *self, ros_Duration *other);
+bool ros_Duration_lt(ros_Duration *self, ros_Duration *other);
+double ros_Duration_toSec(ros_Duration *self);
+void ros_Duration_fromSec(ros_Duration *self, double t);
+bool ros_Duration_isZero(ros_Duration *self);
+void ros_Duration_sleep(ros_Duration *self);
 ]]
 
 ffi.cdef(ros_cdef)
@@ -149,6 +169,8 @@ local tf_cdef = [[
 typedef struct tf_Transform {} tf_Transform;
 typedef struct tf_StampedTransform {} tf_StampedTransform;
 typedef struct tf_Quaternion {} tf_Quaternion;
+typedef struct tf_TransformBroadcaster {} tf_TransformBroadcaster;
+typedef struct tf_TransformListener {} tf_TransformListener;
 
 tf_Quaternion * tf_Quaternion_new();
 tf_Quaternion * tf_Quaternion_clone(tf_Quaternion *self);
@@ -185,6 +207,32 @@ void tf_Transform_getBasis(tf_Transform *self, THDoubleTensor *basis);
 void tf_Transform_getOrigin(tf_Transform *self, THDoubleTensor *origin);
 void tf_Transform_setRotation(tf_Transform *self, tf_Quaternion *rotation);
 void tf_Transform_getRotation(tf_Transform *self, tf_Quaternion *rotation);
+
+tf_StampedTransform *tf_StampedTransform_new(tf_Transform *transform, ros_Time* timestamp, const char *frame_id, const char *child_frame_id);
+tf_StampedTransform *tf_StampedTransform_clone(tf_StampedTransform *self);
+void tf_StampedTransform_delete(tf_StampedTransform *self);
+tf_Transform *tf_StampedTransform_getBasePointer(tf_StampedTransform *self);
+void tf_StampedTransform_get_stamp(tf_StampedTransform *self, ros_Time *result);
+void tf_StampedTransform_set_stamp(tf_StampedTransform *self, ros_Time *stamp);
+const char *tf_StampedTransform_get_frame_id(tf_StampedTransform *self);
+void tf_StampedTransform_set_frame_id(tf_StampedTransform *self, const char *id);
+const char *tf_StampedTransform_get_child_frame_id(tf_StampedTransform *self);
+void tf_StampedTransform_set_child_frame_id(tf_StampedTransform *self, const char *id);
+void tf_StampedTransform_setData(tf_StampedTransform *self, tf_Transform *input);
+bool tf_StampedTransform_eq(tf_StampedTransform *self, tf_StampedTransform *other);
+
+tf_TransformBroadcaster *tf_TransformBroadcaster_new();
+void tf_TransformBroadcaster_delete(tf_TransformBroadcaster *self);
+void tf_TransformBroadcaster_sendTransform(tf_TransformBroadcaster *self, tf_StampedTransform *transform);
+
+tf_TransformListener * tf_TransformListener_new();
+void tf_TransformListener_delete(tf_TransformListener *self);
+void tf_TransformListener_clear(tf_TransformListener *self);
+void tf_TransformListener_getFrameStrings(tf_TransformListener *self, StringsPtr *result);
+void tf_TransformListener_lookupTransform(tf_TransformListener *self, const char *target_frame, const char *source_frame, ros_Time *time, tf_StampedTransform *result);
+bool tf_TransformListener_waitForTransform(tf_TransformListener *self, const char *target_frame, const char *source_frame, ros_Time *time, ros_Duration *timeout, StringsPtr *error_msg);
+bool tf_TransformListener_canTransform(tf_TransformListener *self, const char *target_frame, const char *source_frame, ros_Time *time, StringsPtr *error_msg);
+void tf_TransformListener_resolve(tf_TransformListener *self, const char *frame_name, StringsPtr *result);
 ]]
 
 ffi.cdef(tf_cdef)

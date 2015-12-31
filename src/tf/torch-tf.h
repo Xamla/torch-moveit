@@ -5,9 +5,12 @@ extern "C" {
 #include <TH/TH.h>
 }
 
+#include <boost/shared_ptr.hpp>
 #include <tf/tf.h>
 
 #define TFIMP(return_type, class_name, name) extern "C" return_type TH_CONCAT_4(tf_, class_name, _, name)
+
+typedef boost::shared_ptr<std::vector<std::string> > StringsPtr;
 
 inline void viewMatrix3x3(tf::Matrix3x3& m, THDoubleTensor *t)
 {

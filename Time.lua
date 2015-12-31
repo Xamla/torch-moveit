@@ -17,6 +17,7 @@ function init()
     "fromSec",
     "toSec",
     "set",
+    "assign",
     "get_sec",
     "set_sec",
     "get_nsec",
@@ -38,13 +39,16 @@ function init()
     "isValid"
   }
   
-  f = utils.create_method_table("ros_Time_", Time_method_names )
+  f = utils.create_method_table("ros_Time_", Time_method_names)
 end
 
 init()
 
-function Time:__init()
+function Time:__init(_1, _2)
   self.o = f.new()
+  if _1 or _2 then
+    self:set(_1, _2)
+  end
 end
 
 function Time:cdata()
@@ -52,7 +56,7 @@ function Time:cdata()
 end
 
 function Time:clone()
-  local c = torch.factory('ros.Transform')()
+  local c = torch.factory('ros.Time')()
   rawset(c, 'o', f.clone(self.o))
   return c
 end
@@ -69,8 +73,18 @@ function Time:toSec()
   return f.toSec(self.o)
 end
 
-function Time:set(sec, nsec)
-  f.set(self.o, sec, nsec)
+function Time:set(_1, _2)
+  if torch.isTypeOf(_1, ros.Time) then
+    self:assign(_1)
+  elseif not _2 then
+    self:fromSec(_1)
+  else
+    f.set(self.o, _1, _2)
+  end
+end
+
+function Time:assign(other)
+  f.assign(self.o, other:cdata())
 end
 
 function Time:get_sec()
@@ -99,11 +113,17 @@ end
 
 function Time:add(d, result)
   result = result or self
+  if type(d) == 'number' then
+    d = ros.Duration(d)
+  end
   f.add_Duration(self.o, d:cdata(), result:cdata())
   return result
 end
 
 function Time:sub(x, result)
+  if type(x) == 'number' then
+    x = ros.Duration(x)
+  end
   if torch.isTypeOf(x, ros.Time) then
     result = result or ros.Duration()
     f.sub(self.o, x:cdata(), result:cdata())
@@ -134,7 +154,7 @@ function Time:__sub(x)
 end
 
 function Time:__tostring()
-  return string.format("{ sec: %d, nsec: %d }", self:get_sec(), self:get_nsec())
+  return string.format("%f", self:toSec())
 end
 
 -- static functions
@@ -147,10 +167,14 @@ function Time.shutdown()
   f.shutdown()
 end
 
-function Time.getNow()
-  local now = ros.Time()
-  f.getNow(now:cdata())
-  return now
+function Time.now()
+  return Time.getNow()
+end
+
+function Time.getNow(result)
+  result = result or ros.Time()
+  f.getNow(result:cdata())
+  return result
 end
 
 function Time.setNow(time)

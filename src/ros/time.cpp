@@ -36,6 +36,11 @@ ROSIMP(void, Time, set)(ros::Time *self, unsigned int sec, unsigned int nsec)
   self->nsec = nsec;
 }
 
+ROSIMP(void, Time, assign)(ros::Time *self, ros::Time *other)
+{
+  *self = *other;
+}
+
 ROSIMP(int, Time, get_sec)(ros::Time *self)
 {
   return static_cast<int>(self->sec);
