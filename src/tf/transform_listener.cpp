@@ -16,9 +16,9 @@ TFIMP(void, TransformListener, clear)(tf::TransformListener *self)
   self->clear();
 }
 
-TFIMP(void, TransformListener, getFrameStrings)(tf::TransformListener *self, StringsPtr *result)
+TFIMP(void, TransformListener, getFrameStrings)(tf::TransformListener *self, std::vector<std::string> *result)
 {
-  self->getFrameStrings(**result);
+  self->getFrameStrings(*result);
 }
 
 TFIMP(void, TransformListener, lookupTransform)(tf::TransformListener *self, const char *target_frame, const char *source_frame, ros::Time *time, tf::StampedTransform *result)
@@ -26,22 +26,17 @@ TFIMP(void, TransformListener, lookupTransform)(tf::TransformListener *self, con
   self->lookupTransform(target_frame, source_frame, *time, *result);
 }
 
-TFIMP(bool, TransformListener, waitForTransform)(tf::TransformListener *self, const char *target_frame, const char *source_frame, ros::Time *time, ros::Duration *timeout, StringsPtr *error_msg)
+TFIMP(bool, TransformListener, waitForTransform)(tf::TransformListener *self, const char *target_frame, const char *source_frame, ros::Time *time, ros::Duration *timeout, std::string *error_msg)
 {
-  if (error_msg && *error_msg)
-    (*error_msg)->push_back(std::string());
-  return self->waitForTransform(target_frame, source_frame, *time, *timeout, ros::Duration(0.01), error_msg && *error_msg ? &(*error_msg)->back() : NULL);
+  return self->waitForTransform(target_frame, source_frame, *time, *timeout, ros::Duration(0.01), error_msg);
 }
 
-
-TFIMP(bool, TransformListener, canTransform)(tf::TransformListener *self, const char *target_frame, const char *source_frame, ros::Time *time, StringsPtr *error_msg)
+TFIMP(bool, TransformListener, canTransform)(tf::TransformListener *self, const char *target_frame, const char *source_frame, ros::Time *time, std::string *error_msg)
 {
-  if (error_msg && *error_msg)
-    (*error_msg)->push_back(std::string());
-  return self->canTransform(target_frame, source_frame, *time, error_msg && *error_msg ? &(*error_msg)->back() : NULL);
+  return self->canTransform(target_frame, source_frame, *time, error_msg);
 }
 
-TFIMP(void, TransformListener, resolve)(tf::TransformListener *self, const char *frame_name, StringsPtr *result)
+TFIMP(void, TransformListener, resolve)(tf::TransformListener *self, const char *frame_name, std::string *result)
 {
-  (*result)->push_back(self->resolve(frame_name));
+  *result = self->resolve(frame_name);
 }

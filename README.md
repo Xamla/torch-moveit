@@ -13,7 +13,12 @@ It is currently used by the Xamla team to move a UR5 robot equipped with RGB and
 
 ```
 moveit = require 'moveit'
-moveit.init()
+ros = moveit.ros
+
+ros.init()
+local sp = ros.AsyncSpinner()
+sp:start()
+
 g = moveit.MoveGroup('arm')
 pos, rot = g:getCurrentPose_Tensors()
 print('pose:'..tostring(pos)..tostring(rot))

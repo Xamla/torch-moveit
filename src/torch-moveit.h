@@ -8,7 +8,7 @@ extern "C" {
 #include <boost/shared_ptr.hpp>
 #include <moveit/move_group_interface/move_group.h>
 
-typedef boost::shared_ptr<std::vector<std::string> > StringsPtr;
+typedef std::vector<std::string> StringVector;
 typedef boost::shared_ptr<moveit::planning_interface::MoveGroup> MoveGroupPtr;
 typedef boost::shared_ptr<moveit::planning_interface::MoveGroup::Plan> PlanPtr;
 typedef boost::shared_ptr<moveit::core::RobotState> RobotStatePtr;

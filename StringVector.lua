@@ -2,13 +2,14 @@ local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
+std = moveit.std
 
-local Strings = torch.class('moveit.Strings', moveit)
+local StringVector = torch.class('std.StringVector', std)
 
 local f
 
 function init()
-  local Strings_method_names = {
+  local StringVector_method_names = {
     "new",
     "clone",
     "delete",
@@ -23,12 +24,12 @@ function init()
     "empty"
   }
   
-  f = utils.create_method_table("moveit_Strings_", Strings_method_names)
+  f = utils.create_method_table("std_StringVector_", StringVector_method_names)
 end
 
 init()
 
-function Strings:__init(...)
+function StringVector:__init(...)
   rawset(self, 'o', f.new())
   if select("#", ...) > 0 then
     local x = ...
@@ -39,28 +40,28 @@ function Strings:__init(...)
   end
 end
 
-function Strings:cdata()
+function StringVector:cdata()
   return self.o
 end
 
-function Strings:clone()
-  local c = torch.factory('moveit.Strings')()
+function StringVector:clone()
+  local c = torch.factory('std.StringVector')()
   rawset(c, 'o', f.clone(self.o))
   return c
 end
 
-function Strings:size()
+function StringVector:size()
   return f.size(self.o)
 end
 
-function Strings:__len()
+function StringVector:__len()
   return self:size()
 end
 
-function Strings:__index(idx)
+function StringVector:__index(idx)
   local v = rawget(self, idx)
   if not v then 
-    v = Strings[idx]
+    v = StringVector[idx]
     if not v and type(idx) == 'number' then
       local o = rawget(self, 'o')
       v = ffi.string(f.getAt(o, idx-1))
@@ -69,7 +70,7 @@ function Strings:__index(idx)
   return v
 end
 
-function Strings:__newindex(idx, v)
+function StringVector:__newindex(idx, v)
   local o = rawget(self, 'o')
   if type(idx) == 'number' then
     f.setAt(o, idx-1, tostring(v))
@@ -78,21 +79,21 @@ function Strings:__newindex(idx, v)
   end
 end
 
-function Strings:push_back(value)
+function StringVector:push_back(value)
   f.push_back(self.o, tostring(value))
 end
 
-function Strings:pop_back()
+function StringVector:pop_back()
   local last = self[#self]
   f.pop_back(self.o)
   return last
 end
 
-function Strings:clear()
+function StringVector:clear()
   f.clear(self.o)
 end
 
-function Strings:insert(pos, value, n)
+function StringVector:insert(pos, value, n)
   if pos < 1 then
     pos = 1
   elseif pos > #self+1 then
@@ -101,7 +102,7 @@ function Strings:insert(pos, value, n)
   f.insert(self.o, pos-1, n or 1, value)
 end
 
-function Strings:insertFromTable(pos, t)
+function StringVector:insertFromTable(pos, t)
   if type(pos) == 'table' then
     t = pos
     pos = #self + 1
@@ -113,11 +114,11 @@ function Strings:insertFromTable(pos, t)
   end
 end
 
-function Strings:erase(begin_pos, end_pos)
+function StringVector:erase(begin_pos, end_pos)
   f.erase(self.o, begin_pos-1, (end_pos or begin_pos + 1)-1)
 end
 
-function Strings:__pairs()
+function StringVector:__pairs()
   return function (t, k)
     local i = k or 1
     if i > #t then
@@ -129,11 +130,11 @@ function Strings:__pairs()
   end, self, nil
 end
 
-function Strings:__ipairs()
+function StringVector:__ipairs()
   return self:__pairs()
 end
 
-function Strings:totable()
+function StringVector:totable()
   local t = {}
   for i,v in ipairs(self) do
     table.insert(t, v)
@@ -141,7 +142,7 @@ function Strings:totable()
   return t
 end
 
-function Strings:__tostring()
+function StringVector:__tostring()
   local t = self:totable()
   return table.concat(t, '\n')
 end

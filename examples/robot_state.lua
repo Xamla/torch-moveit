@@ -1,5 +1,8 @@
 moveit = require 'moveit'
-moveit.init()
+
+ros.init()
+local sp = ros.AsyncSpinner()
+sp:start()
 
 g = moveit.MoveGroup('arm')
 s = g:getCurrentState()

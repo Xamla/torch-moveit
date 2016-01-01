@@ -77,7 +77,10 @@ function Quaternion:setIdentity()
   f.setIdentity(self.o)
 end
 
-function Quaternion:setRotation(axis, angle)
+function Quaternion:setRotation(axis, angle, deg)
+  if deg then
+    angle = math.rad(deg)
+  end
   if type(axis) == 'table' then
     axis = torch.DoubleTensor(axis)
   end
@@ -88,15 +91,19 @@ function Quaternion:setRotation(axis, angle)
   end
 end
 
-function Quaternion:setEuler(yaw, pitch, roll)
+function Quaternion:setEuler(yaw, pitch, roll, deg)
+  
   f.setEuler(self.o, yaw, pitch, roll)
 end
 
-function Quaternion:setRPY(roll, pitch, yaw)
-  f.setRPY(roll, pitch, yaw)
+function Quaternion:setRPY(roll, pitch, yaw, deg)
+  if deg then
+    roll, pitch, yaw = math.rad(roll), math.rad(pitch), math.rad(yaw)
+  end
+  f.setRPY(self.o, roll, pitch, yaw)
 end
 
-function Quaternion:getAngle(angle)
+function Quaternion:getAngle()
   return f.getAngle(self.o)
 end
 

@@ -21,9 +21,9 @@ MOVIMP(int, RobotState, getVariableCount)(RobotStatePtr *self)
   return static_cast<int>((*self)->getVariableCount());
 }
 
-MOVIMP(void, RobotState, getVariableNames)(RobotStatePtr *self, StringsPtr *output)
+MOVIMP(void, RobotState, getVariableNames)(RobotStatePtr *self, StringVector *output)
 {
-  **output = (*self)->getVariableNames();
+  *output = (*self)->getVariableNames();
 }
 
 MOVIMP(void, RobotState, getVariablePositions)(RobotStatePtr *self, THDoubleTensor *view)

@@ -1,5 +1,9 @@
 moveit = require 'moveit'
-moveit.init()
+ros = moveit.ros
+
+ros.init()
+local sp = ros.AsyncSpinner()
+sp:start()
 
 g = moveit.MoveGroup('arm')
 pos, rot = g:getCurrentPose_Tensors()

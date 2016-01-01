@@ -101,14 +101,14 @@ function Transform:fromTensor(t)
   self:getOrigin()[{}] = t[{{4},{1,3}}]
 end
 
-function Transform:getRotation(rotation)
-  rotation = rotation or tf.Quaternion()
-  f.getRotation(self.o, rotation:cdata())
-  return rotation
+function Transform:getRotation(output)
+  output = output or tf.Quaternion()
+  f.getRotation(self.o, output:cdata())
+  return output
 end
 
-function Transform:setRotation(rotation)
-  f.setRotation(self.o, rotation:cdata())
+function Transform:setRotation(quaternion)
+  f.setRotation(self.o, quaternion:cdata())
 end
 
 function Transform:__tostring()

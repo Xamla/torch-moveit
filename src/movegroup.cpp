@@ -31,10 +31,9 @@ MOVIMP(const char*, MoveGroup, getEndEffectorLink)(MoveGroupPtr *self)
   return (*self)->getEndEffectorLink().c_str();
 }
 
-MOVIMP(void, MoveGroup, getJoints)(MoveGroupPtr *self, StringsPtr *strings)
+MOVIMP(void, MoveGroup, getJoints)(MoveGroupPtr *self, StringVector *output)
 {
-  std::vector<std::string>& s = **strings; 
-  s = (*self)->getJoints();
+  *output = (*self)->getJoints();
 }
 
 /*MOVIMP(const char*, MoveGroup, getDefaultPlannerId)(MoveGroupPtr *self, const char* group)
