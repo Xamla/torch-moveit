@@ -173,8 +173,17 @@ void tf_TransformListener_clear(tf_TransformListener *self);
 void tf_TransformListener_getFrameStrings(tf_TransformListener *self, std_StringVector *result);
 void tf_TransformListener_lookupTransform(tf_TransformListener *self, const char *target_frame, const char *source_frame, ros_Time *time, tf_StampedTransform *result);
 bool tf_TransformListener_waitForTransform(tf_TransformListener *self, const char *target_frame, const char *source_frame, ros_Time *time, ros_Duration *timeout, std_string *error_msg);
-bool tf_TransformListener_canTransform(tf_TransformListener *self, const char *target_frame, const char *source_frame, ros_Time *time, std_string *error_msg);
+bool tf_TransformListener_canTransform(tf_TransformListener *self, const char *target_frame, const char *source_frame, ros_Time *time);
+void tf_TransformListener_lookupTransformFull(tf_TransformListener *self, const char *target_frame, ros_Time *target_time, const char *source_frame, ros_Time *source_time,const char *fixed_frame, tf_StampedTransform *result);
+bool tf_TransformListener_waitForTransformFull(tf_TransformListener *self, const char *target_frame, ros_Time *target_time, const char *source_frame, ros_Time *source_time, const char *fixed_frame, ros_Duration *timeout, std_string *error_msg);
+bool tf_TransformListener_canTransformFull(tf_TransformListener *self, const char *target_frame, ros_Time *target_time, const char *source_frame, ros_Time *source_time, const char *fixed_frame);
 void tf_TransformListener_resolve(tf_TransformListener *self, const char *frame_name, std_string *result);
+int tf_TransformListener_getLatestCommonTime(tf_TransformListener *self, const char *source_frame, const char *target_frame, ros_Time *time, std_string* error_string)
+void tf_TransformListener_chainAsVector(tf_TransformListener *self, const char *target_frame, ros_Time *target_time, const char *source_frame, ros_Time *source_time, const char *fixed_frame, std_StringVector *result);
+bool tf_TransformListener_getParent(tf_TransformListener *self, const char* frame_id, ros_Time *time, std_string *result);
+bool tf_TransformListener_frameExists(tf_TransformListener *self, const char *frame_id);
+void tf_TransformListener_getCacheLength(tf_TransformListener *self, ros_Duration *result);
+void tf_TransformListener_getTFPrefix(tf_TransformListener *self, std_string *result);
 ]]
 
 ffi.cdef(tf_cdef)

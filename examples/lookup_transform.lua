@@ -11,8 +11,6 @@ l = tf.TransformListener()
 
 ros.Time.init()
 
-
-
 for i=1,10 do
 
   print(ros.Time.now())

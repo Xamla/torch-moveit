@@ -56,7 +56,6 @@
       <File Name="status.lua"/>
       <File Name="Plan.lua"/>
       <File Name="RobotState.lua"/>
-      <File Name="Pose.lua"/>
       <File Name="Transform.lua"/>
       <File Name="Quaternion.lua"/>
       <File Name="Time.lua"/>
@@ -94,6 +93,7 @@
       <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="/opt/ros/indigo/include"/>
+        <IncludePath Value="/opt/ros/jade/include"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>

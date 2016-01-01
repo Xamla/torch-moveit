@@ -17,7 +17,6 @@ rosrun tf tf_echo /world /tomato
 ]]
 
 for i=1,10 do
-  print('hallo')
   local t = tf.Transform()
   t:setOrigin({ i, -i, i*2 })
   local rot = tf.Quaternion()
