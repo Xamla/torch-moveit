@@ -36,7 +36,7 @@ TFIMP(bool, TransformListener, canTransform)(tf::TransformListener *self, const 
   return self->canTransform(target_frame, source_frame, *time, NULL);
 }
 
-TFIMP(void, TransformListener, lookupTransformFull)(tf::TransformListener *self, 
+TFIMP(void, TransformListener, lookupTransformFull)(tf::TransformListener *self,
   const char *target_frame, ros::Time *target_time,
   const char *source_frame, ros::Time *source_time,
   const char *fixed_frame, tf::StampedTransform *result)
@@ -44,7 +44,7 @@ TFIMP(void, TransformListener, lookupTransformFull)(tf::TransformListener *self,
   self->lookupTransform(target_frame, *target_time, source_frame, *source_time, fixed_frame, *result);
 }
 
-TFIMP(bool, TransformListener, waitForTransformFull)(tf::TransformListener *self, 
+TFIMP(bool, TransformListener, waitForTransformFull)(tf::TransformListener *self,
   const char *target_frame, ros::Time *target_time,
   const char *source_frame, ros::Time *source_time,
   const char *fixed_frame, ros::Duration *timeout, std::string *error_msg)
@@ -52,7 +52,7 @@ TFIMP(bool, TransformListener, waitForTransformFull)(tf::TransformListener *self
   return self->waitForTransform(target_frame, *target_time, source_frame, *source_time, fixed_frame, *timeout, ros::Duration(0.01), error_msg);
 }
 
-TFIMP(bool, TransformListener, canTransformFull)(tf::TransformListener *self, 
+TFIMP(bool, TransformListener, canTransformFull)(tf::TransformListener *self,
   const char *target_frame, ros::Time *target_time,
   const char *source_frame, ros::Time *source_time,
   const char *fixed_frame)
@@ -70,7 +70,7 @@ TFIMP(int, TransformListener, getLatestCommonTime)(tf::TransformListener *self, 
   return self->getLatestCommonTime(source_frame, target_frame, *time, error_string);
 }
 
-TFIMP(void, TransformListener, chainAsVector)(tf::TransformListener *self, 
+TFIMP(void, TransformListener, chainAsVector)(tf::TransformListener *self,
   const char *target_frame, ros::Time *target_time,
   const char *source_frame, ros::Time *source_time,
   const char *fixed_frame, std::vector<std::string> *result)

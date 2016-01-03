@@ -178,7 +178,7 @@ void tf_TransformListener_lookupTransformFull(tf_TransformListener *self, const 
 bool tf_TransformListener_waitForTransformFull(tf_TransformListener *self, const char *target_frame, ros_Time *target_time, const char *source_frame, ros_Time *source_time, const char *fixed_frame, ros_Duration *timeout, std_string *error_msg);
 bool tf_TransformListener_canTransformFull(tf_TransformListener *self, const char *target_frame, ros_Time *target_time, const char *source_frame, ros_Time *source_time, const char *fixed_frame);
 void tf_TransformListener_resolve(tf_TransformListener *self, const char *frame_name, std_string *result);
-int tf_TransformListener_getLatestCommonTime(tf_TransformListener *self, const char *source_frame, const char *target_frame, ros_Time *time, std_string* error_string)
+int tf_TransformListener_getLatestCommonTime(tf_TransformListener *self, const char *source_frame, const char *target_frame, ros_Time *time, std_string* error_string);
 void tf_TransformListener_chainAsVector(tf_TransformListener *self, const char *target_frame, ros_Time *target_time, const char *source_frame, ros_Time *source_time, const char *fixed_frame, std_StringVector *result);
 bool tf_TransformListener_getParent(tf_TransformListener *self, const char* frame_id, ros_Time *time, std_string *result);
 bool tf_TransformListener_frameExists(tf_TransformListener *self, const char *frame_id);
