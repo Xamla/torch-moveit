@@ -120,6 +120,7 @@ void tf_Quaternion_delete(tf_Quaternion *self);
 void tf_Quaternion_setIdentity(tf_Quaternion *self);
 void tf_Quaternion_setRotation_Tensor(tf_Quaternion *self, THDoubleTensor *axis, double angle);
 void tf_Quaternion_setEuler(tf_Quaternion *self, double yaw, double pitch, double roll);
+void tf_Quaternion_getRPY(tf_Quaternion *self, int solution_number, THDoubleTensor *result);
 void tf_Quaternion_setRPY(tf_Quaternion *self, double roll, double pitch, double yaw);
 void tf_Quaternion_setEulerZYX(tf_Quaternion *self, double yaw, double pitch, double roll);
 double tf_Quaternion_getAngle(tf_Quaternion *self);
@@ -198,6 +199,8 @@ typedef struct MoveItModulePtr {} MoveItModulePtr;
 typedef struct MoveGroupPtr {} MoveGroupPtr;
 typedef struct PlanPtr {} PlanPtr;
 typedef struct RobotStatePtr {} RobotStatePtr;
+typedef struct CollisionObjectPtr {} CollisionObjectPtr;
+typedef struct PlanningSceneInterfacePtr {} PlanningSceneInterfacePtr;
 
 MoveItModulePtr *moveit_TorchMoveItModule_new();
 void moveit_TorchMoveItModule_delete(MoveItModulePtr *ptr);
@@ -235,7 +238,7 @@ bool moveit_MoveGroup_setPositionTarget_Tensor(MoveGroupPtr *self, THDoubleTenso
 bool moveit_MoveGroup_setOrientationTarget(MoveGroupPtr *self, double x, double y, double z, double w, const char *end_effector_link);
 bool moveit_MoveGroup_setOrientationTarget_Tensor(MoveGroupPtr *self, THDoubleTensor *t, const char *end_effector_link);
 bool moveit_MoveGroup_setRPYTarget(MoveGroupPtr *self, double roll, double pitch, double yaw, const char *end_effector_link);
-bool moveit_MoveGroup_setPoseTarget_Transform(MoveGroupPtr *self, THDoubleTensor *mat, const char *end_effector_link);
+bool moveit_MoveGroup_setPoseTarget_Tensor(MoveGroupPtr *self, THDoubleTensor *mat, const char *end_effector_link);
 bool moveit_MoveGroup_setPoseTarget_Pose(MoveGroupPtr *self, const Pose &target, const char *end_effector_link);
 void moveit_MoveGroup_setPoseReferenceFrame(MoveGroupPtr *self, const char *reference_frame);
 void moveit_MoveGroup_clearPoseTarget(MoveGroupPtr *self, const char *end_effector_link);
@@ -251,9 +254,8 @@ bool moveit_MoveGroup_detachObject(MoveGroupPtr *self, const char *object);
 void moveit_MoveGroup_stop(MoveGroupPtr *self);
 bool moveit_MoveGroup_startStateMonitor(MoveGroupPtr *self, double wait);
 RobotStatePtr *moveit_MoveGroup_getCurrentState(MoveGroupPtr *self);
-void moveit_MoveGroup_getCurrentPose_Transform(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor* output);
-void moveit_MoveGroup_getCurrentPose(MoveGroupPtr *self, const char *end_effector_link, Pose *pose);
-void moveit_MoveGroup_getCurrentPose_Tensors(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor *position, THDoubleTensor *orientation);
+void moveit_MoveGroup_getCurrentPose_Tensor(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor* output);
+void moveit_MoveGroup_getCurrentPose_StampedTransform(MoveGroupPtr *self, const char *end_effector_link, tf_StampedTransform *pose);
 
 PlanPtr* moveit_Plan_new();
 void moveit_Plan_delete(PlanPtr *ptr);
@@ -277,6 +279,25 @@ void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);
+
+CollisionObjectPtr* moveit_CollisionObject_new();
+void moveit_CollisionObject_delete(CollisionObjectPtr *ptr);
+const char *moveit_CollisionObject_getId(CollisionObjectPtr *self);
+void moveit_CollisionObject_setId(CollisionObjectPtr *self, const char *id);
+const char *moveit_CollisionObject_getFrameId(CollisionObjectPtr *self);
+void moveit_CollisionObject_setFrameId(CollisionObjectPtr *self, const char *id);
+int moveit_CollisionObject_getOperation(CollisionObjectPtr *self);
+void moveit_CollisionObject_setOperation(CollisionObjectPtr *self, int operation);
+void moveit_CollisionObject_addPrimitive(CollisionObjectPtr *self, int type, THDoubleTensor *dimensions, tf_Transform *pose);
+void moveit_CollisionObject_addPlane(CollisionObjectPtr *self, THDoubleTensor *coefs, tf_Transform *pose);
+
+PlanningSceneInterfacePtr* moveit_PlanningSceneInterface_new();
+void moveit_PlanningSceneInterface_delete(PlanningSceneInterfacePtr *ptr);
+void moveit_PlanningSceneInterface_addCollisionObject(PlanningSceneInterfacePtr *self, CollisionObjectPtr *obj);
+void moveit_PlanningSceneInterface_removeCollisionObjects(PlanningSceneInterfacePtr *self, std_StringVector *object_ids);
+void moveit_PlanningSceneInterface_getKnownObjectNames(PlanningSceneInterfacePtr *self, bool with_type, std_StringVector *result);
+void moveit_PlanningSceneInterface_getKnownObjectNamesInROI(PlanningSceneInterfacePtr *self, double minx, double miny, double minz, double maxx, double maxy, double maxz, bool with_type, std_StringVector* types, std_StringVector* result);
+void moveit_PlanningSceneInterfacePtr_getObjectPoses(PlanningSceneInterfacePtr *self, std_StringVector *object_ids, std_StringVector *found, THDoubleTensor *found_poses);
 ]]
 
 ffi.cdef(moveit_cdef)

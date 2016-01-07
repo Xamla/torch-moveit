@@ -16,6 +16,7 @@ function init()
     "setIdentity",
     "setRotation_Tensor",
     "setEuler",
+    "getRPY",
     "setRPY",
     "getAngle",
     "getAxis_Tensor",
@@ -92,8 +93,16 @@ function Quaternion:setRotation(axis, angle, deg)
 end
 
 function Quaternion:setEuler(yaw, pitch, roll, deg)
-  
+  if deg then
+    roll, pitch, yaw = math.rad(roll), math.rad(pitch), math.rad(yaw)
+  end
   f.setEuler(self.o, yaw, pitch, roll)
+end
+
+function Quaternion:getRPY(solution_number)
+  local output = torch.DoubleTensor()
+  f.getRPY(self.o, solution_number or 1, output:cdata())
+  return output
 end
 
 function Quaternion:setRPY(roll, pitch, yaw, deg)

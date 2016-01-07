@@ -47,6 +47,7 @@
         <File Name="src/std/torch-std.h"/>
         <File Name="src/std/string_vector.cpp"/>
       </VirtualDirectory>
+      <File Name="src/planning_scene_interface.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="lua">
       <File Name="init.lua"/>
@@ -67,6 +68,8 @@
       <File Name="TransformListener.lua"/>
       <File Name="ros.lua"/>
       <File Name="AsyncSpinner.lua"/>
+      <File Name="CollisionObject.lua"/>
+      <File Name="PlanningSceneInterface.lua"/>
     </VirtualDirectory>
     <VirtualDirectory Name="rocks">
       <File Name="rocks/torch-moveit-scm-1.rockspec"/>
@@ -78,6 +81,10 @@
       <File Name="examples/broadcast_transform.lua"/>
       <File Name="examples/lookup_transform.lua"/>
       <File Name="examples/orbit.lua"/>
+      <File Name="examples/orbit_move.lua"/>
+      <File Name="examples/dump_pose.lua"/>
+      <File Name="examples/move_random.lua"/>
+      <File Name="src/collision_object.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">

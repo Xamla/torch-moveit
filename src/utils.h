@@ -70,4 +70,22 @@ template<int rows, int cols> void copyMatrix(const Eigen::Matrix<double, rows, c
   THDoubleTensor_freeCopyTo(output_, output);
 }
 
+inline void vector2Tensor(const std::vector<double> &v, THDoubleTensor *output)
+{
+  THDoubleTensor_resize1d(output, v.size());
+  THDoubleTensor* output_ = THDoubleTensor_newContiguous(output);
+  std::copy(v.begin(), v.end(), THDoubleTensor_data(output_));
+  THDoubleTensor_freeCopyTo(output_, output);
+}
+
+inline void Tensor2vector(THDoubleTensor *input, std::vector<double> &v)
+{
+  long n = THDoubleTensor_nElement(input);
+  v.resize(n);
+  input = THDoubleTensor_newContiguous(input);
+  double *begin = THDoubleTensor_data(input);
+  std::copy(begin, begin + n, v.begin());
+  THDoubleTensor_free(input);
+}
+
 #endif //_utils_h

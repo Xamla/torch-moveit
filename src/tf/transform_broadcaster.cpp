@@ -1,7 +1,6 @@
 #include "torch-tf.h"
 #include <tf/transform_broadcaster.h>
 
-
 TFIMP(tf::TransformBroadcaster *, TransformBroadcaster, new)()
 {
   return new tf::TransformBroadcaster();

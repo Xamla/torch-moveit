@@ -31,10 +31,10 @@ function project_onto_plane(plane_point, plane_normal, pt)
 end
 
 function look_at_pose(eye, at, up)
-  -- eye becomes origin, 'at' lies on z-axis
-  local xaxis = normalize(at - eye)
-  local yaxis = -normalize(torch.cross(xaxis, up))
-  local zaxis = torch.cross(xaxis, yaxis)
+  -- eye becomes origin, 'at' lies on x-axis
+  local zaxis = normalize(at - eye)
+  local xaxis = -normalize(torch.cross(zaxis, up))
+  local yaxis = torch.cross(zaxis, xaxis)
 
   local basis = torch.Tensor(3,3)
   basis[{{},{1}}] = xaxis
@@ -44,6 +44,11 @@ function look_at_pose(eye, at, up)
   local t = tf.Transform()
   t:setBasis(basis)
   t:setOrigin(eye)
+  
+  local rot90z = tf:Transform()
+  rot90z:setRotation(tf.Quaternion({0,0,1}, -0.5 * math.pi))
+  t:mul(rot90z, t)
+  
   return t
 end
 
@@ -75,19 +80,42 @@ function generate_arc(center, normal, start_pt, total_rotation_angle, angle_step
   return poses
 end
 
-x = generate_arc({1,1,0.25}, {0,0,1}, {0.5,1.5,1.25}, 2 * math.pi, 0.1, {1,1,0})
+x = generate_arc({0.0,0.7,0.6}, {0,0,1}, {-0.4,0.4,0.3}, 0.5 * math.pi, 0.1, {0.0,0.7,0.0})
 
 ros.init('lookat')
 ros.Time.init()
 
 local b = tf.TransformBroadcaster()
 
+ps = moveit.PlanningSceneInterface()
+ps:addPlane('ground plane', 0, 0, 1, -0.001)
+
+g = moveit.MoveGroup('arm')
+
+local pose = g:getCurrentPose_StampedTransform()
+print('pose:'..tostring(pose:getOrigin())..tostring(pose:getRotation():getRPY()))
+g:setMaxVelocityScalingFactor(0.1)
+
+local sp = ros.AsyncSpinner()
+sp:start()
+
 local i = 1
 while ros.ok() do
-print(x[i])
-  local st = tf.StampedTransform(x[i], ros.Time.now(), 'world', 'eye')
-  b:sendTransform(st)
-  ros.Duration(0.1):sleep()
+
+  local pose = x[i]
+
+  g:setPoseReferenceFrame('/world')
+
+  print('goal pose:')
+  print(pose:toTensor())
+  
+  g:setStartStateToCurrentState()
+  g:setPoseTarget(pose:toTensor())
+  s, p = g:plan()
+  if s then
+    g:execute(p)
+  end
+
+  ros.Duration(0.5):sleep()
   i = (i % #x) + 1
-  ros.spinOnce()
 end

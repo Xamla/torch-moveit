@@ -2,6 +2,7 @@ local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
+local tf = moveit.tf;
 
 local MoveGroup = torch.class('moveit.MoveGroup', moveit)
 
@@ -59,9 +60,8 @@ function init()
     "stop",
     "startStateMonitor",
     "getCurrentState",
-    "getCurrentPose_Transform",
-    "getCurrentPose",
-    "getCurrentPose_Tensors"
+    "getCurrentPose_Tensor",
+    "getCurrentPose_StampedTransform"
   }
 
   f = utils.create_method_table("moveit_MoveGroup_", MoveGroup_method_names)
@@ -201,7 +201,7 @@ end
 
 function MoveGroup:setPoseTarget(target, end_effector_link)
   if torch.isTensor(target) then
-    return f.setPoseTarget_Transform(self.o, target:cdata(), end_effector_link or ffi.NULL)
+    return f.setPoseTarget_Tensor(self.o, target:cdata(), end_effector_link or ffi.NULL)
   end
   --f.setPoseTarget_Pose(self.o)
 end
@@ -276,17 +276,16 @@ function MoveGroup:getCurrentState()
   return moveit.RobotState(f.getCurrentState(self.o))
 end
 
-function MoveGroup:getCurrentPose_Transform(end_effector_link, output)
+function MoveGroup:getCurrentPose_Tensor(end_effector_link, output)
   output = output or torch.DoubleTensor()
   f.getCurrentPose_Transform(self.o, end_effector_link or ffi.NULL, output:cdata())
   return output
 end
 
-function MoveGroup:getCurrentPose_Tensors(end_effector_link, position, orientation)
-  position = position or torch.DoubleTensor()
-  orientation = orientation or torch.DoubleTensor()
-  f.getCurrentPose_Tensors(self.o, end_effector_link or ffi.NULL, position:cdata(), orientation:cdata())
-  return position, orientation
+function MoveGroup:getCurrentPose_StampedTransform(end_effector_link, output)
+  output = output or tf.StampedTransform()
+  f.getCurrentPose_StampedTransform(self.o, end_effector_link or ffi.NULL, output:cdata())
+  return output
 end
 
 function MoveGroup:getCurrentPose()

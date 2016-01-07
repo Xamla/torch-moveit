@@ -23,5 +23,7 @@ require 'moveit.TransformListener'
 require 'moveit.RobotState'
 require 'moveit.MoveGroup'
 require 'moveit.Plan'
+require 'moveit.CollisionObject'
+require 'moveit.PlanningSceneInterface'
 
 return moveit

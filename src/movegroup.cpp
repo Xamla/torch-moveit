@@ -180,7 +180,7 @@ MOVIMP(bool, MoveGroup, setRPYTarget)(MoveGroupPtr *self, double roll, double pi
   return (*self)->setRPYTarget(roll, pitch, yaw, end_effector_link);
 }
 
-MOVIMP(bool, MoveGroup, setPoseTarget_Transform)(MoveGroupPtr *self, THDoubleTensor *mat, const char *end_effector_link)
+MOVIMP(bool, MoveGroup, setPoseTarget_Tensor)(MoveGroupPtr *self, THDoubleTensor *mat, const char *end_effector_link)
 {
   if (!end_effector_link)
     end_effector_link = "";
@@ -333,7 +333,7 @@ MOVIMP(RobotStatePtr *, MoveGroup, getCurrentState)(MoveGroupPtr *self)
   return new RobotStatePtr(p);
 }
 
-MOVIMP(void, MoveGroup, getCurrentPose_Transform)(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor *output)
+MOVIMP(void, MoveGroup, getCurrentPose_Tensor)(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor *output)
 {
   moveit::planning_interface::MoveGroup& mg = **self;
   std::string end_effector_link_;  
@@ -358,29 +358,17 @@ MOVIMP(void, MoveGroup, getCurrentPose_Transform)(MoveGroupPtr *self, const char
   copyMatrix(pose.matrix(), output);
 }
 
-MOVIMP(void, MoveGroup, getCurrentPose)(MoveGroupPtr *self, const char *end_effector_link, geometry_msgs::Pose *pose)
+MOVIMP(void, MoveGroup, getCurrentPose_StampedTransform)(MoveGroupPtr *self, const char *end_effector_link, tf::StampedTransform *pose)
 {
   if (!end_effector_link)
     end_effector_link = "";
-  geometry_msgs::PoseStamped pose_ = (*self)->getCurrentPose(end_effector_link);
-  pose->position = pose_.pose.position;
-  pose->orientation = pose_.pose.orientation;
-}
-
-MOVIMP(void, MoveGroup, getCurrentPose_Tensors)(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor *position, THDoubleTensor *orientation)
-{
-  if (!end_effector_link)
-    end_effector_link = "";
-  geometry_msgs::Pose pose = (*self)->getCurrentPose(end_effector_link).pose;
-  Eigen::Vector3d p;
-  p[0] = pose.position.x;
-  p[1] = pose.position.y;
-  p[2] = pose.position.z;
-  Eigen::Vector4d o;
-  o[0] = pose.orientation.x;
-  o[0] = pose.orientation.y;
-  o[0] = pose.orientation.z;
-  o[0] = pose.orientation.w;
-  copyMatrix(p, position);
-  copyMatrix(o, orientation);
+  geometry_msgs::PoseStamped msg_pose = (*self)->getCurrentPose(end_effector_link);
+  
+  tf::Stamped<tf::Pose> stamped_pose;
+  tf::poseStampedMsgToTF(msg_pose, stamped_pose);
+ 
+  static_cast<tf::Transform&>(*pose) = static_cast<const tf::Transform&>(stamped_pose);
+  pose->stamp_ = stamped_pose.stamp_;
+  pose->frame_id_ = stamped_pose.frame_id_;
+  pose->child_frame_id_.clear();
 }

@@ -32,6 +32,13 @@ TFIMP(void, Quaternion, setEuler)(tf::Quaternion *self, double yaw, double pitch
   self->setEuler(yaw, pitch, roll);
 }
 
+TFIMP(void, Quaternion, getRPY)(tf::Quaternion *self, int solution_number, THDoubleTensor *result)
+{
+  double roll = 0, pitch = 0, yaw = 0;
+  tf::Matrix3x3(*self).getRPY(roll, pitch, yaw, solution_number);
+  copyVector3ToTensor(tf::Vector3(roll, pitch, yaw), result);
+}
+
 TFIMP(void, Quaternion, setRPY)(tf::Quaternion *self, double roll, double pitch, double yaw)
 {
   self->setRPY(roll, pitch, yaw);
@@ -110,7 +117,7 @@ TFIMP(void, Quaternion, slerp)(tf::Quaternion *self, tf::Quaternion *other, doub
   *result = self->slerp(*other, t);
 }
 
-TFIMP(void, Quaternion, viewTensor)(tf::Quaternion *self, THDoubleTensor* result)
+TFIMP(void, Quaternion, viewTensor)(tf::Quaternion *self, THDoubleTensor *result)
 {
   viewQuaternion(*self, result);
 }
