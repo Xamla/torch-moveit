@@ -50,11 +50,7 @@ STDIMP(void, StringVector, clear)(StringVector *self)
 STDIMP(void, StringVector, insert)(StringVector *self, size_t pos, size_t n, const char *value)
 {
   StringVector& v = *self;
-  StringVector::iterator i;
-  
-  if (pos >= v.size())
-    i = v.end();
-    
+  StringVector::iterator i = pos >= v.size() ? v.end() : v.begin() + pos;
   v.insert(i, n, value);
 }
 
@@ -64,15 +60,8 @@ STDIMP(void, StringVector, erase)(StringVector *self, size_t begin, size_t end)
     return;
     
   StringVector& v = *self;
-  StringVector::iterator b, e;
-  if (begin >= v.size())
-    b = v.end();
-  else
-    b = v.begin() + begin;
-  if (end >= v.size())
-    e = v.end();
-  else
-    e = v.begin() + end;
+  StringVector::iterator b = begin >= v.size() ? v.end() : v.begin() + begin;
+  StringVector::iterator e = end >= v.size() ? v.end() : v.begin() + end;
   v.erase(b, e);
 }
 
