@@ -80,7 +80,7 @@ end
 
 function Quaternion:setRotation(axis, angle, deg)
   if deg then
-    angle = math.rad(deg)
+    angle = math.rad(angle)
   end
   if type(axis) == 'table' then
     axis = torch.DoubleTensor(axis)
