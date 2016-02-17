@@ -48,7 +48,7 @@ function Quaternion:__init(_1, _2, _3, _4)
     end
     if torch.isTensor(_1) then
       if type(_2) == 'number' then
-        self:setRotation(_1, _2)
+        self:setRotation(_1, _2, _3)
       else
         self:fromTensor(_1)
       end
@@ -176,6 +176,10 @@ function Quaternion:mul(other, result)
     error('Unsupported type of factor for quaternion multiplication.')
   end
   return result
+end
+
+function Quaternion:__mul(other)
+  return self:mul(other)
 end
 
 function Quaternion:div(divisor, result)

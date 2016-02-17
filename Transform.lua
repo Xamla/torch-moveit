@@ -43,6 +43,12 @@ function Transform:clone()
   return c
 end
 
+function Transform.fromStamped(st)
+  local c = torch.factory('tf.Transform')()
+  rawset(c, 'o', f.clone(st.o))
+  return c
+end
+
 function Transform:setIdentity()
   f.setIdentity(self.o)
 end

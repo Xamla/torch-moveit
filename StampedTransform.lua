@@ -41,6 +41,10 @@ function StampedTransform:cdata()
   return self.t
 end
 
+function StampedTransform:toTransform()
+  return tf.Transform.fromStamped(self)
+end
+
 function StampedTransform:clone()
   local c = torch.factory('tf.StampedTransform')()
   local _t = f.clone(self.t)
