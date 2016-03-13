@@ -2,7 +2,7 @@ local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
-local tf = moveit.tf
+local tf = ros.tf
 
 local CollisionObject = torch.class('moveit.CollisionObject', moveit)
 

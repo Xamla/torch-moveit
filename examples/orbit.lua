@@ -1,6 +1,6 @@
+ros = require 'ros'
 moveit = require 'moveit'
-ros = moveit.ros
-tf = moveit.tf
+tf = ros.tf
 
 --[[
 

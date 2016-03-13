@@ -1,6 +1,6 @@
+ros = require 'ros'
 moveit = require 'moveit'
-ros = moveit.ros
-tf = moveit.tf
+tf = ros.tf
 
 ros.init('move_random')
 ros.Time.init()
@@ -33,12 +33,12 @@ print('box added')
 while ros.ok() do
   g:setStartStateToCurrentState()
   g:setRandomTarget()
-  
+
   s, p = g:plan()
   if s then
     print('plan found!')
     g:execute(p)
   end
-  
+
   ros.Duration(5):sleep()
 end

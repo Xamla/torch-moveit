@@ -12,20 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
 SET(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 SET(src
-  "${SOURCE_DIR}/std/string.cpp"
-  "${SOURCE_DIR}/std/string_vector.cpp"
-  
-  "${SOURCE_DIR}/ros/init.cpp"
-  "${SOURCE_DIR}/ros/async_spinner.cpp"
-  "${SOURCE_DIR}/ros/time.cpp"
-  "${SOURCE_DIR}/ros/duration.cpp"
-  
-  "${SOURCE_DIR}/tf/transform.cpp"
-  "${SOURCE_DIR}/tf/quaternion.cpp"
-  "${SOURCE_DIR}/tf/stamped_transform.cpp"
-  "${SOURCE_DIR}/tf/transform_broadcaster.cpp"
-  "${SOURCE_DIR}/tf/transform_listener.cpp"
-
   "${SOURCE_DIR}/movegroup.cpp"
   "${SOURCE_DIR}/plan.cpp"
   "${SOURCE_DIR}/robotstate.cpp"

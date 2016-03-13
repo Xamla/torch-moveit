@@ -1,6 +1,6 @@
+ros = require 'ros'
 moveit = require 'moveit'
-ros = moveit.ros
-tf = moveit.tf
+tf = ros.tf
 
 --[[
 
@@ -44,11 +44,11 @@ function look_at_pose(eye, at, up)
   local t = tf.Transform()
   t:setBasis(basis)
   t:setOrigin(eye)
-  
+
   local rot90z = tf:Transform()
   rot90z:setRotation(tf.Quaternion({0,0,1}, -0.5 * math.pi))
   t:mul(rot90z, t)
-  
+
   return t
 end
 
@@ -108,7 +108,7 @@ while ros.ok() do
 
   print('goal pose:')
   print(pose:toTensor())
-  
+
   g:setStartStateToCurrentState()
   g:setPoseTarget(pose:toTensor())
   s, p = g:plan()

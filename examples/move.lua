@@ -1,5 +1,5 @@
+ros = require 'ros'
 moveit = require 'moveit'
-ros = moveit.ros
 
 ros.init()
 local sp = ros.AsyncSpinner()

@@ -2,7 +2,7 @@ local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
-local tf = moveit.tf;
+local tf = ros.tf
 
 local MoveGroup = torch.class('moveit.MoveGroup', moveit)
 
@@ -190,7 +190,7 @@ end
 function MoveGroup:setOrientationTarget(x, y, z, w, end_effector_link)
   if torch.isTensor(x) then
     return f.setOrientationTarget_Tensor(self.o, x:cdata(), y or end_effector_link or ffi.NULL)
-  else  
+  else
     return f.setOrientationTarget(self.o, x, y, z, w, end_effector_link or ffi.NULL)
   end
 end
@@ -253,7 +253,7 @@ end
 function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
   local error_code = ffi.new 'int[1]'
   local r = f.computeCartesianPath_Tensor(self.o, positions:cdata(), orientations:cdata(), eef_step, jump_threshold, avoid_collisions, error_code)
-  return error_code[0], r 
+  return error_code[0], r
 end
 
 function MoveGroup:attachObject(object, link)
