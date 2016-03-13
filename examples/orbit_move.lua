@@ -94,10 +94,20 @@ g = moveit.MoveGroup('arm')
 
 local pose = g:getCurrentPose_StampedTransform()
 print('pose:'..tostring(pose:getOrigin())..tostring(pose:getRotation():getRPY()))
-g:setMaxVelocityScalingFactor(0.1)
+g:setMaxVelocityScalingFactor(0.3)
 
 local sp = ros.AsyncSpinner()
 sp:start()
+
+box_pose = tf.Transform()
+box_pose:setOrigin({-0.25, 0.35, -0.431})
+rot = box_pose:getRotation()
+rot.x = 0
+rot.y = 0
+rot.z = -0.38
+rot.w = 0.92
+box_pose:setRotation(rot)
+ps:addBox('ground', 0.8, 1.0, 0.8, box_pose)
 
 local i = 1
 while ros.ok() do
