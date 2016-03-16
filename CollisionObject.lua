@@ -1,5 +1,6 @@
 local ffi = require 'ffi'
 local torch = require 'torch'
+local ros = require 'ros'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
 local tf = ros.tf
