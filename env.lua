@@ -61,7 +61,6 @@ int moveit_MoveGroup_move(MoveGroupPtr *self);
 int moveit_MoveGroup_plan(MoveGroupPtr *self, PlanPtr *plan_output);
 int moveit_MoveGroup_asyncExecute(MoveGroupPtr *self, PlanPtr *plan);
 int moveit_MoveGroup_execute(MoveGroupPtr *self, PlanPtr *plan);
-double moveit_MoveGroup_computeCartesianPath_Tensor(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code);
 bool moveit_MoveGroup_attachObject(MoveGroupPtr *self, const char *object, const char *link);
 bool moveit_MoveGroup_detachObject(MoveGroupPtr *self, const char *object);
 void moveit_MoveGroup_stop(MoveGroupPtr *self);
@@ -69,6 +68,9 @@ bool moveit_MoveGroup_startStateMonitor(MoveGroupPtr *self, double wait);
 RobotStatePtr *moveit_MoveGroup_getCurrentState(MoveGroupPtr *self);
 void moveit_MoveGroup_getCurrentPose_Tensor(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor* output);
 void moveit_MoveGroup_getCurrentPose_StampedTransform(MoveGroupPtr *self, const char *end_effector_link, tf_StampedTransform *pose);
+void moveit_MoveGroup_getCurrentPose(MoveGroupPtr *self, const char *end_effector_link, tf_Transform *pose);
+void moveit_MoveGroup_computeCartesianPath_Tensor(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
+void moveit_MoveGroup_pick(MoveGroupPtr *self, const char *object);
 
 PlanPtr* moveit_Plan_new();
 void moveit_Plan_delete(PlanPtr *ptr);

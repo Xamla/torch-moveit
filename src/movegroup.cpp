@@ -258,51 +258,74 @@ MOVIMP(int, MoveGroup, execute)(MoveGroupPtr *self, PlanPtr *plan)
   return (*self)->execute(**plan);
 }
 
-MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code)
+MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan)
 {
   // fill waypoint vecetor from tensors
   std::vector<geometry_msgs::Pose> waypoints;
-  
+ROS_INFO("position size: %d, %d",(int)THDoubleTensor_size(positions,0),(int)THDoubleTensor_size(positions,1) );
   // validate tensor dimensionality  
-  if (!positions || THDoubleTensor_nDimension(positions) != 2 || THDoubleTensor_size(positions, 1) != 3)
+  if (!positions || THDoubleTensor_nDimension(positions) != 2|| THDoubleTensor_size(positions,1) != 3)
     throw MoveItWrapperException("A position tensor with 2 dimensions was expected (each row specifying a (x,y,z) 3D position vector).");
-    
-  if (!orientations || THDoubleTensor_nDimension(orientations) != 2 || THDoubleTensor_size(orientations, 1) != 4)
+ROS_INFO("orientations size: %d, %d",(int)THDoubleTensor_size(orientations,0),(int)THDoubleTensor_size(orientations,1) );
+  if (!orientations || THDoubleTensor_nDimension(orientations) != 2 || THDoubleTensor_size(orientations,1) != 4)
     throw MoveItWrapperException("A orientation tensor with 2 dimensions was expected (each row specifying a (x,y,z,w) quaternion).");
-
   int n = THDoubleTensor_size(positions, 0);
+ROS_INFO("orientations size: %d, position size %d",(int)THDoubleTensor_size(orientations,0),(int)THDoubleTensor_size(positions,0) );
   if (THDoubleTensor_size(orientations, 0) < n)
     throw MoveItWrapperException("For each position there must be an orientation.");
-  
+
   // get continous data segments
   positions = THDoubleTensor_newContiguous(positions);
   orientations = THDoubleTensor_newContiguous(orientations);
   
   double* pos = THDoubleTensor_data(positions);
   double* rot = THDoubleTensor_data(orientations);
-
-  for (int i = 0; i < n; ++i, rot+=3, rot+=4)
+  for (int i = 0; i < n; ++i)
   {
     geometry_msgs::Pose p;
-    p.position.x = pos[0];
-    p.position.y = pos[1];
-    p.position.z = pos[2];
-    p.orientation.x = rot[0];
-    p.orientation.y = rot[1];
-    p.orientation.z = rot[2];
-    p.orientation.w = rot[3];
+    p.position.x = pos[i*3+0];
+    p.position.y = pos[i*3+1];
+    p.position.z = pos[i*3+2];
+    p.orientation.x = rot[i*4+0];
+    p.orientation.y = rot[i*4+1];
+    p.orientation.z = rot[i*4+2];
+    p.orientation.w = rot[i*4+3];
     waypoints.push_back(p);
+//std::cout<<"pose waypoint: "<< p.position<<std::endl;
   }
   
   THDoubleTensor_free(positions);
   THDoubleTensor_free(orientations);
-  
-  moveit_msgs::RobotTrajectory trajectory;
+
+  moveit_msgs::RobotTrajectory path_msg;
   moveit_msgs::MoveItErrorCodes error;
-  double result = (*self)->computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory, avoid_collisions, &error);
+  double fraction = (*self)->computeCartesianPath(waypoints, eef_step, jump_threshold, path_msg, avoid_collisions, &error);
+ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
+      fraction * 100.0);
+
+robot_trajectory::RobotTrajectory rt((*self)->getCurrentState()->getRobotModel(),"manipulator" ); //TODO group needs to be parametrized (*self)->getName()
+
+// Second get a RobotTrajectory from trajectory
+  rt.setRobotTrajectoryMsg(*(*self)->getCurrentState(), path_msg);
+ 
+  // Thrid create a IterativeParabolicTimeParameterization object
+  trajectory_processing::IterativeParabolicTimeParameterization iptp;
+
+  // Fourth compute computeTimeStamps
+  bool success = iptp.computeTimeStamps(rt);
+  ROS_INFO("Computed time stamp %s",success?"SUCCEDED":"FAILED");
+
+  // Get RobotTrajectory_msg from RobotTrajectory
+  rt.getRobotTrajectoryMsg(path_msg);
+
+  // Finally plan and execute the trajectory
+  (*plan)->trajectory_ = path_msg;
+
+
   if (error_code)
     *error_code = error.val;
-  return result;
+
+  return fraction;
 }
 
 MOVIMP(bool, MoveGroup, attachObject)(MoveGroupPtr *self, const char *object, const char *link)
@@ -371,4 +394,26 @@ MOVIMP(void, MoveGroup, getCurrentPose_StampedTransform)(MoveGroupPtr *self, con
   pose->stamp_ = stamped_pose.stamp_;
   pose->frame_id_ = stamped_pose.frame_id_;
   pose->child_frame_id_.clear();
+}
+
+
+MOVIMP(void, MoveGroup, getCurrentPose)(MoveGroupPtr *self, const char *end_effector_link, tf::Transform *pose)
+{
+  if (!end_effector_link)
+    end_effector_link = "";
+  geometry_msgs::PoseStamped msg_pose = (*self)->getCurrentPose(end_effector_link);
+  
+  tf::Stamped<tf::Pose> stamped_pose;
+  tf::poseStampedMsgToTF(msg_pose, stamped_pose);
+ 
+  *pose = static_cast<const tf::Transform&>(stamped_pose);
+}
+
+MOVIMP(void, MoveGroup, pick)(MoveGroupPtr *self, const char *object)
+{
+  std::string object_name;  
+  if (object)
+    object_name = object;
+  	
+ (*self)->pick(object_name);
 }

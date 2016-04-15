@@ -1,7 +1,7 @@
 ros = require 'ros'
 moveit = require 'moveit'
 
-ros.init()
+ros.init('test')
 local sp = ros.AsyncSpinner()
 sp:start()
 

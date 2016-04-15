@@ -6,6 +6,8 @@ FIND_PACKAGE(Torch REQUIRED)
 find_package(Boost 1.47.0 REQUIRED COMPONENTS system)
 find_package(catkin REQUIRED COMPONENTS
   moveit_ros_planning_interface
+  tf
+   tf_conversions
   roscpp
 )
 

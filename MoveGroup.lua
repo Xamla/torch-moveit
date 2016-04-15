@@ -62,7 +62,9 @@ function init()
     "startStateMonitor",
     "getCurrentState",
     "getCurrentPose_Tensor",
-    "getCurrentPose_StampedTransform"
+    "getCurrentPose_StampedTransform",
+    "getCurrentPose",
+    "pick"
   }
 
   f = utils.create_method_table("moveit_MoveGroup_", MoveGroup_method_names)
@@ -252,9 +254,37 @@ function MoveGroup:execute(plan)
 end
 
 function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
-  local error_code = ffi.new 'int[1]'
-  local r = f.computeCartesianPath_Tensor(self.o, positions:cdata(), orientations:cdata(), eef_step, jump_threshold, avoid_collisions, error_code)
-  return error_code[0], r
+  print("MoveGroup:computeCartesianPath_Tensor")
+       local error_code = ffi.new 'int[1]'
+  if torch.type(positions) == 'table' and torch.type(orientations) == 'table' then
+	tmp_positions = torch.zeros(#positions,3) -- needs to be xyz
+	tmp_orientations = torch.zeros(#orientations,4) --computeCartesianPath expects orientations
+	for i=1, #positions do
+		tmp_positions[{i,{}}]=positions[i][{}]
+		local pose = orientations[i]
+--		local q = pose:getRotation():toTensor()
+		local q = pose:toTensor()
+                 tmp_orientations[{i,{}}]=q
+	end
+        plan_output = moveit.Plan()
+	local r = f.computeCartesianPath_Tensor(self.o, tmp_positions:cdata(), tmp_orientations:cdata(), eef_step, jump_threshold, avoid_collisions, error_code,plan_output:cdata())	
+	--if r > 0.5 then
+	--	print("Cartesian Path successfully generated")
+	--else
+	--	print("Cartesian Path NOT successfully generated")
+	--end
+else
+print("WRONG DATA TYPE")
+  end
+ 
+--  ffi.delete(error_code)
+  if not plan_output then
+    plan_output = moveit.Plan()
+    status = f.plan(self.o, plan_output:cdata())
+  end
+  
+  
+  return status, plan_output
 end
 
 function MoveGroup:attachObject(object, link)
@@ -289,8 +319,14 @@ function MoveGroup:getCurrentPose_StampedTransform(end_effector_link, output)
   return output
 end
 
-function MoveGroup:getCurrentPose()
-  local pose = ffi.new 'Pose[1]'
-  f.getCurrentPose(self.o, end_effector_link or ffi.NULL, pose)
-  return pose[0]
+function MoveGroup:getCurrentPose(end_effector_link, output)
+  output = output or tf.Transform()
+  f.getCurrentPose(self.o, end_effector_link or ffi.NULL, output:cdata())
+  return output
+end
+
+function MoveGroup:pick(object)
+	--object needs to be string
+	print(object)
+  return f.pick(self.o,object)
 end
