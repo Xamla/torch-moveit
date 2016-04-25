@@ -258,6 +258,27 @@ MOVIMP(int, MoveGroup, execute)(MoveGroupPtr *self, PlanPtr *plan)
   return (*self)->execute(**plan);
 }
 
+MOVIMP(void, MoveGroup, setOrientationConstraint)(MoveGroupPtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight)
+{
+moveit_msgs::OrientationConstraint ocm;
+ocm.link_name = link_name; //"r_wrist_roll_link";
+ocm.header.frame_id = frame_id;//"base_link";
+ocm.orientation.w = orientation_w;//1.0;
+ocm.absolute_x_axis_tolerance = absolute_x_axis_tolerance;//0.1;
+ocm.absolute_y_axis_tolerance = absolute_y_axis_tolerance;//;0.1;
+ocm.absolute_z_axis_tolerance = absolute_z_axis_tolerance;//0.1;
+ocm.weight = weight;
+
+moveit_msgs::Constraints test_constraints;
+test_constraints.orientation_constraints.push_back(ocm);
+(*self)->setPathConstraints(test_constraints);
+}
+  
+MOVIMP(void, MoveGroup, clearPathConstraints)(MoveGroupPtr *self)
+{
+(*self)->clearPathConstraints();
+}
+
 MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan)
 {
   // fill waypoint vecetor from tensors
@@ -306,7 +327,7 @@ ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
 robot_trajectory::RobotTrajectory rt((*self)->getCurrentState()->getRobotModel(),"manipulator" ); //TODO group needs to be parametrized (*self)->getName()
 
 // Second get a RobotTrajectory from trajectory
-  rt.setRobotTrajectoryMsg(*(*self)->getCurrentState(), path_msg);
+  rt.setRobotTrajectoryMsg(*((*self)->getCurrentState()), path_msg);
  
   // Thrid create a IterativeParabolicTimeParameterization object
   trajectory_processing::IterativeParabolicTimeParameterization iptp;

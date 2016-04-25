@@ -69,14 +69,15 @@ RobotStatePtr *moveit_MoveGroup_getCurrentState(MoveGroupPtr *self);
 void moveit_MoveGroup_getCurrentPose_Tensor(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor* output);
 void moveit_MoveGroup_getCurrentPose_StampedTransform(MoveGroupPtr *self, const char *end_effector_link, tf_StampedTransform *pose);
 void moveit_MoveGroup_getCurrentPose(MoveGroupPtr *self, const char *end_effector_link, tf_Transform *pose);
+
+void moveit_MoveGroup_setOrientationConstraint(MoveGroupPtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight);
+void moveit_MoveGroup_clearPathConstraints(MoveGroupPtr *self);
 void moveit_MoveGroup_computeCartesianPath_Tensor(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
 void moveit_MoveGroup_pick(MoveGroupPtr *self, const char *object);
-
 PlanPtr* moveit_Plan_new();
 void moveit_Plan_delete(PlanPtr *ptr);
 void moveit_Plan_release(PlanPtr *ptr);
 double moveit_Plan_getPlanningTime(PlanPtr *ptr);
-
 RobotStatePtr *moveit_RobotState_clone(RobotStatePtr *ptr);
 void moveit_RobotState_delete(RobotStatePtr *ptr);
 void moveit_RobotState_release(RobotStatePtr *ptr);
