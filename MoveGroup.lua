@@ -55,6 +55,8 @@ function init()
     "plan",
     "asyncExecute",
     "execute",
+    "setOrientationConstraint",
+    "clearPathConstraints",
     "computeCartesianPath_Tensor",
     "attachObject",
     "detachObject",
@@ -253,7 +255,15 @@ function MoveGroup:execute(plan)
   return f.execute(self.o, plan:cdata())
 end
 
-function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions, plan_output)
+function MoveGroup:setOrientationConstraint(link_name, frame_id, orientation_w, absolute_x_axis_tolerance, absolute_y_axis_tolerance, absolute_z_axis_tolerance, weight)
+	f.setOrientationConstraint(self.o,link_name, frame_id, orientation_w, absolute_x_axis_tolerance, absolute_y_axis_tolerance,absolute_z_axis_tolerance, weight)
+end
+
+function MoveGroup:clearPathConstraints()
+	f.clearPathConstraints(self.o)
+end
+
+function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
   if not plan_output then
     plan_output = moveit.Plan()
   end
