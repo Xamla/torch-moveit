@@ -303,7 +303,7 @@ ROS_INFO("orientations size: %d, position size %d",(int)THDoubleTensor_size(orie
 ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
       fraction * 100.0);
 
-robot_trajectory::RobotTrajectory rt((*self)->getCurrentState()->getRobotModel(),"manipulator" ); //TODO group needs to be parametrized (*self)->getName()
+robot_trajectory::RobotTrajectory rt((*self)->getCurrentState()->getRobotModel(),(*self)->getName() ); 
 
 // Second get a RobotTrajectory from trajectory
   rt.setRobotTrajectoryMsg(*(*self)->getCurrentState(), path_msg);

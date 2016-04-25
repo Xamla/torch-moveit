@@ -31,9 +31,14 @@ function project_onto_plane(plane_point, plane_normal, pt)
 end
 
 function look_at_pose(eye, at, up)
-  -- eye becomes origin, 'at' lies on x-axis
+  -- eye becomes origin, 'at' lies on z-axis
+  --[[local xaxis = normalize(at - eye)
+  local yaxis = -normalize(torch.cross(xaxis, up))
+  local zaxis = torch.cross(xaxis, yaxis)]]
+  
+  
   local zaxis = normalize(at - eye)
-  local xaxis = -normalize(torch.cross(zaxis, up))
+  local xaxis = normalize(torch.cross(zaxis, up))
   local yaxis = torch.cross(zaxis, xaxis)
 
   local basis = torch.Tensor(3,3)
@@ -45,9 +50,14 @@ function look_at_pose(eye, at, up)
   t:setBasis(basis)
   t:setOrigin(eye)
 
+
   local rot90z = tf:Transform()
-  rot90z:setRotation(tf.Quaternion({0,0,1}, -0.5 * math.pi))
+  rot90z:setRotation(tf.Quaternion({0,1,0}, math.rad(90) ))
   t:mul(rot90z, t)
+
+  local rot38x = tf:Transform()
+  rot38x:setRotation(tf.Quaternion({0,0,1}, math.rad(51+90-5) ))
+  t:mul(rot38x, t)
 
   return t
 end
@@ -80,7 +90,11 @@ function generate_arc(center, normal, start_pt, total_rotation_angle, angle_step
   return poses
 end
 
-x = generate_arc({0.0,0.7,0.6}, {0,0,1}, {-0.4,0.4,0.3}, 0.5 * math.pi, 0.1, {0.0,0.7,0.0})
+-- x = generate_arc({0.0,0.55,0.6}, {0,0,1}, {0.0,0.45,0.3}, 0.5 * math.pi, 0.1, {0.0,0.55,0.0})
+-- x = generate_arc({0.0,0.55,0.6}, {0,0,1}, {0.0,0.35,0.3}, 0.75*math.pi, 0.1, {0.0,0.55,0.0})
+ x = generate_arc({0.0,0.55,0.4}, {0,0,1}, {0.0,0.35,0.3}, 0.5*math.pi, 0.1, {0.0,0.55,0.0})
+-- x = generate_arc({0.0,0.55,0.8}, {0,0,1}, {0.0,0.35,0.3}, 0.5*math.pi, 0.1, {0.0,0.55,0.0})
+
 
 ros.init('lookat')
 ros.Time.init()
@@ -90,11 +104,11 @@ local b = tf.TransformBroadcaster()
 ps = moveit.PlanningSceneInterface()
 ps:addPlane('ground plane', 0, 0, 1, -0.001)
 
-g = moveit.MoveGroup('arm')
+g = moveit.MoveGroup('manipulator')
 
 local pose = g:getCurrentPose_StampedTransform()
 print('pose:'..tostring(pose:getOrigin())..tostring(pose:getRotation():getRPY()))
-g:setMaxVelocityScalingFactor(0.3)
+g:setMaxVelocityScalingFactor(0.5)
 
 local sp = ros.AsyncSpinner()
 sp:start()
