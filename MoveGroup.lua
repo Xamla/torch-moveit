@@ -268,18 +268,22 @@ function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step
     plan_output = moveit.Plan()
   end
   print("MoveGroup:computeCartesianPath_Tensor")
-       local error_code = ffi.new 'int[1]'
+  local error_code = ffi.new 'int[1]'
   if torch.type(positions) == 'table' and torch.type(orientations) == 'table' then
 	tmp_positions = torch.zeros(#positions,3) -- needs to be xyz
 	tmp_orientations = torch.zeros(#orientations,4) --computeCartesianPath expects orientations
 	for i=1, #positions do
 		tmp_positions[{i,{}}]=positions[i][{}]
 		local pose = orientations[i]
---		local q = pose:getRotation():toTensor()
+
+
+		--local q = pose:getRotation():toTensor()
 		local q = pose:toTensor()
                  tmp_orientations[{i,{}}]=q
 	end
-	local r = f.computeCartesianPath_Tensor(self.o, tmp_positions:cdata(), tmp_orientations:cdata(), eef_step, jump_threshold, avoid_collisions, error_code,plan_output:cdata())	
+  local r = f.computeCartesianPath_Tensor(self.o, tmp_positions:cdata(), tmp_orientations:cdata(), eef_step, jump_threshold, avoid_collisions, error_code,plan_output:cdata())	
+print("test")
+print(r)
 	if r > 0.5 then
 		status = 1
 		print("Cartesian Path successfully generated")
@@ -291,11 +295,12 @@ function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step
 print("WRONG DATA TYPE")
   end
  
---  ffi.delete(error_code)
- -- if not plan_output then
- --   plan_output = moveit.Plan()
- --   status = f.plan(self.o, plan_output:cdata())
- -- end
+-- ffi.delete(error_code)
+  if not plan_output then
+	print("REPLANNING")
+    plan_output = moveit.Plan()
+    status = f.plan(self.o, plan_output:cdata())
+  end
   
   
   return status, plan_output
