@@ -264,46 +264,28 @@ function MoveGroup:clearPathConstraints()
 end
 
 function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
-  if not plan_output then
+  if torch.type(positions) ~= 'table' then
+    error('Argument positions of wrong type. Table expected.')
+  end
+  if torch.type(orientations) ~= 'table' then
+    error('Argument orientations of wrong type. Table expected.')
+  end
+  if plan_output == nil then
     plan_output = moveit.Plan()
   end
-  print("MoveGroup:computeCartesianPath_Tensor")
+
+  local positions_ = torch.zeros(#positions, 3)         -- xyz
+  local orientations_ = torch.zeros(#orientations, 4)
+  for i=1, #positions do
+    positions_[{i,{}}] = positions[i]
+    local pose = orientations[i]
+    local q = pose:toTensor()
+    orientations_[{i,{}}] = q
+  end
+
   local error_code = ffi.new 'int[1]'
-  if torch.type(positions) == 'table' and torch.type(orientations) == 'table' then
-	tmp_positions = torch.zeros(#positions,3) -- needs to be xyz
-	tmp_orientations = torch.zeros(#orientations,4) --computeCartesianPath expects orientations
-	for i=1, #positions do
-		tmp_positions[{i,{}}]=positions[i][{}]
-		local pose = orientations[i]
-
-
-		--local q = pose:getRotation():toTensor()
-		local q = pose:toTensor()
-                 tmp_orientations[{i,{}}]=q
-	end
-  local r = f.computeCartesianPath_Tensor(self.o, tmp_positions:cdata(), tmp_orientations:cdata(), eef_step, jump_threshold, avoid_collisions, error_code,plan_output:cdata())	
-print("test")
-print(r)
-	if r > 0.5 then
-		status = 1
-		print("Cartesian Path successfully generated")
-	else
-		status = 0
-		print("Cartesian Path NOT successfully generated")
-	end
-  else
-print("WRONG DATA TYPE")
-  end
- 
--- ffi.delete(error_code)
-  if not plan_output then
-	print("REPLANNING")
-    plan_output = moveit.Plan()
-    status = f.plan(self.o, plan_output:cdata())
-  end
-  
-  
-  return status, plan_output
+  local status = f.computeCartesianPath_Tensor(self.o, positions_:cdata(), orientations_:cdata(), eef_step, jump_threshold, avoid_collisions, error_code, plan_output:cdata())
+  return status, plan_output, error_code
 end
 
 function MoveGroup:attachObject(object, link)
@@ -319,8 +301,9 @@ function MoveGroup:stop()
 end
 
 function MoveGroup:startStateMonitor(wait)
-  return f.startStateMonitor(self.o, wait or 1.0)
+  return f.startStateMonitor(self.o, wait or 0.01)
 end
+
 
 function MoveGroup:getCurrentState()
   return moveit.RobotState(f.getCurrentState(self.o))

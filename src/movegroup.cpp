@@ -58,7 +58,7 @@ MOVIMP(void, MoveGroup, setGoalJointTolerance)(MoveGroupPtr *self, double tolera
   (*self)->setGoalJointTolerance(tolerance);
 }
 
-MOVIMP(double, MoveGroup, getGoalOrientationTolerance)(MoveGroupPtr *self) 
+MOVIMP(double, MoveGroup, getGoalOrientationTolerance)(MoveGroupPtr *self)
 {
   return (*self)->getGoalOrientationTolerance();
 }
@@ -112,7 +112,7 @@ MOVIMP(void, MoveGroup, setStartStateToCurrentState)(MoveGroupPtr *self)
 {
   (*self)->setStartStateToCurrentState();
 }
- 
+
 MOVIMP(void, MoveGroup, setSupportSurfaceName)(MoveGroupPtr *self, const char *name)
 {
   (*self)->setSupportSurfaceName(name);
@@ -184,7 +184,7 @@ MOVIMP(bool, MoveGroup, setPoseTarget_Tensor)(MoveGroupPtr *self, THDoubleTensor
 {
   if (!end_effector_link)
     end_effector_link = "";
-    
+
   Eigen::Affine3d t(Tensor2Mat<4,4>(mat));
   return (*self)->setPoseTarget(t, end_effector_link);
 }
@@ -224,7 +224,7 @@ MOVIMP(void, MoveGroup, clearPoseTarget)(MoveGroupPtr *self, const char *end_eff
     end_effector_link = "";
   (*self)->clearPoseTarget(end_effector_link);
 }
-  
+
 MOVIMP(void, MoveGroup, clearPoseTargets)(MoveGroupPtr *self)
 {
   (*self)->clearPoseTargets();
@@ -244,7 +244,7 @@ MOVIMP(int, MoveGroup, plan)(MoveGroupPtr *self, PlanPtr *result)
 {
   if (!result || !*result)
     throw MoveItWrapperException("Valid plan output argument has to be provided by caller.");
-    
+
   return (*self)->plan(**result);
 }
 
@@ -260,45 +260,45 @@ MOVIMP(int, MoveGroup, execute)(MoveGroupPtr *self, PlanPtr *plan)
 
 MOVIMP(void, MoveGroup, setOrientationConstraint)(MoveGroupPtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight)
 {
-moveit_msgs::OrientationConstraint ocm;
-ocm.link_name = link_name; //"r_wrist_roll_link";
-ocm.header.frame_id = frame_id;//"base_link";
-ocm.orientation.w = orientation_w;//1.0;
-ocm.absolute_x_axis_tolerance = absolute_x_axis_tolerance;//0.1;
-ocm.absolute_y_axis_tolerance = absolute_y_axis_tolerance;//;0.1;
-ocm.absolute_z_axis_tolerance = absolute_z_axis_tolerance;//0.1;
-ocm.weight = weight;
+  moveit_msgs::OrientationConstraint ocm;
+  ocm.link_name = link_name; //"r_wrist_roll_link";
+  ocm.header.frame_id = frame_id;//"base_link";
+  ocm.orientation.w = orientation_w;//1.0;
+  ocm.absolute_x_axis_tolerance = absolute_x_axis_tolerance;//0.1;
+  ocm.absolute_y_axis_tolerance = absolute_y_axis_tolerance;//;0.1;
+  ocm.absolute_z_axis_tolerance = absolute_z_axis_tolerance;//0.1;
+  ocm.weight = weight;
 
-moveit_msgs::Constraints test_constraints;
-test_constraints.orientation_constraints.push_back(ocm);
-(*self)->setPathConstraints(test_constraints);
+  moveit_msgs::Constraints test_constraints;
+  test_constraints.orientation_constraints.push_back(ocm);
+  (*self)->setPathConstraints(test_constraints);
 }
-  
+
 MOVIMP(void, MoveGroup, clearPathConstraints)(MoveGroupPtr *self)
 {
-(*self)->clearPathConstraints();
+  (*self)->clearPathConstraints();
 }
 
 MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan)
 {
   // fill waypoint vecetor from tensors
   std::vector<geometry_msgs::Pose> waypoints;
-ROS_INFO("position size: %d, %d",(int)THDoubleTensor_size(positions,0),(int)THDoubleTensor_size(positions,1) );
-  // validate tensor dimensionality  
+  ROS_INFO("position size: %d, %d",(int)THDoubleTensor_size(positions,0),(int)THDoubleTensor_size(positions,1) );
+  // validate tensor dimensionality
   if (!positions || THDoubleTensor_nDimension(positions) != 2|| THDoubleTensor_size(positions,1) != 3)
     throw MoveItWrapperException("A position tensor with 2 dimensions was expected (each row specifying a (x,y,z) 3D position vector).");
-ROS_INFO("orientations size: %d, %d",(int)THDoubleTensor_size(orientations,0),(int)THDoubleTensor_size(orientations,1) );
+  ROS_INFO("orientations size: %d, %d",(int)THDoubleTensor_size(orientations,0),(int)THDoubleTensor_size(orientations,1) );
   if (!orientations || THDoubleTensor_nDimension(orientations) != 2 || THDoubleTensor_size(orientations,1) != 4)
     throw MoveItWrapperException("A orientation tensor with 2 dimensions was expected (each row specifying a (x,y,z,w) quaternion).");
   int n = THDoubleTensor_size(positions, 0);
-ROS_INFO("orientations size: %d, position size %d",(int)THDoubleTensor_size(orientations,0),(int)THDoubleTensor_size(positions,0) );
+  ROS_INFO("orientations size: %d, position size %d",(int)THDoubleTensor_size(orientations,0),(int)THDoubleTensor_size(positions,0) );
   if (THDoubleTensor_size(orientations, 0) < n)
     throw MoveItWrapperException("For each position there must be an orientation.");
 
   // get continous data segments
   positions = THDoubleTensor_newContiguous(positions);
   orientations = THDoubleTensor_newContiguous(orientations);
-  
+
   double* pos = THDoubleTensor_data(positions);
   double* rot = THDoubleTensor_data(orientations);
   for (int i = 0; i < n; ++i)
@@ -312,34 +312,37 @@ ROS_INFO("orientations size: %d, position size %d",(int)THDoubleTensor_size(orie
     p.orientation.z = rot[i*4+2];
     p.orientation.w = rot[i*4+3];
     waypoints.push_back(p);
-//std::cout<<"pose waypoint: "<< p.position<<std::endl;
   }
-  
+
   THDoubleTensor_free(positions);
   THDoubleTensor_free(orientations);
 
   moveit_msgs::RobotTrajectory path_msg;
   moveit_msgs::MoveItErrorCodes error;
   double fraction = (*self)->computeCartesianPath(waypoints, eef_step, jump_threshold, path_msg, avoid_collisions, &error);
-ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
+  ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
       fraction * 100.0);
 
-robot_trajectory::RobotTrajectory rt((*self)->getCurrentState()->getRobotModel(),(*self)->getName() ); 
+  robot_trajectory::RobotTrajectory rt((*self)->getCurrentState()->getRobotModel(),(*self)->getName() );
 
-// Second get a RobotTrajectory from trajectory
-  rt.setRobotTrajectoryMsg(*((*self)->getCurrentState()), path_msg);
- 
+  // Second get a RobotTrajectory from trajectory
+  //rt.setRobotTrajectoryMsg(*((*self)->getCurrentState()), path_msg);
+
   // Thrid create a IterativeParabolicTimeParameterization object
-  trajectory_processing::IterativeParabolicTimeParameterization iptp;
+  //unsigned int max_iterations = 100;
+  //double max_time_change_per_it = .01;
+  //trajectory_processing::IterativeParabolicTimeParameterization iptp = trajectory_processing::IterativeParabolicTimeParameterization(max_iterations,max_time_change_per_it);
 
   // Fourth compute computeTimeStamps
-  bool success = iptp.computeTimeStamps(rt);
-  ROS_INFO("Computed time stamp %s",success?"SUCCEDED":"FAILED");
+  //bool success = iptp.computeTimeStamps(rt,1.0,1.0);
+  //ROS_INFO("Computed time stamp %s",success?"SUCCEDED":"FAILED");
 
   // Get RobotTrajectory_msg from RobotTrajectory
-  rt.getRobotTrajectoryMsg(path_msg);
+  //rt.getRobotTrajectoryMsg(path_msg);
 
   // Finally plan and execute the trajectory
+  std::cout<< "path_msg"<<std::endl;
+  std::cout<< path_msg<<std::endl;
   (*plan)->trajectory_ = path_msg;
 
 
@@ -371,6 +374,7 @@ MOVIMP(bool, MoveGroup, startStateMonitor)(MoveGroupPtr *self, double wait_secon
   return (*self)->startStateMonitor(wait_seconds);
 }
 
+
 MOVIMP(RobotStatePtr *, MoveGroup, getCurrentState)(MoveGroupPtr *self)
 {
   robot_state::RobotStatePtr p = (*self)->getCurrentState();
@@ -380,17 +384,17 @@ MOVIMP(RobotStatePtr *, MoveGroup, getCurrentState)(MoveGroupPtr *self)
 MOVIMP(void, MoveGroup, getCurrentPose_Tensor)(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor *output)
 {
   moveit::planning_interface::MoveGroup& mg = **self;
-  std::string end_effector_link_;  
+  std::string end_effector_link_;
   if (end_effector_link)
     end_effector_link_ = end_effector_link;
-  
+
   const std::string &eef = end_effector_link_.empty() ? mg.getEndEffectorLink() : end_effector_link_;
   if (eef.empty())
     throw MoveItWrapperException("No end-effector specified.");
-    
+
   Eigen::Affine3d pose;
   pose.setIdentity();
-  
+
   RobotStatePtr current_state = mg.getCurrentState();
   if (current_state)
   {
@@ -398,7 +402,7 @@ MOVIMP(void, MoveGroup, getCurrentPose_Tensor)(MoveGroupPtr *self, const char *e
     if (lm)
       pose = current_state->getGlobalLinkTransform(lm);
   }
-  
+
   copyMatrix(pose.matrix(), output);
 }
 
@@ -407,10 +411,10 @@ MOVIMP(void, MoveGroup, getCurrentPose_StampedTransform)(MoveGroupPtr *self, con
   if (!end_effector_link)
     end_effector_link = "";
   geometry_msgs::PoseStamped msg_pose = (*self)->getCurrentPose(end_effector_link);
-  
+
   tf::Stamped<tf::Pose> stamped_pose;
   tf::poseStampedMsgToTF(msg_pose, stamped_pose);
- 
+
   static_cast<tf::Transform&>(*pose) = static_cast<const tf::Transform&>(stamped_pose);
   pose->stamp_ = stamped_pose.stamp_;
   pose->frame_id_ = stamped_pose.frame_id_;
@@ -423,18 +427,18 @@ MOVIMP(void, MoveGroup, getCurrentPose)(MoveGroupPtr *self, const char *end_effe
   if (!end_effector_link)
     end_effector_link = "";
   geometry_msgs::PoseStamped msg_pose = (*self)->getCurrentPose(end_effector_link);
-  
+
   tf::Stamped<tf::Pose> stamped_pose;
   tf::poseStampedMsgToTF(msg_pose, stamped_pose);
- 
+
   *pose = static_cast<const tf::Transform&>(stamped_pose);
 }
 
 MOVIMP(void, MoveGroup, pick)(MoveGroupPtr *self, const char *object)
 {
-  std::string object_name;  
+  std::string object_name;
   if (object)
     object_name = object;
-  	
+
  (*self)->pick(object_name);
 }

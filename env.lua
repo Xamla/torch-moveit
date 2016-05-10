@@ -65,6 +65,7 @@ bool moveit_MoveGroup_attachObject(MoveGroupPtr *self, const char *object, const
 bool moveit_MoveGroup_detachObject(MoveGroupPtr *self, const char *object);
 void moveit_MoveGroup_stop(MoveGroupPtr *self);
 bool moveit_MoveGroup_startStateMonitor(MoveGroupPtr *self, double wait);
+void moveit_MoveGroup_setStartState(MoveGroupPtr *self, RobotStatePtr robot_state);
 RobotStatePtr *moveit_MoveGroup_getCurrentState(MoveGroupPtr *self);
 void moveit_MoveGroup_getCurrentPose_Tensor(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor* output);
 void moveit_MoveGroup_getCurrentPose_StampedTransform(MoveGroupPtr *self, const char *end_effector_link, tf_StampedTransform *pose);
