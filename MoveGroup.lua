@@ -304,7 +304,6 @@ function MoveGroup:startStateMonitor(wait)
   return f.startStateMonitor(self.o, wait or 0.01)
 end
 
-
 function MoveGroup:getCurrentState()
   return moveit.RobotState(f.getCurrentState(self.o))
 end

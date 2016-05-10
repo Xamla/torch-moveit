@@ -1,3 +1,9 @@
+# Build directory 
+build/
+
+# codelite
+.codelite/
+
 # Compiled Object files
 *.slo
 *.lo

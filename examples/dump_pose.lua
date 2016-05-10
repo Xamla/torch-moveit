@@ -5,7 +5,7 @@ ros.init('dump_pose')
 ros.Time.init()
 local sp = ros.AsyncSpinner()
 sp:start()
-g = moveit.MoveGroup('arm')
+g = moveit.MoveGroup('manipulator')
 
 while ros.ok() do
   local st = g:getCurrentPose_StampedTransform()
@@ -18,3 +18,6 @@ while ros.ok() do
 
   ros.Duration(1):sleep()
 end
+
+ros.shutdown()
+
