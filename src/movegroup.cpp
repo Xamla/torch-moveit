@@ -341,8 +341,6 @@ MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(MoveGroupPtr *self, THDou
   //rt.getRobotTrajectoryMsg(path_msg);
 
   // Finally plan and execute the trajectory
-  std::cout<< "path_msg"<<std::endl;
-  std::cout<< path_msg<<std::endl;
   (*plan)->trajectory_ = path_msg;
 
 
