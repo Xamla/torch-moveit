@@ -258,6 +258,22 @@ MOVIMP(int, MoveGroup, execute)(MoveGroupPtr *self, PlanPtr *plan)
   return (*self)->execute(**plan);
 }
 
+MOVIMP(void, MoveGroup, setJointPostureConstraint)(MoveGroupPtr *self, const char *joint_name, double position,double tolerance_above,double tolerance_below , double weight)
+{
+
+	  // Constructing the joint constraint
+	  moveit_msgs::JointConstraint jcm;
+	  jcm.joint_name = joint_name;
+	  jcm.position = position;
+	  jcm.tolerance_above = tolerance_above ;//1.5;
+	  jcm.tolerance_below = tolerance_below ;//1.5;
+	  jcm.weight = weight;
+	  moveit_msgs::Constraints test_constraints;
+	  test_constraints.joint_constraints.push_back(jcm);
+	  (*self)->setPathConstraints(test_constraints);
+}
+
+
 MOVIMP(void, MoveGroup, setOrientationConstraint)(MoveGroupPtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight)
 {
   moveit_msgs::OrientationConstraint ocm;

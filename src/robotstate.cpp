@@ -79,6 +79,43 @@ MOVIMP(void, RobotState, setToRandomPositions)(RobotStatePtr *self)
   (*self)->setToRandomPositions();
 }
 
+MOVIMP(bool, RobotState, setFromIK)
+(RobotStatePtr *self, const char * group_id_, const tf::Transform * pose_,
+ THDoubleTensor * tensor)
+{
+
+  std::string group_id = std::string (group_id_);
+  const robot_state::JointModelGroup* group = (*self)->getJointModelGroup (
+      group_id);
+  Eigen::Affine3d pose;
+  tf::poseTFToEigen (*pose_, pose);
+
+  std::vector<double> joint_values;
+
+  const std::vector<std::string> &joint_names = group->getJointModelNames ();
+  bool found_ik = (*self)->setFromIK (group, pose, 10, 0.1);
+  if (found_ik)
+    {
+
+      (*self)->copyJointGroupPositions (group, joint_values);
+      THDoubleTensor_resize1d (tensor, joint_values.size ());
+      THDoubleTensor * output = THDoubleTensor_newContiguous (tensor);
+      double *data = THDoubleTensor_data (output);
+
+      for (std::size_t i = 0; i < joint_values.size (); ++i)
+        {
+          ROS_DEBUG("Joint %d: %f", (int)i, joint_values[i]);
+          data[i] = joint_values[i];
+        }
+      THDoubleTensor_freeCopyTo (output, tensor);
+    }
+  else
+    {
+      ROS_INFO("Did not find IK solution");
+    }
+  return found_ik;
+}
+
 
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const

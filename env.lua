@@ -48,6 +48,7 @@ void moveit_MoveGroup_setRandomTarget(MoveGroupPtr* self);
 bool moveit_MoveGroup_setNamedTarget(MoveGroupPtr *self, const char *name);
 bool moveit_MoveGroup_setPositionTarget(MoveGroupPtr *self, double x, double y, double z, const char *end_effector_link);
 bool moveit_MoveGroup_setPositionTarget_Tensor(MoveGroupPtr *self, THDoubleTensor *t, const char *end_effector_link);
+void moveit_MoveGroup_setJointPostureConstraint(MoveGroupPtr *self, const char *joint_name, double position,double tolerance_above,double tolerance_below , double weight);
 bool moveit_MoveGroup_setOrientationTarget(MoveGroupPtr *self, double x, double y, double z, double w, const char *end_effector_link);
 bool moveit_MoveGroup_setOrientationTarget_Tensor(MoveGroupPtr *self, THDoubleTensor *t, const char *end_effector_link);
 bool moveit_MoveGroup_setRPYTarget(MoveGroupPtr *self, double roll, double pitch, double yaw, const char *end_effector_link);
@@ -96,6 +97,7 @@ bool moveit_RobotState_hasEffort(RobotStatePtr *self);
 void moveit_RobotState_getVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setToDefaultValues(RobotStatePtr *self);
 void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
+bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char * group_id_, const tf_Transform * pose_, THDoubleTensor * tensor);
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);

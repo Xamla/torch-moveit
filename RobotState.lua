@@ -2,6 +2,7 @@ local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
+local tf = ros.tf
 
 local RobotState = torch.class('moveit.RobotState', moveit)
 
@@ -22,7 +23,8 @@ function init()
     "hasEffort",
     "getVariableEffort",
     "setToDefaultValues",
-    "setToRandomPositions"
+    "setToRandomPositions",
+    "setFromIK"
   }
   
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
@@ -100,4 +102,10 @@ end
 
 function RobotState:setToRandomPositions()
   f.setToRandomPositions(self.o)
+end
+
+function RobotState:setFromIK(group_id,pose_)
+  local tensor = torch.DoubleTensor()
+  local suc = f.setFromIK(self.o, group_id, pose_:cdata(), tensor:cdata())
+  return suc, tensor
 end

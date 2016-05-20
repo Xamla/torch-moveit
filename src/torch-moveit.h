@@ -8,6 +8,7 @@ extern "C" {
 #include <boost/shared_ptr.hpp>
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
+#include <tf_conversions/tf_eigen.h>
 
 typedef std::vector<std::string> StringVector;
 typedef boost::shared_ptr<moveit::planning_interface::MoveGroup> MoveGroupPtr;

@@ -55,6 +55,7 @@ function init()
     "plan",
     "asyncExecute",
     "execute",
+    "setJointPostureConstraint",
     "setOrientationConstraint",
     "clearPathConstraints",
     "computeCartesianPath_Tensor",
@@ -254,6 +255,11 @@ end
 function MoveGroup:execute(plan)
   return f.execute(self.o, plan:cdata())
 end
+
+function MoveGroup:setJointPostureConstraint(joint_name, position, tolerance_above, tolerance_below ,  weight)
+  f.setJointPostureConstraint(self.o,joint_name, position, tolerance_above, tolerance_below ,  weight)
+end
+
 
 function MoveGroup:setOrientationConstraint(link_name, frame_id, orientation_w, absolute_x_axis_tolerance, absolute_y_axis_tolerance, absolute_z_axis_tolerance, weight)
 	f.setOrientationConstraint(self.o,link_name, frame_id, orientation_w, absolute_x_axis_tolerance, absolute_y_axis_tolerance,absolute_z_axis_tolerance, weight)
