@@ -2,6 +2,7 @@ local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
+local ros = require 'ros'
 local tf = ros.tf
 
 local RobotState = torch.class('moveit.RobotState', moveit)

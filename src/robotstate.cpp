@@ -79,9 +79,7 @@ MOVIMP(void, RobotState, setToRandomPositions)(RobotStatePtr *self)
   (*self)->setToRandomPositions();
 }
 
-MOVIMP(bool, RobotState, setFromIK)
-(RobotStatePtr *self, const char * group_id_, const tf::Transform * pose_,
- THDoubleTensor * tensor)
+MOVIMP(bool, RobotState, setFromIK)(RobotStatePtr *self, const char * group_id_, const tf::Transform * pose_, THDoubleTensor * tensor)
 {
 
   std::string group_id = std::string (group_id_);
