@@ -233,7 +233,7 @@ function MoveGroup:clearPoseTargets()
 end
 
 function MoveGroup:moveAsync()
-  return f.moveAsync(self.o)
+  return f.asyncMove(self.o)
 end
 
 function MoveGroup:move()
