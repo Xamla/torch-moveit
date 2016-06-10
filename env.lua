@@ -18,12 +18,12 @@ typedef struct PlanningSceneInterfacePtr {} PlanningSceneInterfacePtr;
 MoveItModulePtr *moveit_TorchMoveItModule_new();
 void moveit_TorchMoveItModule_delete(MoveItModulePtr *ptr);
 
-MoveGroupPtr* moveit_MoveGroup_new(const char *name);
+MoveGroupPtr *moveit_MoveGroup_new(const char *name);
 void moveit_MoveGroup_delete(MoveGroupPtr *ptr);
 void moveit_MoveGroup_release(MoveGroupPtr *ptr);
-const char* moveit_MoveGroup_getName(MoveGroupPtr *self);
-const char* moveit_MoveGroup_getPlanningFrame(MoveGroupPtr *self);
-const char* moveit_MoveGroup_getEndEffectorLink(MoveGroupPtr *self);
+const char *moveit_MoveGroup_getName(MoveGroupPtr *self);
+const char *moveit_MoveGroup_getPlanningFrame(MoveGroupPtr *self);
+const char *moveit_MoveGroup_getEndEffectorLink(MoveGroupPtr *self);
 void moveit_MoveGroup_setEndEffectorLink(MoveGroupPtr *self, const char *name);
 void moveit_MoveGroup_getJoints(MoveGroupPtr *self, std_StringVector *strings);
 void moveit_MoveGroup_setGoalTolerance(MoveGroupPtr *self, double tolerance);
@@ -76,7 +76,7 @@ void moveit_MoveGroup_setOrientationConstraint(MoveGroupPtr *self, const char *l
 void moveit_MoveGroup_clearPathConstraints(MoveGroupPtr *self);
 double moveit_MoveGroup_computeCartesianPath_Tensor(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
 void moveit_MoveGroup_pick(MoveGroupPtr *self, const char *object);
-PlanPtr* moveit_Plan_new();
+PlanPtr *moveit_Plan_new();
 void moveit_Plan_delete(PlanPtr *ptr);
 void moveit_Plan_release(PlanPtr *ptr);
 void moveit_Plan_getStartStateMsg(PlanPtr *ptr, THByteStorage *output);
@@ -97,12 +97,12 @@ bool moveit_RobotState_hasEffort(RobotStatePtr *self);
 void moveit_RobotState_getVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setToDefaultValues(RobotStatePtr *self);
 void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
-bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char * group_id_, const tf_Transform * pose_, THDoubleTensor * tensor);
+bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, unsigned int attempts, double timeout, THDoubleTensor *result_joint_positions);
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);
 
-CollisionObjectPtr* moveit_CollisionObject_new();
+CollisionObjectPtr *moveit_CollisionObject_new();
 void moveit_CollisionObject_delete(CollisionObjectPtr *ptr);
 const char *moveit_CollisionObject_getId(CollisionObjectPtr *self);
 void moveit_CollisionObject_setId(CollisionObjectPtr *self, const char *id);
@@ -113,7 +113,7 @@ void moveit_CollisionObject_setOperation(CollisionObjectPtr *self, int operation
 void moveit_CollisionObject_addPrimitive(CollisionObjectPtr *self, int type, THDoubleTensor *dimensions, tf_Transform *pose);
 void moveit_CollisionObject_addPlane(CollisionObjectPtr *self, THDoubleTensor *coefs, tf_Transform *pose);
 
-PlanningSceneInterfacePtr* moveit_PlanningSceneInterface_new();
+PlanningSceneInterfacePtr *moveit_PlanningSceneInterface_new();
 void moveit_PlanningSceneInterface_delete(PlanningSceneInterfacePtr *ptr);
 void moveit_PlanningSceneInterface_addCollisionObject(PlanningSceneInterfacePtr *self, CollisionObjectPtr *obj);
 void moveit_PlanningSceneInterface_removeCollisionObjects(PlanningSceneInterfacePtr *self, std_StringVector *object_ids);

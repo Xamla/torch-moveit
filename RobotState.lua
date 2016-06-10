@@ -27,7 +27,7 @@ function init()
     "setToRandomPositions",
     "setFromIK"
   }
-  
+
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
 end
 
@@ -105,8 +105,10 @@ function RobotState:setToRandomPositions()
   f.setToRandomPositions(self.o)
 end
 
-function RobotState:setFromIK(group_id,pose_)
-  local tensor = torch.DoubleTensor()
-  local suc = f.setFromIK(self.o, group_id, pose_:cdata(), tensor:cdata())
-  return suc, tensor
+function RobotState:setFromIK(group_id, pose, attempts, timeout)
+  attempts = attempts or 10
+  timeout = timeout or 0.1
+  local result_joint_positions = torch.DoubleTensor()
+  local found_ik = f.setFromIK(self.o, group_id, pose:cdata(), attempts, timeout, result_joint_positions:cdata())
+  return found_ik, result_joint_positions
 end
