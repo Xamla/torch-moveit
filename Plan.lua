@@ -4,6 +4,12 @@ local ros = require 'ros'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
 local gnuplot = require 'gnuplot'
+
+----------------------
+-- LUA wrapper for moveit plan environment
+-- dependency to tourch.ros
+-- module: MoveGroup
+--
 local Plan = torch.class('moveit.Plan', moveit)
 
 local f
@@ -39,6 +45,10 @@ function Plan:release()
   f.release(self.o)
 end
 
+---function getStartStateMsg
+--Create a ros message for the robot state: moveit_msgs/RobotState
+--@tparam[opt] ros.Message()
+--@treturn ros.Message()
 function Plan:getStartStateMsg(result)
   local msg_bytes = torch.ByteStorage()
   f.getStartStateMsg(self.o, msg_bytes:cdata())
@@ -47,6 +57,10 @@ function Plan:getStartStateMsg(result)
   return msg
 end
 
+---function getTrajectoryMsg
+--Create a ros message for the robot trajectory: moveit_msgs/RobotTrajectory
+--@tparam[opt] ros.Message()
+--@treturn ros.Message()
 function Plan:getTrajectoryMsg(result)
   local msg_bytes = torch.ByteStorage()
   f.getTrajectoryMsg(self.o, msg_bytes:cdata())
@@ -55,12 +69,19 @@ function Plan:getTrajectoryMsg(result)
   return msg
 end
 
+---function getPlanningTime
+--Get the number of seconds
+--@treturn number
 function Plan:getPlanningTime()
   return f.getPlannigTime(self.o)
 end
 
-function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils object 
-    local positions = {}
+---function convertTrajectoyMsgToTable
+--Convert a ros message: moveit_msgs/RobotTrajectory
+--@tparam[opt] ros.Message()
+--@return Positions, Velocities and Labels (name of each joint)
+function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils object
+  local positions = {}
   local velocities = {}
   local accelerations = {}
   local efforts = {}
@@ -75,68 +96,80 @@ function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils objec
   return positions,velocities,accelerations,efforts
 end
 
-function Plan:convertStartStateMsgToTensor(start_state) -- expect a Utils object 
-  position = start_state.joint_state.position
-  velocity = start_state.joint_state.velocity
-  labels = start_state.joint_state.names
+---function convertStartStateMsgToTensor
+--Convert a ros message: moveit_msgs/RobotState
+--@tparam[opt] ros.Message()
+--@return current position, velocity and labels (name of each joint)
+function Plan:convertStartStateMsgToTensor(start_state) -- expect a Utils object
+  local position = start_state.joint_state.position
+  local velocity = start_state.joint_state.velocity
+  local labels = start_state.joint_state.names
   return position, velocity, labels
 end
 
-
 local function plot6DTrajectory(trajectory)
-    if trajectory[1]:nDimension()==0 then 
-      return false 
-    end
-    print(trajectory[1])
-    local history_size = #trajectory   
- 
-    local q1={}
-    local q2={}
-    local q3={}
-    local q4={}
-    local q5={}
-    local q6={}
-    for i=1,history_size do
-      q1[#q1+1] = trajectory[i][1]
-      q2[#q2+1] = trajectory[i][2]
-      q3[#q3+1] = trajectory[i][3]
-      q4[#q4+1] = trajectory[i][4]
-      q5[#q5+1] = trajectory[i][5]
-      q6[#q6+1] = trajectory[i][6]
-    end
-    local q1_tensor = torch.Tensor(q1)
-    local q2_tensor = torch.Tensor(q2)
-    local q3_tensor = torch.Tensor(q3)
-    local q4_tensor = torch.Tensor(q4)
-    local q5_tensor = torch.Tensor(q5)
-    local q6_tensor = torch.Tensor(q6)
-    gnuplot.plot({'q1',q1_tensor}, {'q2',q2_tensor}, {'q3',q3_tensor},{'q4',q4_tensor},{'q5',q5_tensor},{'q6',q6_tensor})
+  if trajectory[1]:nDimension()==0 then
+    return false
+  end
+  print(trajectory[1])
+  local history_size = #trajectory
+
+  local q1={}
+  local q2={}
+  local q3={}
+  local q4={}
+  local q5={}
+  local q6={}
+  for i=1,history_size do
+    q1[#q1+1] = trajectory[i][1]
+    q2[#q2+1] = trajectory[i][2]
+    q3[#q3+1] = trajectory[i][3]
+    q4[#q4+1] = trajectory[i][4]
+    q5[#q5+1] = trajectory[i][5]
+    q6[#q6+1] = trajectory[i][6]
+  end
+  local q1_tensor = torch.Tensor(q1)
+  local q2_tensor = torch.Tensor(q2)
+  local q3_tensor = torch.Tensor(q3)
+  local q4_tensor = torch.Tensor(q4)
+  local q5_tensor = torch.Tensor(q5)
+  local q6_tensor = torch.Tensor(q6)
+  gnuplot.plot({'q1',q1_tensor}, {'q2',q2_tensor}, {'q3',q3_tensor},{'q4',q4_tensor},{'q5',q5_tensor},{'q6',q6_tensor})
   --gnuplot.axis{0, history_size, -100, 100}
-    gnuplot.grid(true)
-    return true
+  gnuplot.grid(true)
+  return true
 end
 
+---function plot
+--creates gnu plot for either position, velocity, acceleration and speed depending input
+--@tparam int if 1: Positions are plotted, 2: velocities are plotted,3: accelarations are plotted,4: speed is plotted
+--@treturn bool is true if the requested type of the plot is know.
 function Plan:plot(type)
   local msg
   msg= self:getTrajectoryMsg()--Position
   local positions,velocities,accelerations,efforts= self:convertTrajectoyMsgToTable(msg)
-  
   gnuplot.figure(type)
 
   if type == 1 then
     if plot6DTrajectory(positions)then 
-    gnuplot.title('Trajectory position Data')
+      gnuplot.title('Trajectory position Data')
+    else
+      return false
     end
   elseif type == 2 then
     if plot6DTrajectory(velocities) then
-    gnuplot.title('Trajectory velocity Data')
+      gnuplot.title('Trajectory velocity Data')
+    else
+      return false
     end
   elseif type == 3 then
     if plot6DTrajectory(accelerations) then
       gnuplot.title('Trajectory accelaration Data')
+    else
+      return false
     end
   elseif type ==4 then
-    if  velocities[1]:nDimension()==0 then 
+    if velocities[1]:nDimension()==0 then
       return false 
     end
     history_size = #velocities
@@ -151,8 +184,8 @@ function Plan:plot(type)
     gnuplot.title('Trajectory speed Data')
   else
     print("plot type not yet implemented")
+    return false
   end
-  
 
   return true
 end
