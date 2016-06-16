@@ -118,7 +118,14 @@ MOVIMP(void, MoveGroup, setSupportSurfaceName)(MoveGroupPtr *self, const char *n
   (*self)->setSupportSurfaceName (name);
 }
 
-MOVIMP(void, MoveGroup, setWorkspace)(MoveGroupPtr *self, double minx, double miny, double minz, double maxx, double maxy, double maxz)
+MOVIMP(void, MoveGroup, setWorkspace)(
+    MoveGroupPtr *self,
+    double minx,
+    double miny,
+    double minz,
+    double maxx,
+    double maxy,
+    double maxz)
 {
   (*self)->setWorkspace (minx, miny, minz, maxx, maxy, maxz);
 }
@@ -143,7 +150,10 @@ MOVIMP(bool, MoveGroup, setNamedTarget)(MoveGroupPtr *self, const char *name)
   return (*self)->setNamedTarget (name);
 }
 
-MOVIMP(bool, MoveGroup, setPositionTarget_Tensor)(MoveGroupPtr *self, THDoubleTensor *t, const char *end_effector_link)
+MOVIMP(bool, MoveGroup, setPositionTarget_Tensor)(
+    MoveGroupPtr *self,
+    THDoubleTensor *t,
+    const char *end_effector_link)
 {
   if (!end_effector_link)
     end_effector_link = "";
@@ -151,7 +161,12 @@ MOVIMP(bool, MoveGroup, setPositionTarget_Tensor)(MoveGroupPtr *self, THDoubleTe
   return (*self)->setPositionTarget (v[0], v[1], v[2], end_effector_link);
 }
 
-MOVIMP(bool, MoveGroup, setPositionTarget)(MoveGroupPtr *self, double x, double y, double z, const char *end_effector_link)
+MOVIMP(bool, MoveGroup, setPositionTarget)(
+    MoveGroupPtr *self,
+    double x,
+    double y,
+    double z,
+    const char *end_effector_link)
 {
   if (!end_effector_link)
     end_effector_link = "";
@@ -166,14 +181,25 @@ MOVIMP(bool, MoveGroup, setOrientationTarget_Tensor)(MoveGroupPtr *self, THDoubl
   return (*self)->setOrientationTarget (v[0], v[1], v[2], v[3],end_effector_link);
 }
 
-MOVIMP(bool, MoveGroup, setOrientationTarget)(MoveGroupPtr *self, double x, double y, double z, double w, const char *end_effector_link)
+MOVIMP(bool, MoveGroup, setOrientationTarget)(
+    MoveGroupPtr *self,
+    double x,
+    double y,
+    double z,
+    double w,
+    const char *end_effector_link)
 {
   if (!end_effector_link)
     end_effector_link = "";
   return (*self)->setOrientationTarget (x, y, z, w, end_effector_link);
 }
 
-MOVIMP(bool, MoveGroup, setRPYTarget)(MoveGroupPtr *self, double roll, double pitch, double yaw, const char *end_effector_link)
+MOVIMP(bool, MoveGroup, setRPYTarget)(
+    MoveGroupPtr *self,
+    double roll,
+    double pitch,
+    double yaw,
+    const char *end_effector_link)
 {
   if (!end_effector_link)
     end_effector_link = "";
@@ -259,7 +285,13 @@ MOVIMP(int, MoveGroup, execute)(MoveGroupPtr *self, PlanPtr *plan)
   return (*self)->execute (**plan);
 }
 
-MOVIMP(void, MoveGroup, setJointPostureConstraint)(MoveGroupPtr *self, const char *joint_name, double position, double tolerance_above, double tolerance_below, double weight)
+MOVIMP(void, MoveGroup, setJointPostureConstraint)(
+    MoveGroupPtr *self,
+    const char *joint_name,
+    double position,
+    double tolerance_above,
+    double tolerance_below,
+    double weight)
 {
 
   // Constructing the joint constraint
@@ -274,7 +306,15 @@ MOVIMP(void, MoveGroup, setJointPostureConstraint)(MoveGroupPtr *self, const cha
   (*self)->setPathConstraints (test_constraints);
 }
 
-MOVIMP(void, MoveGroup, setOrientationConstraint)(MoveGroupPtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight)
+MOVIMP(void, MoveGroup, setOrientationConstraint)(
+    MoveGroupPtr *self,
+    const char *link_name,
+    const char *frame_id,
+    double orientation_w,
+    double absolute_x_axis_tolerance,
+    double absolute_y_axis_tolerance,
+    double absolute_z_axis_tolerance,
+    double weight)
 {
   moveit_msgs::OrientationConstraint ocm;
   ocm.link_name = link_name; //"r_wrist_roll_link";
@@ -295,7 +335,15 @@ MOVIMP(void, MoveGroup, clearPathConstraints)(MoveGroupPtr *self)
   (*self)->clearPathConstraints ();
 }
 
-MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code, PlanPtr *plan)
+MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(
+    MoveGroupPtr *self,
+    THDoubleTensor *positions,
+    THDoubleTensor *orientations,
+    double eef_step,
+    double jump_threshold,
+    bool avoid_collisions,
+    int *error_code,
+    PlanPtr *plan)
 {
   // fill waypoint vecetor from tensors
   std::vector<geometry_msgs::Pose> waypoints;
@@ -433,8 +481,7 @@ MOVIMP(void, MoveGroup, getCurrentPose_Tensor)(MoveGroupPtr *self, const char *e
   copyMatrix (pose.matrix (), output);
 }
 
-MOVIMP(void, MoveGroup, getCurrentPose_StampedTransform)
-(MoveGroupPtr *self, const char *end_effector_link, tf::StampedTransform *pose)
+MOVIMP(void, MoveGroup, getCurrentPose_StampedTransform)(MoveGroupPtr *self, const char *end_effector_link, tf::StampedTransform *pose)
 {
   if (!end_effector_link)
     end_effector_link = "";
