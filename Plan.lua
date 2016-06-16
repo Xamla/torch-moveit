@@ -1,3 +1,6 @@
+--- LUA wrapper for moveit planning environment
+-- dependency to tourch.ros
+-- @classmod moveit.Plan
 local ffi = require 'ffi'
 local torch = require 'torch'
 local ros = require 'ros'
@@ -5,11 +8,6 @@ local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
 local gnuplot = require 'gnuplot'
 
-----------------------
--- LUA wrapper for moveit plan environment
--- dependency to tourch.ros
--- module: MoveGroup
---
 local Plan = torch.class('moveit.Plan', moveit)
 
 local f
@@ -47,7 +45,7 @@ end
 
 ---function getStartStateMsg
 --Create a ros message for the robot state: moveit_msgs/RobotState
---@tparam[opt] ros.Message()
+--@tparam[opt] ros.Message() result
 --@treturn ros.Message()
 function Plan:getStartStateMsg(result)
   local msg_bytes = torch.ByteStorage()
@@ -59,7 +57,7 @@ end
 
 ---function getTrajectoryMsg
 --Create a ros message for the robot trajectory: moveit_msgs/RobotTrajectory
---@tparam[opt] ros.Message()
+--@tparam[opt] ros.Message() result
 --@treturn ros.Message()
 function Plan:getTrajectoryMsg(result)
   local msg_bytes = torch.ByteStorage()
@@ -78,7 +76,7 @@ end
 
 ---function convertTrajectoyMsgToTable
 --Convert a ros message: moveit_msgs/RobotTrajectory
---@tparam[opt] ros.Message()
+--@tparam[opt] ros.Message() trajectory_msg
 --@return Positions, Velocities and Labels (name of each joint)
 function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils object
   local positions = {}
@@ -98,7 +96,7 @@ end
 
 ---function convertStartStateMsgToTensor
 --Convert a ros message: moveit_msgs/RobotState
---@tparam[opt] ros.Message()
+--@tparam[opt] ros.Message() start_state
 --@return current position, velocity and labels (name of each joint)
 function Plan:convertStartStateMsgToTensor(start_state) -- expect a Utils object
   local position = start_state.joint_state.position
@@ -142,7 +140,7 @@ end
 
 ---function plot
 --creates gnu plot for either position, velocity, acceleration and speed depending input
---@tparam int if 1: Positions are plotted, 2: velocities are plotted,3: accelarations are plotted,4: speed is plotted
+--@tparam int type if 1: Positions are plotted, 2: velocities are plotted,3: accelarations are plotted,4: speed is plotted
 --@treturn bool is true if the requested type of the plot is know.
 function Plan:plot(type)
   local msg

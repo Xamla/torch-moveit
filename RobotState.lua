@@ -1,3 +1,6 @@
+--- LUA wrapper for moveit robot state environment
+-- dependency to tourch.ros
+-- @classmod moveit.RobotState
 local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
@@ -5,11 +8,7 @@ local utils = require 'moveit.utils'
 local ros = require 'ros'
 local tf = ros.tf
 
-----------------------
--- LUA wrapper for moveit robot state environment
--- dependency to tourch.ros
--- module: MoveGroup
---
+
 local RobotState = torch.class('moveit.RobotState', moveit)
 
 local f
@@ -65,7 +64,7 @@ end
 
 ---function getVariableNames
 --Get the names of the variables that make up this state, in the order they are stored in memory.
---@tparam[opt] moveit.Strings()
+--@tparam[opt] moveit.Strings() names
 --@treturn moveit.Strings()
 function RobotState:getVariableNames(names)
   names = names or moveit.Strings()
@@ -151,10 +150,10 @@ end
 --If the group this state corresponds to is a chain and a solver is available, then the joint values can be set by computing inverse kinematics.
 --The pose is assumed to be in the reference frame of the kinematic model.
 --Returns true on success.
---@tparam string
---@tparam tf.Transform
---@tparam[opt=10] int
---@tparam[opt=0.1] number
+--@tparam string group_id
+--@tparam tf.Transform pose
+--@tparam[opt=10] int attempts
+--@tparam[opt=0.1] number timeout
 --@treturn bool
 function RobotState:setFromIK(group_id, pose, attempts, timeout)
   attempts = attempts or 10

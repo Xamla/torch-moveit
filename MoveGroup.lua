@@ -1,3 +1,6 @@
+--- LUA wrapper for moveit planning environment
+-- dependency to tourch.ros
+-- @classmod moveit.MoveGroup
 local ffi = require 'ffi'
 local torch = require 'torch'
 local ros = require 'ros'
@@ -5,11 +8,6 @@ local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
 local tf = ros.tf
 
-----------------------
--- LUA wrapper for moveit planning environment
--- dependency to tourch.ros
--- module: MoveGroup
---
 local MoveGroup = torch.class('moveit.MoveGroup', moveit)
 
 local f
@@ -123,8 +121,8 @@ end
 
 --- function getJoints
 -- Get all the joints this instance operates on (including fixed joints)
--- @tparam[opt] strings can be empty
--- @return moveit.Strings()
+-- @tparam[opt] strings strings be empty
+-- @return moveit.Strings
 function MoveGroup:getJoints(strings)
   strings = strings or moveit.Strings()
   f.getJoints(self.o, strings:cdata())
@@ -136,7 +134,7 @@ end
 -- For joint state goals, this will be distance for each joint, in the configuration space (radians or meters depending on joint type).
 -- For pose goals this will be the radius of a sphere where the end-effector must reach.
 -- This function simply triggers calls to @see setGoalPositionTolerance(), @see setGoalOrientationTolerance() and @see setGoalJointTolerance().
--- @tparam number Goal error tolerance radians or meters depending on joint type
+-- @tparam number tolerance Goal error tolerance radians or meters depending on joint type
 function MoveGroup:setGoalTolerance(tolerance)
   f.setGoalTolerance(self.o, tolerance)
 end
@@ -150,7 +148,7 @@ end
 
 --- function setGoalJointTolerance
 -- Set the joint tolerance (for each joint) that is used for reaching the goal when moving to a joint value target.
--- @tparam number Goal error tolerance in rad
+-- @tparam number tolerance Goal error tolerance in rad
 function MoveGroup:setGoalJointTolerance(tolerance)
   f.setGoalJointTolerance(self.o, tolerance)
 end
@@ -164,7 +162,7 @@ end
 
 --- function setGoalOrientationTolerance
 -- Set the orientation tolerance that is used for reaching the goal when moving to a pose.
--- @tparam number Goal tolerance in radians
+-- @tparam number tolerance Goal tolerance in radians
 function MoveGroup:setGoalOrientationTolerance(tolerance)
   f.setGoalOrientationTolerance(self.o, tolerance)
 end
@@ -194,7 +192,7 @@ end
 
 --- function setPlannerId
 -- Specify a planner to be used for further planning.
--- @tparam string
+-- @tparam string name
 function MoveGroup:setPlannerId(name)
   f.setPlannerId(self.o, name)
 end
@@ -208,7 +206,7 @@ end
 
 --- function setPlanningTime
 --  Specify the maximum amount of time to use when planning.
--- @tparam number
+-- @tparam number seconds
 function MoveGroup:setPlanningTime(seconds)
   f.setPlanningTime(self.o, seconds)
 end
@@ -224,7 +222,7 @@ end
 --- function setNumPlanningAttempts
 -- Set the number of times the motion plan is to be computed from scratch before the shortest solution is returned.
 -- The default value is 1.
--- @tparam int
+-- @tparam int attempts
 function MoveGroup:setNumPlanningAttempts(attempts)
   f.setNumPlanningAttempts(self.o, attempts)
 end
@@ -237,7 +235,7 @@ end
 
 --- function setSupportSurfaceName
 -- For pick/place operations, the name of the support surface is used to specify the fact that attached objects are allowed to touch the support surface.
--- @tparam string
+-- @tparam string name
 function MoveGroup:setSupportSurfaceName(name)
   f.setSupportSurfaceName(self.o, name)
 end
@@ -251,21 +249,21 @@ end
 -- @tparam number maxx
 -- @tparam number maxy
 -- @tparam number maxz
--- @tparam[opt] string should be the name of the use end effector link
+-- @tparam[opt] string end_effector_link should be the name of the use end effector link
 function MoveGroup:setWorkspace(minx, miny, minz, maxx, maxy, maxz, end_effector_link)
   f.setWorkspace(self.o, minx, miny, minz, maxx, maxy, maxz, end_effector_link or ffi.NULL)
 end
 
 --- function setSupportSurfaceName
 -- Specify whether the robot is allowed to look around before moving if it determines it should (default is true)
--- @tparam[opt=true] bool
+-- @tparam[opt=true] bool flag
 function MoveGroup:allowLooking(flag)
   f.allowLooking(self.o, flag or true)
 end
 
 --- function setSupportSurfaceName
 -- Specify whether the robot is allowed to replan if it detects changes in the environment. (default is true)
--- @tparam[opt=true] bool
+-- @tparam[opt=true] bool flag
 function MoveGroup:allowReplanning(flag)
   f.allowReplanning(self.o, flag or true)
 end
@@ -280,17 +278,17 @@ end
 --- function setNamedTarget
 -- Set the current joint values to be ones previously remembered by @see rememberJointValues() or,
 -- if not found, that are specified in the SRDF under the name name as a group state.
--- @tparam string
+-- @tparam string name
 function MoveGroup:setNamedTarget(name)
   f.setNamedTarget(self.o, name)
 end
 
 --- function setPositionTarget
 -- Set the goal position of the end-effector end_effector_link to be (x, y, z).
--- @tparam ?Tensor|double
--- @tparam[opt] double
--- @tparam[opt] double
--- @tparam[opt] string
+-- @tparam ?Tensor|double x
+-- @tparam[opt] double y
+-- @tparam[opt] double z
+-- @tparam[opt] string end_effector_link
 function MoveGroup:setPositionTarget(x, y, z, end_effector_link)
   if torch.isTensor(x) then
     return f.setPositionTarget_Tensor(self.o, x:cdata(), y or end_effector_link or ffi.NULL)
@@ -301,11 +299,11 @@ end
 
 --- function setOrientationTarget
 -- Set the goal orientation of the end-effector end_effector_link to be the quaternion (x,y,z,w).
--- @tparam ?Tensor|double
--- @tparam[opt] double
--- @tparam[opt] double
--- @tparam[opt] double
--- @tparam[opt] string
+-- @tparam ?Tensor|double x
+-- @tparam[opt] double y
+-- @tparam[opt] double z
+-- @tparam[opt] double w
+-- @tparam[opt] string end_effector_link
 function MoveGroup:setOrientationTarget(x, y, z, w, end_effector_link)
   if torch.isTensor(x) then
     return f.setOrientationTarget_Tensor(self.o, x:cdata(), y or end_effector_link or ffi.NULL)
@@ -318,10 +316,10 @@ end
 -- Set the goal orientation of the end-effector end_effector_link to be (roll,pitch,yaw) radians.
 -- If end_effector_link is empty then @see getEndEffectorLink() is used.
 -- This new orientation target replaces any pre-existing JointValueTarget or pre-existing Position, Orientation, or Pose target for this end_effector_link.
--- @tparam double
--- @tparam double
--- @tparam double
--- @tparam[opt] string
+-- @tparam double roll
+-- @tparam double pitch
+-- @tparam double yaw
+-- @tparam[opt] string end_effector_link
 function MoveGroup:setRPYTarget(roll, pitch, yaw, end_effector_link)
   return f.setRPYTarget(self.o, roll, pitch, yaw, end_effector_link or ffi.NULL)
 end
@@ -330,8 +328,8 @@ end
 -- Set the goal pose of the end-effector end_effector_link.
 -- If end_effector_link is empty then getEndEffectorLink() is used.
 -- This new pose target replaces any pre-existing JointValueTarget or pre-existing Position, Orientation, or Pose target for this end_effector_link.
--- @tparam Tensor
--- @tparam[opt] string
+-- @tparam Tensor target
+-- @tparam[opt] string end_effector_link
 function MoveGroup:setPoseTarget(target, end_effector_link)
   if torch.isTensor(target) then
     return f.setPoseTarget_Tensor(self.o, target:cdata(), end_effector_link or ffi.NULL)
@@ -341,14 +339,14 @@ end
 
 --- function setPoseReferenceFrame
 --  Specify which reference frame to assume for poses specified without a reference frame.
--- @tparam string
+-- @tparam string frame_name
 function MoveGroup:setPoseReferenceFrame(frame_name)
   f.setPoseReferenceFrame(self.o, frame_name)
 end
 
 --- function setEndEffectorLink
 -- Specify the parent link of the end-effector. This end_effector_link will be used in calls to pose target functions when end_effector_link is not explicitly specified.
--- @tparam string
+-- @tparam string name
 function MoveGroup:setEndEffectorLink(name)
   f.setEndEffectorLink(self.o, name)
 end
@@ -392,9 +390,9 @@ end
 --- function plan
 -- Compute a motion plan that takes the group declared in the constructor from the current state to the specified target.
 -- No execution is performed. The resulting plan is stored in plan.
--- @tparam[opt] moveit.Plan()
--- @return status if the plan was generated successfully
--- @return plan_output final plan
+-- @tparam[opt] moveit.Plan() plan_output
+-- @treturn int status if the plan was generated successfully
+-- @treturn moveit.Plan() plan_output final plan
 function MoveGroup:plan(plan_output)
   if not plan_output then
     plan_output = moveit.Plan()
@@ -405,7 +403,7 @@ end
 
 --- function asyncExecute
 -- Given a plan, execute it without waiting for completion. Return true on success.
--- @tparam moveit.Plan()
+-- @tparam moveit.Plan() plan
 -- @treturn bool success
 function MoveGroup:asyncExecute(plan)
   return f.asyncExecute(self.o, plan:cdata())
@@ -413,7 +411,7 @@ end
 
 --- function asyncExecute
 -- Given a plan, execute it while waiting for completion. Return true on success.
--- @tparam moveit.Plan()
+-- @tparam moveit.Plan() plan
 -- @treturn bool success
 function MoveGroup:execute(plan)
   return f.execute(self.o, plan:cdata())
@@ -422,11 +420,11 @@ end
 --- function setJointPostureConstraint
 -- Specify a set of moveit_msgs::JointConstraint path constraints to use.
 -- This replaces any path constraints set in previous calls to setPathConstraints().
--- @tparam string
--- @tparam int
--- @tparam number
--- @tparam number
--- @tparam number
+-- @tparam string joint_name
+-- @tparam int position
+-- @tparam number tolerance_above
+-- @tparam number tolerance_below
+-- @tparam number weight
 function MoveGroup:setJointPostureConstraint(joint_name, position, tolerance_above, tolerance_below , weight)
   f.setJointPostureConstraint(self.o,joint_name, position, tolerance_above, tolerance_below ,  weight)
 end
@@ -434,14 +432,13 @@ end
 --- function setOrientationConstraint
 -- Specify a set of moveit_msgs::OrientationConstraint path constraints to use.
 -- This replaces any path constraints set in previous calls to setPathConstraints().
--- @tparam string
--- @tparam string
--- @tparam number
--- @tparam number
--- @tparam number
--- @tparam number
--- @tparam number
--- @tparam number
+-- @tparam string link_name
+-- @tparam string frame_id
+-- @tparam number orientation_w
+-- @tparam number absolute_x_axis_tolerance
+-- @tparam number absolute_y_axis_tolerance
+-- @tparam number absolute_z_axis_tolerance
+-- @tparam number weight
 function MoveGroup:setOrientationConstraint(link_name, frame_id, orientation_w, absolute_x_axis_tolerance, absolute_y_axis_tolerance, absolute_z_axis_tolerance, weight)
   f.setOrientationConstraint(self.o,link_name, frame_id, orientation_w, absolute_x_axis_tolerance, absolute_y_axis_tolerance,absolute_z_axis_tolerance, weight)
 end
@@ -455,11 +452,11 @@ end
 --- function computeCartesianPath_Tensor
 -- Specify a set of moveit_msgs::OrientationConstraint path constraints to use.
 -- This replaces any path constraints set in previous calls to setPathConstraints().
--- @tparam table This table should hold a number of waypoints 3D Tensors
--- @tparam table This table should hold a number of orientations for each waypoint
--- @tparam number
--- @tparam number
--- @tparam[opt=true] bool
+-- @tparam table positions This table should hold a number of waypoints 3D Tensors
+-- @tparam table orientations This table should hold a number of orientations for each waypoint
+-- @tparam number eef_step
+-- @tparam number jump_threshold
+-- @tparam[opt=true] bool avoid_collisions
 -- @treturn moveit.Plan()
 function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
   local avoid_collisions = avoid_collisions or true
@@ -491,8 +488,8 @@ end
 -- Given the name of an object in the planning scene, make the object attached to a link of the robot.
 -- If no link name is specified, the end-effector is used. If there is no end-effector, the first link in the group is used.
 -- If the object name does not exist an error will be produced in move_group, but the request made by this interface will succeed.
--- @tparam string
--- @tparam[opt] string
+-- @tparam string object
+-- @tparam[opt] string link
 -- @treturn bool
 function MoveGroup:attachObject(object, link)
   return f.attachObject(object, link or ffi.NULL)
@@ -502,7 +499,7 @@ end
 -- Detach an object. name specifies the name of the object attached to this group, or the name of the link the object is attached to.
 -- If there is no name specified, and there is only one attached object, that object is detached.
 -- An error is produced if no object to detach is identified.
--- @tparam string
+-- @tparam string object
 -- @treturn bool
 function MoveGroup:detachObject(object)
   return f.detachObject(object)
@@ -517,7 +514,7 @@ end
 --- function startStateMonitor
 -- When reasoning about the current state of a robot, a CurrentStateMonitor instance is automatically constructed.
 -- This function allows triggering the construction of that object from the beginning, so that future calls to functions such as @see getCurrentState() will not take so long and are less likely to fail.
--- @tparam[opt=0.01] number
+-- @tparam[opt=0.01] number wait
 -- @treturn bool
 function MoveGroup:startStateMonitor(wait)
   return f.startStateMonitor(self.o, wait or 0.01)
@@ -532,9 +529,9 @@ end
 
 --- function getCurrentPose_Tensor
 -- Get the current state of the robot.
--- @tparam string
--- @tparam[opt] torch.DoubleTensor()
--- @treturn torch.DoubleTensor()
+-- @tparam string end_effector_link
+-- @tparam[opt] torch.DoubleTensor() output end_effector_link
+-- @treturn torch.DoubleTensor() output
 function MoveGroup:getCurrentPose_Tensor(end_effector_link, output)
   output = output or torch.DoubleTensor()
   f.getCurrentPose_Transform(self.o, end_effector_link or ffi.NULL, output:cdata())
@@ -543,8 +540,8 @@ end
 
 --- function getCurrentPose_StampedTransform
 -- Get the current state of the robot.
--- @tparam string
--- @tparam[opt] tf.StampedTransform()
+-- @tparam string end_effector_link
+-- @tparam[opt] tf.StampedTransform() output
 -- @treturn tf.StampedTransform()
 function MoveGroup:getCurrentPose_StampedTransform(end_effector_link, output)
   output = output or tf.StampedTransform()
@@ -554,8 +551,8 @@ end
 
 --- function getCurrentPose
 -- Get the current state of the robot.
--- @tparam string
--- @tparam[opt] tf.Transform()
+-- @tparam string end_effector_link
+-- @tparam[opt] tf.Transform() output
 -- @treturn tf.Transform()
 function MoveGroup:getCurrentPose(end_effector_link, output)
   output = output or tf.Transform()
@@ -565,7 +562,7 @@ end
 
 --- function getCurrentPose
 -- Pick up an object.
--- @tparam string Name of the object
+-- @tparam string object Name of the object
 -- @treturn MoveItErrorCode
 function MoveGroup:pick(object)
   --object needs to be string
