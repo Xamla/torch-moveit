@@ -1,6 +1,6 @@
 # torch-moveit
 
-Prototype implementation of a [lua](http://www.lua.org/)/[Torch](http://torch.ch/) wrapper for the [ROS](http://www.ros.org/) manipulation software package [MoveIt!](http://moveit.ros.org/).
+Implementation of a [lua](http://www.lua.org/)/[Torch](http://torch.ch/) wrapper for the [ROS](http://www.ros.org/) manipulation software package [MoveIt!](http://moveit.ros.org/).
 It is currently used by the Xamla team to move a UR5 robot equipped with RGB and depth camera to capture point clouds for scene understanding experiments.
 
 ## Functionality
