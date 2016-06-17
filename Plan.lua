@@ -1,9 +1,13 @@
+--- LUA wrapper for moveit planning environment
+-- dependency to tourch.ros
+-- @classmod Plan
 local ffi = require 'ffi'
 local torch = require 'torch'
 local ros = require 'ros'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
 local gnuplot = require 'gnuplot'
+
 local Plan = torch.class('moveit.Plan', moveit)
 
 local f
@@ -39,6 +43,9 @@ function Plan:release()
   f.release(self.o)
 end
 
+---Create a ros message for the robot state: moveit_msgs/RobotState
+--@tparam[opt] ros.Message result
+--@treturn ros.Message
 function Plan:getStartStateMsg(result)
   local msg_bytes = torch.ByteStorage()
   f.getStartStateMsg(self.o, msg_bytes:cdata())
@@ -47,6 +54,9 @@ function Plan:getStartStateMsg(result)
   return msg
 end
 
+---Create a ros message for the robot trajectory: moveit_msgs/RobotTrajectory
+--@tparam[opt] ros.Message result
+--@treturn ros.Message
 function Plan:getTrajectoryMsg(result)
   local msg_bytes = torch.ByteStorage()
   f.getTrajectoryMsg(self.o, msg_bytes:cdata())
@@ -55,12 +65,17 @@ function Plan:getTrajectoryMsg(result)
   return msg
 end
 
+---Get the number of seconds
+--@treturn number
 function Plan:getPlanningTime()
   return f.getPlannigTime(self.o)
 end
 
-function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils object 
-    local positions = {}
+---Convert a ros message: moveit_msgs/RobotTrajectory
+--@tparam[opt] ros.Message trajectory_msg
+--@return Positions, Velocities and Labels (name of each joint)
+function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils object
+  local positions = {}
   local velocities = {}
   local accelerations = {}
   local efforts = {}
@@ -75,13 +90,15 @@ function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils objec
   return positions,velocities,accelerations,efforts
 end
 
-function Plan:convertStartStateMsgToTensor(start_state) -- expect a Utils object 
-  position = start_state.joint_state.position
-  velocity = start_state.joint_state.velocity
-  labels = start_state.joint_state.names
+---Convert a ros message: moveit_msgs/RobotState
+--@tparam[opt] ros.Message start_state
+--@return current position, velocity and labels (name of each joint)
+function Plan:convertStartStateMsgToTensor(start_state) -- expect a Utils object
+  local position = start_state.joint_state.position
+  local velocity = start_state.joint_state.velocity
+  local labels = start_state.joint_state.names
   return position, velocity, labels
 end
-
 
 local function plot6DTrajectory(trajectory)
     if trajectory[1]:nDimension()==0 then 
@@ -111,31 +128,39 @@ local function plot6DTrajectory(trajectory)
     local q6_tensor = torch.Tensor(q6)
     gnuplot.plot({'q1',q1_tensor}, {'q2',q2_tensor}, {'q3',q3_tensor},{'q4',q4_tensor},{'q5',q5_tensor},{'q6',q6_tensor})
   --gnuplot.axis{0, history_size, -100, 100}
-    gnuplot.grid(true)
-    return true
+  gnuplot.grid(true)
+  return true
 end
 
+---Creates gnu plot for either position, velocity, acceleration and speed depending input
+--@tparam int type if 1: Positions are plotted, 2: velocities are plotted,3: accelarations are plotted,4: speed is plotted
+--@treturn bool is true if the requested type of the plot is know.
 function Plan:plot(type)
   local msg
   msg= self:getTrajectoryMsg()--Position
   local positions,velocities,accelerations,efforts= self:convertTrajectoyMsgToTable(msg)
-  
   gnuplot.figure(type)
 
   if type == 1 then
     if plot6DTrajectory(positions)then 
-    gnuplot.title('Trajectory position Data')
+      gnuplot.title('Trajectory position Data')
+    else
+      return false
     end
   elseif type == 2 then
     if plot6DTrajectory(velocities) then
-    gnuplot.title('Trajectory velocity Data')
+      gnuplot.title('Trajectory velocity Data')
+    else
+      return false
     end
   elseif type == 3 then
     if plot6DTrajectory(accelerations) then
       gnuplot.title('Trajectory accelaration Data')
+    else
+      return false
     end
   elseif type ==4 then
-    if  velocities[1]:nDimension()==0 then 
+    if velocities[1]:nDimension()==0 then
       return false 
     end
     history_size = #velocities
@@ -150,8 +175,8 @@ function Plan:plot(type)
     gnuplot.title('Trajectory speed Data')
   else
     print("plot type not yet implemented")
+    return false
   end
-  
 
   return true
 end

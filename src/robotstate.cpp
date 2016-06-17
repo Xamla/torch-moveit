@@ -79,11 +79,34 @@ MOVIMP(void, RobotState, setToRandomPositions)(RobotStatePtr *self)
   (*self)->setToRandomPositions();
 }
 
+MOVIMP(bool, RobotState, setFromIK)(
+  RobotStatePtr *self,
+  const char *group_id,
+  const tf::Transform *pose,
+  unsigned int attempts,
+  double timeout,
+  THDoubleTensor *result_joint_positions
+) {
+  const robot_state::JointModelGroup *group = (*self)->getJointModelGroup(group_id);
+
+  std::vector<double> joint_values;
+  Eigen::Affine3d pose_;
+  tf::poseTFToEigen(*pose, pose_);
+  bool found_ik = (*self)->setFromIK(group, pose_, attempts, timeout);
+  if (found_ik) {
+    (*self)->copyJointGroupPositions(group, joint_values);
+    vector2Tensor(joint_values, result_joint_positions);
+  } else {
+    ROS_DEBUG("Did not find IK solution");
+  }
+
+  return found_ik;
+}
 
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const
 void 	printStateInfo (std::ostream &out=std::cout) const
 void 	printStatePositions (std::ostream &out=std::cout) const
 void 	printTransform (const Eigen::Affine3d &transform, std::ostream &out=std::cout) const
-void 	printTransforms (std::ostream &out=std::cout) const 
+void 	printTransforms (std::ostream &out=std::cout) const
 */
