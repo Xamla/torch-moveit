@@ -1,6 +1,6 @@
 --- LUA wrapper for moveit PlanningSceneInterface environment
 -- dependency to tourch.ros
--- @classmod moveit.PlanningSceneInterface
+-- @classmod PlanningSceneInterface
 local ffi = require 'ffi'
 local torch = require 'torch'
 local moveit = require 'moveit.env'
@@ -33,8 +33,7 @@ function PlanningSceneInterface:cdata()
   return self.o
 end
 
----function addBox
---Add a solit box as a collision object into the planning scene
+---Add a solit box as a collision object into the planning scene.
 --@tparam string id
 --@tparam number w
 --@tparam number h
@@ -48,8 +47,7 @@ function PlanningSceneInterface:addBox(id, w, h, t, pose)
   self:addCollisionObject(obj)
 end
 
----function addSphere
---Add a solit sphere as a collision object into the planning scene
+---Add a solit sphere as a collision object into the planning scene.
 --@tparam string id
 --@tparam number radius
 --@tparam tf.Transform pose
@@ -61,8 +59,7 @@ function PlanningSceneInterface:addSphere(id, radius, pose)
   self:addCollisionObject(obj)
 end
 
----function addSphere
---Add a solit sphere as a collision object into the planning scene
+---Add a solit plane as a collision object into the planning scene.
 --ax + by + cz + d = 0
 --@tparam string id
 --@tparam number a
@@ -77,9 +74,8 @@ function PlanningSceneInterface:addPlane(id, a, b, c, d, pose)
   self:addCollisionObject(obj)
 end
 
----function addCollisionObject
---Add a collision object
---@tparam moveit.CollisionObject() collision_object
+---Add a collision object.
+--@tparam moveit.CollisionObject collision_object
 function PlanningSceneInterface:addCollisionObject(collision_object)
   f.addCollisionObject(self.o, collision_object:cdata())
 end
@@ -92,18 +88,17 @@ function PlanningSceneInterface:removeCollisionObjects(object_ids)
   f.removeCollisionObjects(self.o, ids:cdata())
 end
 
----function getKnownObjectNames
---Get the names of all known objects in the world. If with_type is set to true, only return objects that have a known type.
+---Get the names of all known objects in the world. 
+--If with_type is set to true, only return objects that have a known type.
 --@tparam[opt] bool with_type
---@treturn std.StringVector()
+--@treturn std.StringVector
 function PlanningSceneInterface:getKnownObjectNames(with_type)
   local result = std.StringVector()
   f.getKnownObjectNames(self.o, with_type or false, result:cdata())
   return result
 end
 
----function getKnownObjectNamesInROI
---Get the names of known objects in the world that are located within a bounding region (specified in the frame reported by getPlanningFrame()).
+---Get the names of known objects in the world that are located within a bounding region (specified in the frame reported by getPlanningFrame()).
 --If with_type is set to true, only return objects that have a known type.
 --@tparam number minx
 --@tparam number miny
@@ -112,7 +107,7 @@ end
 --@tparam number maxy
 --@tparam number maxz
 --@tparam[opt=false] bool with_type
---@tparam[opt] ?std.StringVector()|list types
+--@tparam[opt] ?std.StringVector|list types
 --@treturn std.StringVector()
 function PlanningSceneInterface:getKnownObjectNamesInROI(minx, miny, minz, maxx, maxy, maxz, with_type, types)
   if types and not torch.isTypeOf(types, std.StringVector) then
@@ -123,11 +118,10 @@ function PlanningSceneInterface:getKnownObjectNamesInROI(minx, miny, minz, maxx,
   return result
 end
 
----function getObjectPoses
---Get poses of objects specified in object_ids
---@tparam[opt] ?std.StringVector()|list object_ids
+---Get poses of objects specified in object_ids
+--@tparam[opt] ?std.StringVector|list object_ids
 --@treturn bool
---@treturn torch.DoubleTensor()
+--@treturn torch.DoubleTensor
 function PlanningSceneInterface:getObjectPoses(object_ids)
   if not torch.isTypeOf(object_ids, std.StringVector) then
     object_ids = std.StringVector(object_ids)

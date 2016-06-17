@@ -1,6 +1,6 @@
 --- LUA wrapper for moveit planning environment
 -- dependency to tourch.ros
--- @classmod moveit.Plan
+-- @classmod Plan
 local ffi = require 'ffi'
 local torch = require 'torch'
 local ros = require 'ros'
@@ -43,10 +43,9 @@ function Plan:release()
   f.release(self.o)
 end
 
----function getStartStateMsg
---Create a ros message for the robot state: moveit_msgs/RobotState
---@tparam[opt] ros.Message() result
---@treturn ros.Message()
+---Create a ros message for the robot state: moveit_msgs/RobotState
+--@tparam[opt] ros.Message result
+--@treturn ros.Message
 function Plan:getStartStateMsg(result)
   local msg_bytes = torch.ByteStorage()
   f.getStartStateMsg(self.o, msg_bytes:cdata())
@@ -55,10 +54,9 @@ function Plan:getStartStateMsg(result)
   return msg
 end
 
----function getTrajectoryMsg
---Create a ros message for the robot trajectory: moveit_msgs/RobotTrajectory
---@tparam[opt] ros.Message() result
---@treturn ros.Message()
+---Create a ros message for the robot trajectory: moveit_msgs/RobotTrajectory
+--@tparam[opt] ros.Message result
+--@treturn ros.Message
 function Plan:getTrajectoryMsg(result)
   local msg_bytes = torch.ByteStorage()
   f.getTrajectoryMsg(self.o, msg_bytes:cdata())
@@ -67,16 +65,14 @@ function Plan:getTrajectoryMsg(result)
   return msg
 end
 
----function getPlanningTime
---Get the number of seconds
+---Get the number of seconds
 --@treturn number
 function Plan:getPlanningTime()
   return f.getPlannigTime(self.o)
 end
 
----function convertTrajectoyMsgToTable
---Convert a ros message: moveit_msgs/RobotTrajectory
---@tparam[opt] ros.Message() trajectory_msg
+---Convert a ros message: moveit_msgs/RobotTrajectory
+--@tparam[opt] ros.Message trajectory_msg
 --@return Positions, Velocities and Labels (name of each joint)
 function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils object
   local positions = {}
@@ -94,9 +90,8 @@ function Plan:convertTrajectoyMsgToTable(trajectory_msg) -- expect a Utils objec
   return positions,velocities,accelerations,efforts
 end
 
----function convertStartStateMsgToTensor
---Convert a ros message: moveit_msgs/RobotState
---@tparam[opt] ros.Message() start_state
+---Convert a ros message: moveit_msgs/RobotState
+--@tparam[opt] ros.Message start_state
 --@return current position, velocity and labels (name of each joint)
 function Plan:convertStartStateMsgToTensor(start_state) -- expect a Utils object
   local position = start_state.joint_state.position
@@ -138,8 +133,7 @@ local function plot6DTrajectory(trajectory)
   return true
 end
 
----function plot
---creates gnu plot for either position, velocity, acceleration and speed depending input
+---Creates gnu plot for either position, velocity, acceleration and speed depending input
 --@tparam int type if 1: Positions are plotted, 2: velocities are plotted,3: accelarations are plotted,4: speed is plotted
 --@treturn bool is true if the requested type of the plot is know.
 function Plan:plot(type)
