@@ -87,7 +87,6 @@ local function plot6DTrajectory(trajectory)
     if trajectory[1]:nDimension()==0 then 
       return false 
     end
-    print(trajectory[1])
     local history_size = #trajectory   
  
     local q1={}
