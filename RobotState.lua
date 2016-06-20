@@ -55,8 +55,7 @@ function RobotState:clone()
   return c
 end
 
----function getVariableNames
---Get the number of variables that make up this state.
+---Get the number of variables that make up this state.
 --@treturn int
 function RobotState:getVariableCount()
   return f.getVariableCount(self.o)
@@ -82,7 +81,7 @@ end
 
 ---By default, if velocities are never set or initialized, the state remembers that there are no velocities set.
 --This is useful to know when serializing or copying the state.
---@treturn bool
+--@treturn boolean
 function RobotState:hasVelocities()
   return f.hasVelocities(self.o)
 end
@@ -99,8 +98,8 @@ end
 
 ---Check if accelerations are provided.
 --By default, if accelerations are never set or initialized, the state remembers that there are no accelerations set.
---This is useful to know when serializing or copying the state. If @see hasAccelerations() reports true, @see hasEffort() will certainly report false.
---@treturn bool
+--This is useful to know when serializing or copying the state. If hasAccelerations() reports true, hasEffort() will certainly report false.
+--@treturn boolean
 function RobotState:hasAccelerations()
   return f.hasAccelerations(self.o)
 end
@@ -118,8 +117,8 @@ end
 
 ---Check if efforts are provided.
 --By default, if effort is never set or initialized, the state remembers that there is no effort set.
---This is useful to know when serializing or copying the state. If @see hasEffort() reports true, @see hasAccelerations() will certainly report false.
---@treturn bool
+--This is useful to know when serializing or copying the state. If hasEffort() reports true, hasAccelerations() will certainly report false.
+--@treturn boolean
 function RobotState:hasEffort()
   return f.hasEffort(self.o)
 end
@@ -153,7 +152,7 @@ end
 --@tparam tf.Transform pose
 --@tparam[opt=10] int attempts
 --@tparam[opt=0.1] number timeout
---@treturn bool
+--@treturn boolean
 function RobotState:setFromIK(group_id, pose, attempts, timeout)
   attempts = attempts or 10
   timeout = timeout or 0.1

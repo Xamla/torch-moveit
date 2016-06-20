@@ -90,7 +90,7 @@ end
 
 ---Get the names of all known objects in the world. 
 --If with_type is set to true, only return objects that have a known type.
---@tparam[opt] bool with_type
+--@tparam[opt] boolean with_type
 --@treturn std.StringVector
 function PlanningSceneInterface:getKnownObjectNames(with_type)
   local result = std.StringVector()
@@ -106,7 +106,7 @@ end
 --@tparam number maxx
 --@tparam number maxy
 --@tparam number maxz
---@tparam[opt=false] bool with_type
+--@tparam[opt=false] boolean with_type
 --@tparam[opt] ?std.StringVector|list types
 --@treturn std.StringVector()
 function PlanningSceneInterface:getKnownObjectNamesInROI(minx, miny, minz, maxx, maxy, maxz, with_type, types)
@@ -120,7 +120,7 @@ end
 
 ---Get poses of objects specified in object_ids
 --@tparam[opt] ?std.StringVector|list object_ids
---@treturn bool
+--@treturn boolean
 --@treturn torch.DoubleTensor
 function PlanningSceneInterface:getObjectPoses(object_ids)
   if not torch.isTypeOf(object_ids, std.StringVector) then

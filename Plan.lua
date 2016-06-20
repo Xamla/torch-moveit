@@ -134,7 +134,7 @@ end
 
 ---Creates gnu plot for either position, velocity, acceleration and speed depending input
 --@tparam int type if 1: Positions are plotted, 2: velocities are plotted,3: accelarations are plotted,4: speed is plotted
---@treturn bool is true if the requested type of the plot is know.
+--@treturn boolean is true if the requested type of the plot is know.
 function Plan:plot(type)
   local msg
   msg= self:getTrajectoryMsg()--Position

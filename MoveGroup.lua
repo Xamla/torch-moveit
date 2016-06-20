@@ -107,8 +107,7 @@ function MoveGroup:getPlanningFrame()
 end
 
 --- Get the current end-effector link.
--- This returns the value set by setEndEffectorLink()
--- (or indirectly by setEndEffector()).
+-- This returns the value set by setEndEffectorLink().
 -- If setEndEffectorLink() was not called, this function reports the link name that serves as parent of an end-effector attached to this group.
 -- If there are multiple end-effectors, one of them is returned. If no such link is known, the empty string is returned.
 -- @treturn string
@@ -244,14 +243,14 @@ end
 
 --- Specify whether the robot is allowed to look around before moving if it determines it should.
 -- (default is true).
--- @tparam[opt=true] bool flag
+-- @tparam[opt=true] boolean flag
 function MoveGroup:allowLooking(flag)
   f.allowLooking(self.o, flag or true)
 end
 
 --- Specify whether the robot is allowed to replan if it detects changes in the environment.
 -- (default is true)
--- @tparam[opt=true] bool flag
+-- @tparam[opt=true] boolean flag
 function MoveGroup:allowReplanning(flag)
   f.allowReplanning(self.o, flag or true)
 end
@@ -340,12 +339,11 @@ function MoveGroup:setEndEffectorLink(name)
 end
 
 --- Get the current end-effector link.
--- This returns the value set by setEndEffectorLink() (or indirectly by setEndEffector()).
+-- This returns the value set by setEndEffectorLink().
 -- If setEndEffectorLink() was not called, this function reports the link name that serves as parent of an end-effector attached to this group.
 -- If there are multiple end-effectors, one of them is returned. If no such link is known, the empty string is returned.
 -- @treturn string
 -- @see setEndEffectorLink
--- @see setEndEffector
 function MoveGroup:getEndEffectorlink()
   return ffi.string(f.getEndEffectorlink(self.o))
 end
@@ -388,14 +386,14 @@ end
 --- Given a plan, execute it without waiting for completion. 
 -- Return true on success.
 -- @tparam moveit.Plan plan
--- @treturn bool success
+-- @treturn boolean success
 function MoveGroup:asyncExecute(plan)
   return f.asyncExecute(self.o, plan:cdata())
 end
 
 --- Given a plan, execute it while waiting for completion. Return true on success.
 -- @tparam moveit.Plan plan
--- @treturn bool success
+-- @treturn boolean success
 function MoveGroup:execute(plan)
   return f.execute(self.o, plan:cdata())
 end
@@ -438,7 +436,7 @@ end
 -- @tparam table orientations This table should hold a number of orientations for each waypoint
 -- @tparam number eef_step
 -- @tparam number jump_threshold
--- @tparam[opt=true] bool avoid_collisions
+-- @tparam[opt=true] boolean avoid_collisions
 -- @treturn moveit.Plan
 -- @see setPathConstraints
 -- @see clearPathConstraints
@@ -473,7 +471,7 @@ end
 -- If the object name does not exist an error will be produced in move_group, but the request made by this interface will succeed.
 -- @tparam string object
 -- @tparam[opt] string link
--- @treturn bool
+-- @treturn boolean
 function MoveGroup:attachObject(object, link)
   return f.attachObject(object, link or ffi.NULL)
 end
@@ -482,7 +480,7 @@ end
 -- If there is no name specified, and there is only one attached object, that object is detached.
 -- An error is produced if no object to detach is identified.
 -- @tparam string object
--- @treturn bool
+-- @treturn boolean
 function MoveGroup:detachObject(object)
   return f.detachObject(object)
 end
@@ -495,7 +493,7 @@ end
 --- When reasoning about the current state of a robot, a CurrentStateMonitor instance is automatically constructed.
 -- This function allows triggering the construction of that object from the beginning, so that future calls to functions such as getCurrentState() will not take so long and are less likely to fail.
 -- @tparam[opt=0.01] number wait
--- @treturn bool
+-- @treturn boolean
 -- @see getCurrentState
 function MoveGroup:startStateMonitor(wait)
   return f.startStateMonitor(self.o, wait or 0.01)
