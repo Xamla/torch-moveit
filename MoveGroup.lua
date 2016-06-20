@@ -438,7 +438,6 @@ end
 -- @tparam number jump_threshold
 -- @tparam[opt=true] boolean avoid_collisions
 -- @treturn moveit.Plan
--- @see setPathConstraints
 -- @see clearPathConstraints
 function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
   local avoid_collisions = avoid_collisions or true
