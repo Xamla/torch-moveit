@@ -1,5 +1,6 @@
 # Build directory 
 build/
+doc/
 
 # codelite
 .codelite/
@@ -32,3 +33,6 @@ build/
 *.exe
 *.out
 *.app
+
+# backups
+*.*~
