@@ -51,6 +51,7 @@ function init()
     "setPoseReferenceFrame",
     "setEndEffectorLink",
     "getEndEffectorlink",
+    "setJointValueTarget",
     "clearPoseTarget",
     "clearPoseTargets",
     "asyncMove",
@@ -115,7 +116,18 @@ function MoveGroup:getEndEffectorLink()
   return ffi.string(f.getEndEffectorLink(self.o))
 end
 
----Get all the joints this instance operates on (including fixed joints).
+--- Set the JointValueTarget and use it for future planning requests.
+-- group_variable_values MUST contain exactly one value per joint variable in the same order as returned by getJointValueTarget().getJointModelGroup(getName())->getVariableNames().
+-- This always sets all of the group's joint values.
+-- After this call, the JointValueTarget is used instead of any previously set Position, Orientation, or Pose targets.
+-- If these values are out of bounds then false is returned BUT THE VALUES ARE STILL SET AS THE GOAL.
+-- @tparam torch.Tensor
+-- @treturn bool 
+function MoveGroup:setJointValueTarget(group_variable_values)
+  return f.setJointValueTarget(self.o, group_variable_values:cdata())
+end
+
+--- Get all the joints this instance operates on (including fixed joints).
 -- @tparam[opt] strings strings be empty
 -- @return moveit.Strings
 function MoveGroup:getJoints(strings)

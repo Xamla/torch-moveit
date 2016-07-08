@@ -55,6 +55,7 @@ bool moveit_MoveGroup_setRPYTarget(MoveGroupPtr *self, double roll, double pitch
 bool moveit_MoveGroup_setPoseTarget_Tensor(MoveGroupPtr *self, THDoubleTensor *mat, const char *end_effector_link);
 bool moveit_MoveGroup_setPoseTarget_Pose(MoveGroupPtr *self, const Pose &target, const char *end_effector_link);
 void moveit_MoveGroup_setPoseReferenceFrame(MoveGroupPtr *self, const char *reference_frame);
+bool moveit_MoveGroup_setJointValueTarget(MoveGroupPtr *self, THDoubleTensor *t);
 void moveit_MoveGroup_clearPoseTarget(MoveGroupPtr *self, const char *end_effector_link);
 void moveit_MoveGroup_clearPoseTargets(MoveGroupPtr *self);
 int moveit_MoveGroup_asyncMove(MoveGroupPtr *self);

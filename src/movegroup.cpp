@@ -31,6 +31,12 @@ MOVIMP(const char*, MoveGroup, getEndEffectorLink)(MoveGroupPtr *self)
   return (*self)->getEndEffectorLink().c_str();
 }
 
+MOVIMP(bool, MoveGroup, setJointValueTarget)(MoveGroupPtr *self, THDoubleTensor *t){
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  return (*self)->setJointValueTarget (group_variable_values);
+}
+
 MOVIMP(void, MoveGroup, getJoints)(MoveGroupPtr *self, StringVector *output)
 {
   *output = (*self)->getJoints ();
