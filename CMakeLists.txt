@@ -19,6 +19,9 @@ SET(src
   "${SOURCE_DIR}/robotstate.cpp"
   "${SOURCE_DIR}/collision_object.cpp"
   "${SOURCE_DIR}/planning_scene_interface.cpp"
+  "${SOURCE_DIR}/robot_model_loader.cpp"
+  "${SOURCE_DIR}/robot_model.cpp"
+  "${SOURCE_DIR}/planning_scene.cpp"
 )
 
 include_directories(
