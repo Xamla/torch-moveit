@@ -47,6 +47,21 @@ function PlanningSceneInterface:addBox(id, w, h, t, pose)
   self:addCollisionObject(obj)
 end
 
+
+--- Add a cone as collision element
+--@tparam string id
+--@tparam number radius radius of the cone at the lower position
+--@tparam number height height of the cone
+--@tparam tf.Transform pose
+function PlanningSceneInterface:addCone(id, radius, height, pose)
+  local obj = moveit.CollisionObject()
+  obj:setId(id)
+  local d = torch.DoubleTensor({radius, height})
+  obj:addPrimitive(moveit.SolidPrimitiveType.CONE, d, pose)
+  self:addCollisionObject(obj)  
+end
+
+
 ---Add a solit sphere as a collision object into the planning scene.
 --@tparam string id
 --@tparam number radius
