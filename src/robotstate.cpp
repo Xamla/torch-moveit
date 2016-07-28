@@ -103,6 +103,25 @@ MOVIMP(bool, RobotState, setFromIK)(
   return found_ik;
 }
 
+MOVIMP(void, RobotState, getGlobalLinkTransform)(
+  RobotStatePtr *self,
+  tf::Transform *pose_,
+  const char *link_name
+) {
+  Eigen::Affine3d pose = (*self)->getGlobalLinkTransform(link_name);
+  tf::poseEigenToTF(pose,*pose_);
+}
+
+MOVIMP(void, RobotState, setVariablePositions)(RobotStatePtr *self, THDoubleTensor *t) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariablePositions(group_variable_values);
+}
+
+MOVIMP(void, RobotState, updateLinkTransforms)(RobotStatePtr *self) {
+  (*self)->updateLinkTransforms();
+}
+
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const
 void 	printStateInfo (std::ostream &out=std::cout) const

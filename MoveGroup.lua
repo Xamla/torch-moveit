@@ -451,16 +451,14 @@ end
 -- @tparam[opt=true] boolean avoid_collisions
 -- @treturn moveit.Plan
 -- @see clearPathConstraints
-function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions)
+function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step, jump_threshold, avoid_collisions, plan_output)
   local avoid_collisions = avoid_collisions or true
+  local plan_output = plan_output or moveit.Plan()
   if torch.type(positions) ~= 'table' then
     error('Argument positions of wrong type. Table expected.')
   end
   if torch.type(orientations) ~= 'table' then
     error('Argument orientations of wrong type. Table expected.')
-  end
-  if plan_output == nil then
-    plan_output = moveit.Plan()
   end
 
   local positions_ = torch.zeros(#positions, 3)         -- xyz
