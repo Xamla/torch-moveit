@@ -6,6 +6,7 @@ local torch = require 'torch'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
 local ros = require 'ros'
+local std = ros.std
 local tf = ros.tf
 
 
@@ -15,6 +16,7 @@ local f
 
 function init()
   local RobotState_method_names = {
+    "createEmpty",
     "clone",
     "delete",
     "release",
@@ -36,6 +38,12 @@ function init()
 end
 
 init()
+
+function RobotState.createEmpty()
+  local c = torch.factory('moveit.RobotState')()
+  rawset(c, 'o', f.createEmpty())
+  return c
+end
 
 function RobotState:__init(o)
   if type(o) ~= 'cdata' or ffi.typeof(o) ~= ffi.typeof('RobotStatePtr*') then
@@ -65,7 +73,7 @@ end
 --@tparam[opt] moveit.Strings names
 --@treturn moveit.Strings
 function RobotState:getVariableNames(names)
-  names = names or moveit.Strings()
+  names = names or std.StringVector()
   f.getVariableNames(self.o, names:cdata())
   return names
 end
@@ -86,7 +94,7 @@ function RobotState:hasVelocities()
   return f.hasVelocities(self.o)
 end
 
----Get const access to the velocities of the variables that make up this state. 
+---Get const access to the velocities of the variables that make up this state.
 --The values are in the same order as reported by getVariableNames.
 --@see getVariableNames
 --@treturn torch.DoubleTensor
@@ -133,7 +141,7 @@ function RobotState:getVariableEffort()
   return t
 end
 
----Set all joints to their default positions. 
+---Set all joints to their default positions.
 --The default position is 0, or if that is not within bounds then half way between min and max bound.
 function RobotState:setToDefaultValues()
   f.setToDefaultValues(self.o)

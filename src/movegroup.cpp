@@ -31,10 +31,16 @@ MOVIMP(const char*, MoveGroup, getEndEffectorLink)(MoveGroupPtr *self)
   return (*self)->getEndEffectorLink().c_str();
 }
 
-MOVIMP(bool, MoveGroup, setJointValueTarget)(MoveGroupPtr *self, THDoubleTensor *t){
+MOVIMP(bool, MoveGroup, setJointValueTarget)(MoveGroupPtr *self, THDoubleTensor *t)
+{
   std::vector<double> group_variable_values;
   Tensor2vector(t,group_variable_values);
   return (*self)->setJointValueTarget (group_variable_values);
+}
+
+MOVIMP(void, MoveGroup, getJointValueTarget)(MoveGroupPtr *self, RobotStatePtr *ptr)
+{
+  ptr->reset(new moveit::core::RobotState((*self)->getJointValueTarget()));
 }
 
 MOVIMP(void, MoveGroup, getJoints)(MoveGroupPtr *self, StringVector *output)
@@ -221,12 +227,13 @@ MOVIMP(bool, MoveGroup, setPoseTarget_Tensor)(MoveGroupPtr *self, THDoubleTensor
   return (*self)->setPoseTarget (t, end_effector_link);
 }
 
-MOVIMP(bool, MoveGroup, setPoseTarget_Pose)(MoveGroupPtr *self, const geometry_msgs::Pose &target,
- const char *end_effector_link)
+MOVIMP(bool, MoveGroup, setPoseTarget_Pose)(MoveGroupPtr *self, tf::Transform *target, const char *end_effector_link)
 {
+  geometry_msgs::Pose pose_msg;
+  tf::poseTFToMsg(*target, pose_msg);
   if (!end_effector_link)
     end_effector_link = "";
-  return (*self)->setPoseTarget (target);
+  return (*self)->setPoseTarget(pose_msg, end_effector_link);
 }
 
 MOVIMP(void, MoveGroup, setPoseReferenceFrame)(MoveGroupPtr *self, const char *reference_frame)
