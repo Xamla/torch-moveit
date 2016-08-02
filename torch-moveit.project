@@ -29,6 +29,9 @@
       <File Name="src/robotstate.cpp"/>
       <File Name="src/planning_scene_interface.cpp"/>
       <File Name="src/collision_object.cpp"/>
+      <File Name="src/planning_scene.cpp"/>
+      <File Name="src/robot_model.cpp"/>
+      <File Name="src/robot_model_loader.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="lua">
       <File Name="init.lua"/>
@@ -40,6 +43,9 @@
       <File Name="RobotState.lua"/>
       <File Name="CollisionObject.lua"/>
       <File Name="PlanningSceneInterface.lua"/>
+      <File Name="RobotModel.lua"/>
+      <File Name="RobotModelLoader.lua"/>
+      <File Name="PlanningScene.lua"/>
     </VirtualDirectory>
     <VirtualDirectory Name="rocks">
       <File Name="rocks/torch-moveit-scm-1.rockspec"/>
@@ -48,12 +54,11 @@
     <VirtualDirectory Name="examples">
       <File Name="examples/move.lua"/>
       <File Name="examples/robot_state.lua"/>
-      <File Name="examples/broadcast_transform.lua"/>
       <File Name="examples/lookup_transform.lua"/>
-      <File Name="examples/orbit.lua"/>
       <File Name="examples/orbit_move.lua"/>
       <File Name="examples/dump_pose.lua"/>
       <File Name="examples/move_random.lua"/>
+      <File Name="examples/check_self_collision.lua"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
@@ -103,7 +108,8 @@
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
-        <SearchPaths/>
+        <SearchPaths>/opt/ros/indigo/include
+/home/koepf/catkin_indigo/devel/include</SearchPaths>
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

@@ -10,6 +10,9 @@ typedef struct PlanPtr {} PlanPtr;
 typedef struct RobotStatePtr {} RobotStatePtr;
 typedef struct CollisionObjectPtr {} CollisionObjectPtr;
 typedef struct PlanningSceneInterfacePtr {} PlanningSceneInterfacePtr;
+typedef struct RobotModelLoaderPtr {} RobotModelLoaderPtr;
+typedef struct RobotModelPtr {} RobotModelPtr;
+typedef struct PlanningScenePtr {} PlanningScenePtr;
 
 MoveItModulePtr *moveit_TorchMoveItModule_new();
 void moveit_TorchMoveItModule_delete(MoveItModulePtr *ptr);
@@ -97,6 +100,9 @@ void moveit_RobotState_getVariableEffort(RobotStatePtr *self, THDoubleTensor *vi
 void moveit_RobotState_setToDefaultValues(RobotStatePtr *self);
 void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
 bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, unsigned int attempts, double timeout, THDoubleTensor *result_joint_positions);
+void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
+void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
+void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);
@@ -119,6 +125,26 @@ void moveit_PlanningSceneInterface_removeCollisionObjects(PlanningSceneInterface
 void moveit_PlanningSceneInterface_getKnownObjectNames(PlanningSceneInterfacePtr *self, bool with_type, std_StringVector *result);
 void moveit_PlanningSceneInterface_getKnownObjectNamesInROI(PlanningSceneInterfacePtr *self, double minx, double miny, double minz, double maxx, double maxy, double maxz, bool with_type, std_StringVector* types, std_StringVector* result);
 void moveit_PlanningSceneInterfacePtr_getObjectPoses(PlanningSceneInterfacePtr *self, std_StringVector *object_ids, std_StringVector *found, THDoubleTensor *found_poses);
+
+RobotModelLoaderPtr *moveit_RobotModelLoader_new(const char *robot_description, bool load_kinematics_solvers);
+void moveit_RobotModelLoader_delete(RobotModelLoaderPtr *ptr);
+void moveit_RobotModelLoader_release(RobotModelLoaderPtr *ptr);
+void moveit_RobotModelLoader_getModel(RobotModelLoaderPtr *ptr, RobotModelPtr *output);
+const char *moveit_RobotModelLoader_getRobotDescription(RobotModelLoaderPtr *ptr);
+
+RobotModelPtr *moveit_RobotModel_new();
+void moveit_RobotModel_delete(RobotModelPtr *ptr);
+void moveit_RobotModel_release(RobotModelPtr *ptr);
+const char *moveit_RobotModel_getName(RobotModelPtr *ptr);
+const char *moveit_RobotModel_getModelFrame(RobotModelPtr *ptr);
+bool moveit_RobotModel_isEmpty(RobotModelPtr *ptr);
+void moveit_RobotModel_printModelInfo(RobotModelPtr *ptr, std_string *output);
+const char *moveit_RobotModel_getRootJointName(RobotModelPtr *ptr);
+
+PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
+void moveit_PlanningScene_delete(PlanningScenePtr *ptr);
+void moveit_PlanningScene_release(PlanningScenePtr *ptr);
+bool moveit_PlanningScene_checkSelfCollision(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
 ]]
 
 ffi.cdef(moveit_cdef)

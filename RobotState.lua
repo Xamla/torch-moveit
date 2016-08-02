@@ -31,7 +31,10 @@ function init()
     "getVariableEffort",
     "setToDefaultValues",
     "setToRandomPositions",
-    "setFromIK"
+    "setFromIK",
+    "getGlobalLinkTransform",
+    "setVariablePositions",
+    "updateLinkTransforms"
   }
 
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
@@ -164,7 +167,32 @@ end
 function RobotState:setFromIK(group_id, pose, attempts, timeout)
   attempts = attempts or 10
   timeout = timeout or 0.1
+  if torch.isTensor(pose) then
+    pose = tf.Transform():fromTensor(pose)
+  end
   local result_joint_positions = torch.DoubleTensor()
   local found_ik = f.setFromIK(self.o, group_id, pose:cdata(), attempts, timeout, result_joint_positions:cdata())
   return found_ik, result_joint_positions
 end
+
+---Do forward Kinematic
+--@tparam tf.Transform pose
+--@tparam string link name
+function RobotState:getGlobalLinkTransform(link_name, pose)
+  pose = pose or tf.Transform()
+  f.getGlobalLinkTransform(self.o, pose:cdata(), link_name)
+  return pose
+end
+
+---It is assumed positions is an array containing the new positions for all variables in this state. Those values are copied into the state.
+--
+function RobotState:setVariablePositions(group_variable_values)
+  return f.setVariablePositions(self.o, group_variable_values:cdata())
+end
+
+---Update the reference frame transforms for links. This call is needed before using the transforms of links for coordinate transforms.
+--
+function RobotState:updateLinkTransforms()
+  f.updateLinkTransforms (self.o)
+end
+
