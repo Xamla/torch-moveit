@@ -3,7 +3,7 @@
 
 MOVIMP(MoveGroupPtr*, MoveGroup, new)(const char *name)
 {
-  return new MoveGroupPtr(new moveit::planning_interface::MoveGroup(name));
+  return new MoveGroupPtr(new moveit::planning_interface::MoveGroup(name,boost::shared_ptr<tf::Transformer>(),ros::WallDuration()));
 }
 
 MOVIMP(void, MoveGroup, delete)(MoveGroupPtr *ptr)
@@ -419,12 +419,9 @@ MOVIMP(double, MoveGroup, computeCartesianPath_Tensor)(
   //rt.setRobotTrajectoryMsg(*((*self)->getCurrentState()), path_msg);
 
   // Thrid create a IterativeParabolicTimeParameterization object
-  //unsigned int max_iterations = 100;
-  //double max_time_change_per_it = .01;
-  //trajectory_processing::IterativeParabolicTimeParameterization iptp = trajectory_processing::IterativeParabolicTimeParameterization(max_iterations,max_time_change_per_it);
+  //trajectory_processing::IterativeParabolicTimeParameterization iptp;
+  //bool success = iptp.computeTimeStamps(rt);
 
-  // Fourth compute computeTimeStamps
-  //bool success = iptp.computeTimeStamps(rt,1.0,1.0);
   //ROS_INFO("Computed time stamp %s",success?"SUCCEDED":"FAILED");
 
   // Get RobotTrajectory_msg from RobotTrajectory
