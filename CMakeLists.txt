@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
 
 PROJECT(torch-moveit)
-
+add_compile_options(-std=c++11)
 FIND_PACKAGE(Torch REQUIRED)
 find_package(Boost 1.47.0 REQUIRED COMPONENTS system)
 find_package(catkin REQUIRED COMPONENTS
