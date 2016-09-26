@@ -1,6 +1,11 @@
 #include "torch-moveit.h"
 #include "utils.h"
 
+MOVIMP(RobotStatePtr *, RobotState, createEmpty)()
+{
+  return new RobotStatePtr();
+}
+
 MOVIMP(RobotStatePtr *, RobotState, clone)(RobotStatePtr *ptr)
 {
   return new RobotStatePtr(new moveit::core::RobotState(**ptr));

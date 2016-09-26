@@ -4,10 +4,6 @@ local moveit = {}
 
 -- moveit
 local moveit_cdef = [[
-typedef struct Point { double x; double y; double z; } Point;
-typedef struct Quaternion { double x; double y; double z; double w; } Quaternion;
-typedef struct Pose { Point position; Quaternion orientation; } Pose;
-
 typedef struct MoveItModulePtr {} MoveItModulePtr;
 typedef struct MoveGroupPtr {} MoveGroupPtr;
 typedef struct PlanPtr {} PlanPtr;
@@ -56,9 +52,10 @@ bool moveit_MoveGroup_setOrientationTarget(MoveGroupPtr *self, double x, double 
 bool moveit_MoveGroup_setOrientationTarget_Tensor(MoveGroupPtr *self, THDoubleTensor *t, const char *end_effector_link);
 bool moveit_MoveGroup_setRPYTarget(MoveGroupPtr *self, double roll, double pitch, double yaw, const char *end_effector_link);
 bool moveit_MoveGroup_setPoseTarget_Tensor(MoveGroupPtr *self, THDoubleTensor *mat, const char *end_effector_link);
-bool moveit_MoveGroup_setPoseTarget_Pose(MoveGroupPtr *self, const Pose &target, const char *end_effector_link);
+bool moveit_MoveGroup_setPoseTarget_Pose(MoveGroupPtr *self, tf_Transform *target, const char *end_effector_link);
 void moveit_MoveGroup_setPoseReferenceFrame(MoveGroupPtr *self, const char *reference_frame);
 bool moveit_MoveGroup_setJointValueTarget(MoveGroupPtr *self, THDoubleTensor *t);
+void moveit_MoveGroup_getJointValueTarget(MoveGroupPtr *self, RobotStatePtr *ptr);
 void moveit_MoveGroup_clearPoseTarget(MoveGroupPtr *self, const char *end_effector_link);
 void moveit_MoveGroup_clearPoseTargets(MoveGroupPtr *self);
 int moveit_MoveGroup_asyncMove(MoveGroupPtr *self);
@@ -87,6 +84,7 @@ void moveit_Plan_getStartStateMsg(PlanPtr *ptr, THByteStorage *output);
 void moveit_Plan_getTrajectoryMsg(PlanPtr *ptr, THByteStorage *output);
 double moveit_Plan_getPlanningTime(PlanPtr *ptr);
 
+RobotStatePtr *moveit_RobotState_createEmpty();
 RobotStatePtr *moveit_RobotState_clone(RobotStatePtr *ptr);
 void moveit_RobotState_delete(RobotStatePtr *ptr);
 void moveit_RobotState_release(RobotStatePtr *ptr);

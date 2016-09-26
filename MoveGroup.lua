@@ -52,6 +52,7 @@ function init()
     "setEndEffectorLink",
     "getEndEffectorlink",
     "setJointValueTarget",
+    "getJointValueTarget",
     "clearPoseTarget",
     "clearPoseTargets",
     "asyncMove",
@@ -122,9 +123,17 @@ end
 -- After this call, the JointValueTarget is used instead of any previously set Position, Orientation, or Pose targets.
 -- If these values are out of bounds then false is returned BUT THE VALUES ARE STILL SET AS THE GOAL.
 -- @tparam torch.Tensor
--- @treturn bool 
+-- @treturn bool
 function MoveGroup:setJointValueTarget(group_variable_values)
   return f.setJointValueTarget(self.o, group_variable_values:cdata())
+end
+
+--- Get the currently set joint state goal.
+-- @treturn moveit.RobotState Joint value target as moveit.RobotState
+function MoveGroup:getJointValueTarget(robot_state_output)
+  robot_state_output = robot_state_output or moveit.RobotState.createEmpty()
+  f.getJointValueTarget(self.o, robot_state_output:cdata())
+  return robot_state_output
 end
 
 --- Get all the joints this instance operates on (including fixed joints).
@@ -282,7 +291,7 @@ end
 
 --- Set the goal position of the end-effector end_effector_link to be (x, y, z).
 -- If end_effector_link is empty then getEndEffectorLink() is used.
--- This new position target replaces any pre-existing JointValueTarget or pre-existing Position, Orientation, or Pose target for this end_effector_link. 
+-- This new position target replaces any pre-existing JointValueTarget or pre-existing Position, Orientation, or Pose target for this end_effector_link.
 -- @tparam ?torch.DoubleTensor|double x
 -- @tparam[opt] double y
 -- @tparam[opt] double z
@@ -297,7 +306,7 @@ function MoveGroup:setPositionTarget(x, y, z, end_effector_link)
 end
 
 --- Set the goal orientation of the end-effector end_effector_link to be the quaternion (x,y,z,w).
--- If end_effector_link is empty then getEndEffectorLink() is used. 
+-- If end_effector_link is empty then getEndEffectorLink() is used.
 -- This new orientation target replaces any pre-existing JointValueTarget or pre-existing Position, Orientation, or Pose target for this end_effector_link.
 -- @tparam ?torch.DoubleTensor|double x
 -- @tparam[opt] double y
@@ -333,8 +342,11 @@ end
 function MoveGroup:setPoseTarget(target, end_effector_link)
   if torch.isTensor(target) then
     return f.setPoseTarget_Tensor(self.o, target:cdata(), end_effector_link or ffi.NULL)
+  elseif torch.isTypeOf(target, tf.Transform) then
+    return f.setPoseTarget_Pose(self.o, target:cdata(), end_effector_link or ffi.NULL)
+  else
+    error('Invalid target type specified. Expected torch.DoubleTensor or tf.Transform.')
   end
-  --f.setPoseTarget_Pose(self.o)
 end
 
 --- Specify which reference frame to assume for poses specified without a reference frame.
@@ -343,7 +355,7 @@ function MoveGroup:setPoseReferenceFrame(frame_name)
   f.setPoseReferenceFrame(self.o, frame_name)
 end
 
---- Specify the parent link of the end-effector. 
+--- Specify the parent link of the end-effector.
 -- This end_effector_link will be used in calls to pose target functions when end_effector_link is not explicitly specified.
 -- @tparam string name
 function MoveGroup:setEndEffectorLink(name)
@@ -395,7 +407,7 @@ function MoveGroup:plan(plan_output)
   return status, plan_output
 end
 
---- Given a plan, execute it without waiting for completion. 
+--- Given a plan, execute it without waiting for completion.
 -- Return true on success.
 -- @tparam moveit.Plan plan
 -- @treturn boolean success
@@ -436,7 +448,7 @@ function MoveGroup:setOrientationConstraint(link_name, frame_id, orientation_w, 
   f.setOrientationConstraint(self.o,link_name, frame_id, orientation_w, absolute_x_axis_tolerance, absolute_y_axis_tolerance,absolute_z_axis_tolerance, weight)
 end
 
---- Specify that no path constraints are to be used. 
+--- Specify that no path constraints are to be used.
 -- This removes any path constraints set in previous calls to setPathConstraints().
 function MoveGroup:clearPathConstraints()
   f.clearPathConstraints(self.o)
