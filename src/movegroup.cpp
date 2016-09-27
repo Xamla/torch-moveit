@@ -5,12 +5,12 @@ MOVIMP(MoveGroupPtr*, MoveGroup, new)(const char *name)
 {
   try
     {
-      return new MoveGroupPtr(new moveit::planning_interface::MoveGroup(name,boost::shared_ptr<tf::Transformer>(),ros::WallDuration(10)));
+      return new MoveGroupPtr(new moveit::planning_interface::MoveGroup(name,boost::shared_ptr<tf::Transformer>(),ros::WallDuration()));
     }
   catch (std::runtime_error& e)
     {
-      std::cout << e.what();
-      return new MoveGroupPtr(new moveit::planning_interface::MoveGroup(name,boost::shared_ptr<tf::Transformer>(),ros::WallDuration(50)));
+      ROS_ERROR("Exception: [%s]", e.what());
+      return 0;
     }
 }
 
