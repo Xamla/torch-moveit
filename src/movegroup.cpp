@@ -440,12 +440,12 @@ MOVIMP(bool, MoveGroup, attachObject)(MoveGroupPtr *self, const char *object, co
 {
   if (!link)
     link = "";
-  (*self)->attachObject (object, link);
+  return (*self)->attachObject (object, link);
 }
 
 MOVIMP(bool, MoveGroup, detachObject)(MoveGroupPtr *self, const char *object)
 {
-  (*self)->detachObject (object);
+  return (*self)->detachObject (object);
 }
 
 MOVIMP(void, MoveGroup, stop)(MoveGroupPtr *self)
