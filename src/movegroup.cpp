@@ -3,7 +3,15 @@
 
 MOVIMP(MoveGroupPtr*, MoveGroup, new)(const char *name)
 {
-  return new MoveGroupPtr(new moveit::planning_interface::MoveGroup(name,boost::shared_ptr<tf::Transformer>(),ros::WallDuration()));
+  try
+    {
+      return new MoveGroupPtr(new moveit::planning_interface::MoveGroup(name,boost::shared_ptr<tf::Transformer>(),ros::WallDuration(10)));
+    }
+  catch (std::runtime_error& e)
+    {
+      ROS_ERROR("Exception: [%s]", e.what());
+      return 0;
+    }
 }
 
 MOVIMP(void, MoveGroup, delete)(MoveGroupPtr *ptr)
@@ -440,12 +448,12 @@ MOVIMP(bool, MoveGroup, attachObject)(MoveGroupPtr *self, const char *object, co
 {
   if (!link)
     link = "";
-  (*self)->attachObject (object, link);
+  return (*self)->attachObject (object, link);
 }
 
 MOVIMP(bool, MoveGroup, detachObject)(MoveGroupPtr *self, const char *object)
 {
-  (*self)->detachObject (object);
+  return (*self)->detachObject (object);
 }
 
 MOVIMP(void, MoveGroup, stop)(MoveGroupPtr *self)
