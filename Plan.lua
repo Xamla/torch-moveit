@@ -62,7 +62,7 @@ function Plan:setStartStateMsg(input)
   if torch.isTypeOf(input, ros.Message) then
     local msg_bytes = input:serialize()
     msg_bytes:shrinkToFit()
-    local newOffset = f.setStartStateMsg(self.o, msg_bytes.storage:cdata())
+    f.setStartStateMsg(self.o, msg_bytes.storage:cdata())
   end
 end
 
@@ -84,7 +84,7 @@ function Plan:setTrajectoryMsg(input)
   if torch.isTypeOf(input, ros.Message) then
     local msg_bytes = input:serialize()
     msg_bytes:shrinkToFit()
-    local newOffset = f.setTrajectoryMsg(self.o, msg_bytes.storage:cdata())
+    f.setTrajectoryMsg(self.o, msg_bytes.storage:cdata())
   end
 end
 
