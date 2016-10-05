@@ -82,6 +82,7 @@ void moveit_Plan_delete(PlanPtr *ptr);
 void moveit_Plan_release(PlanPtr *ptr);
 void moveit_Plan_getStartStateMsg(PlanPtr *ptr, THByteStorage *output);
 void moveit_Plan_getTrajectoryMsg(PlanPtr *ptr, THByteStorage *output);
+int32_t moveit_Plan_setTrajectoryMsg(PlanPtr *ptr, THByteStorage *serialized_msg, int32_t offset);
 double moveit_Plan_getPlanningTime(PlanPtr *ptr);
 
 RobotStatePtr *moveit_RobotState_createEmpty();

@@ -19,6 +19,7 @@ function init()
     "release",
     "getStartStateMsg",
     "getTrajectoryMsg",
+    "setTrajectoryMsg",
     "getPlanningTime",
     "plot",
     "convertTrajectoyMsgToTable",
@@ -65,6 +66,17 @@ function Plan:getTrajectoryMsg(result)
   return msg
 end
 
+
+---Set a ros message for the robot trajectory: moveit_msgs/RobotTrajectory
+--@tparam[opt] ros.Message input
+function Plan:setTrajectoryMsg(input)
+  if torch.isTypeOf(input, ros.Message) then
+    local msg_bytes = input:serialize()
+    msg_bytes:shrinkToFit()
+    local newOffset = f.setTrajectoryMsg(self.o, msg_bytes.storage:cdata(),0)
+  end
+end
+
 ---Get the number of seconds
 --@treturn number
 function Plan:getPlanningTime()
@@ -101,32 +113,32 @@ function Plan:convertStartStateMsgToTensor(start_state) -- expect a Utils object
 end
 
 local function plot6DTrajectory(trajectory)
-    if trajectory[1]:nDimension()==0 then 
-      return false 
-    end
-    local history_size = #trajectory   
- 
-    local q1={}
-    local q2={}
-    local q3={}
-    local q4={}
-    local q5={}
-    local q6={}
-    for i=1,history_size do
-      q1[#q1+1] = trajectory[i][1]
-      q2[#q2+1] = trajectory[i][2]
-      q3[#q3+1] = trajectory[i][3]
-      q4[#q4+1] = trajectory[i][4]
-      q5[#q5+1] = trajectory[i][5]
-      q6[#q6+1] = trajectory[i][6]
-    end
-    local q1_tensor = torch.Tensor(q1)
-    local q2_tensor = torch.Tensor(q2)
-    local q3_tensor = torch.Tensor(q3)
-    local q4_tensor = torch.Tensor(q4)
-    local q5_tensor = torch.Tensor(q5)
-    local q6_tensor = torch.Tensor(q6)
-    gnuplot.plot({'q1',q1_tensor}, {'q2',q2_tensor}, {'q3',q3_tensor},{'q4',q4_tensor},{'q5',q5_tensor},{'q6',q6_tensor})
+  if trajectory[1]:nDimension()==0 then
+    return false
+  end
+  local history_size = #trajectory
+
+  local q1={}
+  local q2={}
+  local q3={}
+  local q4={}
+  local q5={}
+  local q6={}
+  for i=1,history_size do
+    q1[#q1+1] = trajectory[i][1]
+    q2[#q2+1] = trajectory[i][2]
+    q3[#q3+1] = trajectory[i][3]
+    q4[#q4+1] = trajectory[i][4]
+    q5[#q5+1] = trajectory[i][5]
+    q6[#q6+1] = trajectory[i][6]
+  end
+  local q1_tensor = torch.Tensor(q1)
+  local q2_tensor = torch.Tensor(q2)
+  local q3_tensor = torch.Tensor(q3)
+  local q4_tensor = torch.Tensor(q4)
+  local q5_tensor = torch.Tensor(q5)
+  local q6_tensor = torch.Tensor(q6)
+  gnuplot.plot({'q1',q1_tensor}, {'q2',q2_tensor}, {'q3',q3_tensor},{'q4',q4_tensor},{'q5',q5_tensor},{'q6',q6_tensor})
   --gnuplot.axis{0, history_size, -100, 100}
   gnuplot.grid(true)
   return true
@@ -142,7 +154,7 @@ function Plan:plot(type)
   gnuplot.figure(type)
 
   if type == 1 then
-    if plot6DTrajectory(positions)then 
+    if plot6DTrajectory(positions)then
       gnuplot.title('Trajectory position Data')
     else
       return false
@@ -161,7 +173,7 @@ function Plan:plot(type)
     end
   elseif type ==4 then
     if velocities[1]:nDimension()==0 then
-      return false 
+      return false
     end
     history_size = #velocities
     local q = {}

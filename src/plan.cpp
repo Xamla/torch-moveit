@@ -40,6 +40,23 @@ MOVIMP(void, Plan, getTrajectoryMsg)(PlanPtr *ptr, THByteStorage *output)
   ros::serialization::serialize(stream, trajectory);
 }
 
+
+MOVIMP(int32_t, Plan, setTrajectoryMsg)(PlanPtr *ptr, THByteStorage *serialized_msg, int32_t offset)
+{
+
+  // deserialize to moveit_msgs::RobotTrajectory message
+  long storage_size = THByteStorage_size(serialized_msg);
+
+  uint8_t *data = THByteStorage_data(serialized_msg);
+
+  ros::serialization::IStream stream(data+ sizeof(uint32_t), static_cast<uint32_t>(storage_size-sizeof(uint32_t)));
+  moveit_msgs::RobotTrajectory rt_msg;
+  ros::serialization::Serializer<moveit_msgs::RobotTrajectory>::read(stream, rt_msg);
+  (*ptr)->trajectory_ = rt_msg;
+  return static_cast<int32_t>(stream.getData() - data);   // return new offset
+}
+
+
 MOVIMP(double, Plan, getPlanningTime)(PlanPtr *ptr)
 {
   return (*ptr)->planning_time_;
