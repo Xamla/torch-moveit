@@ -18,6 +18,7 @@ function init()
     "delete",
     "release",
     "getStartStateMsg",
+    "setStartStateMsg",
     "getTrajectoryMsg",
     "setTrajectoryMsg",
     "getPlanningTime",
@@ -55,6 +56,16 @@ function Plan:getStartStateMsg(result)
   return msg
 end
 
+---Set a ros message for the robot state: moveit_msgs/RobotState
+--@tparam[opt] ros.Message result
+function Plan:setStartStateMsg(input)
+  if torch.isTypeOf(input, ros.Message) then
+    local msg_bytes = input:serialize()
+    msg_bytes:shrinkToFit()
+    local newOffset = f.setStartStateMsg(self.o, msg_bytes.storage:cdata())
+  end
+end
+
 ---Create a ros message for the robot trajectory: moveit_msgs/RobotTrajectory
 --@tparam[opt] ros.Message result
 --@treturn ros.Message
@@ -73,7 +84,7 @@ function Plan:setTrajectoryMsg(input)
   if torch.isTypeOf(input, ros.Message) then
     local msg_bytes = input:serialize()
     msg_bytes:shrinkToFit()
-    local newOffset = f.setTrajectoryMsg(self.o, msg_bytes.storage:cdata(),0)
+    local newOffset = f.setTrajectoryMsg(self.o, msg_bytes.storage:cdata())
   end
 end
 

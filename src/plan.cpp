@@ -30,6 +30,20 @@ MOVIMP(void, Plan, getStartStateMsg)(PlanPtr *ptr, THByteStorage *output)
   ros::serialization::serialize(stream, start_state);
 }
 
+MOVIMP(void, Plan, setStartStateMsg)(PlanPtr *ptr, THByteStorage *serialized_msg)
+{
+
+  // deserialize to moveit_msgs::RobotTrajectory message
+  long storage_size = THByteStorage_size(serialized_msg);
+
+  uint8_t *data = THByteStorage_data(serialized_msg);
+
+  ros::serialization::IStream stream(data+ sizeof(uint32_t), static_cast<uint32_t>(storage_size-sizeof(uint32_t)));
+  moveit_msgs::RobotState rs_msg;
+  ros::serialization::Serializer<moveit_msgs::RobotState>::read(stream, rs_msg);
+  (*ptr)->start_state_ = rs_msg;
+}
+
 MOVIMP(void, Plan, getTrajectoryMsg)(PlanPtr *ptr, THByteStorage *output)
 {
   const moveit_msgs::RobotTrajectory& trajectory = (*ptr)->trajectory_;
@@ -41,7 +55,7 @@ MOVIMP(void, Plan, getTrajectoryMsg)(PlanPtr *ptr, THByteStorage *output)
 }
 
 
-MOVIMP(int32_t, Plan, setTrajectoryMsg)(PlanPtr *ptr, THByteStorage *serialized_msg, int32_t offset)
+MOVIMP(void, Plan, setTrajectoryMsg)(PlanPtr *ptr, THByteStorage *serialized_msg)
 {
 
   // deserialize to moveit_msgs::RobotTrajectory message
@@ -53,7 +67,6 @@ MOVIMP(int32_t, Plan, setTrajectoryMsg)(PlanPtr *ptr, THByteStorage *serialized_
   moveit_msgs::RobotTrajectory rt_msg;
   ros::serialization::Serializer<moveit_msgs::RobotTrajectory>::read(stream, rt_msg);
   (*ptr)->trajectory_ = rt_msg;
-  return static_cast<int32_t>(stream.getData() - data);   // return new offset
 }
 
 
