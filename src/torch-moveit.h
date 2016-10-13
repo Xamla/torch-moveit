@@ -11,9 +11,9 @@ extern "C" {
 #include <tf_conversions/tf_eigen.h>
 
 typedef std::vector<std::string> StringVector;
-typedef boost::shared_ptr<moveit::planning_interface::MoveGroup> MoveGroupPtr;
-typedef boost::shared_ptr<moveit::planning_interface::MoveGroup::Plan> PlanPtr;
-typedef boost::shared_ptr<moveit::core::RobotState> RobotStatePtr;
+typedef std::shared_ptr<moveit::planning_interface::MoveGroup> MoveGroupPtr;
+typedef std::shared_ptr<moveit::planning_interface::MoveGroup::Plan> PlanPtr;
+typedef std::shared_ptr<moveit::core::RobotState> RobotStatePtr;
 
 #define MOVIMP(return_type, class_name, name) extern "C" return_type TH_CONCAT_4(moveit_, class_name, _, name)
 
