@@ -2,7 +2,7 @@
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include "utils.h"
 
-typedef boost::shared_ptr<moveit_msgs::CollisionObject> CollisionObjectPtr;
+typedef std::shared_ptr<moveit_msgs::CollisionObject> CollisionObjectPtr;
 
 MOVIMP(CollisionObjectPtr*, CollisionObject, new)()
 {

@@ -8,10 +8,12 @@ typedef struct MoveItModulePtr {} MoveItModulePtr;
 typedef struct MoveGroupPtr {} MoveGroupPtr;
 typedef struct PlanPtr {} PlanPtr;
 typedef struct RobotStatePtr {} RobotStatePtr;
+typedef struct IptPtr {} IptPtr;
 typedef struct CollisionObjectPtr {} CollisionObjectPtr;
 typedef struct PlanningSceneInterfacePtr {} PlanningSceneInterfacePtr;
 typedef struct RobotModelLoaderPtr {} RobotModelLoaderPtr;
 typedef struct RobotModelPtr {} RobotModelPtr;
+typedef struct RobotTrajectoryPtr {} RobotTrajectoryPtr;
 typedef struct PlanningScenePtr {} PlanningScenePtr;
 
 MoveItModulePtr *moveit_TorchMoveItModule_new();
@@ -143,10 +145,21 @@ bool moveit_RobotModel_isEmpty(RobotModelPtr *ptr);
 void moveit_RobotModel_printModelInfo(RobotModelPtr *ptr, std_string *output);
 const char *moveit_RobotModel_getRootJointName(RobotModelPtr *ptr);
 
+RobotTrajectoryPtr *moveit_RobotTrajectory_new();
+void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);
+void moveit_RobotTrajectory_release(RobotTrajectoryPtr *ptr);
+const char *moveit_RobotTrajectory_getGroupName(RobotTrajectoryPtr *ptr);
+
 PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);
 void moveit_PlanningScene_release(PlanningScenePtr *ptr);
+void moveit_PlanningScene_setCurrentState(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
 bool moveit_PlanningScene_checkSelfCollision(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
+bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, const char group_name, bool verbose);
+
+IptPtr *moveit_IterativeParabolicTimeParameterization_new();
+void moveit_IterativeParabolicTimeParameterization_delete(IptPtr *ptr);
+void moveit_IterativeParabolicTimeParameterization_release(IptPtr *ptr);
 ]]
 
 ffi.cdef(moveit_cdef)

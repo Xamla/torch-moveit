@@ -26,6 +26,13 @@ MOVIMP(void, PlanningScene, release)(PlanningScenePtr *ptr)
   ptr->reset();
 }
 
+MOVIMP(void, PlanningScene, setCurrentState)(PlanningScenePtr *ptr, RobotStatePtr *robot_state)
+{
+  if (robot_state != NULL && *robot_state != NULL)
+    (*ptr)->setCurrentState(**robot_state);
+
+}
+
 MOVIMP(bool, PlanningScene, checkSelfCollision)(PlanningScenePtr *ptr, RobotStatePtr *robot_state)
 {
   collision_detection::CollisionRequest collision_request;
@@ -35,4 +42,10 @@ MOVIMP(bool, PlanningScene, checkSelfCollision)(PlanningScenePtr *ptr, RobotStat
   else
     (*ptr)->checkSelfCollision(collision_request, collision_result);
   return collision_result.collision;
+}
+
+MOVIMP(bool, PlanningScene, isStateColliding)(PlanningScenePtr *ptr, const char group_name, bool verbose)
+{
+  //TODO
+  return false;//ptr->isStateColliding(group_name, verbose);
 }
