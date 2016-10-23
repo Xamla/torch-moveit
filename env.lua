@@ -150,6 +150,10 @@ void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);
 void moveit_RobotTrajectory_release(RobotTrajectoryPtr *ptr);
 const char *moveit_RobotTrajectory_getGroupName(RobotTrajectoryPtr *ptr);
 bool moveit_RobotTrajectory_empty(RobotTrajectoryPtr *ptr);
+void moveit_RobotTrajectory_setGroupName(RobotTrajectoryPtr *ptr, const char *group_name);
+int_moveit_RobotTrajectory_getWayPointCount(RobotTrajectoryPtr *ptr);
+const RobotState moveit_RobotTrajectory_getWayPoint(RobotTrajectoryPtr *ptr,int index)
+
 
 PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);

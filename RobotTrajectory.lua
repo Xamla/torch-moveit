@@ -15,7 +15,10 @@ function init()
     "delete",
     "release",
     "empty",
-    "getGroupName"
+    "getGroupName",
+    "setGroupName",
+    "getWayPointCount",
+    "getWayPoint"
   }
   f = utils.create_method_table("moveit_RobotTrajectory_", RobotTrajectory_method_names)
 end
@@ -40,4 +43,16 @@ end
 
 function RobotTrajectory:getGroupName()
   return ffi.string(f.getGroupName(self.o))
+end
+
+function RobotTrajectory:setGroupName(name)
+  return f.setGroupName(self.o,name)
+end
+
+function RobotTrajectory:getWayPointCount()
+  return f.getWayPointCount(self.o)
+end
+
+function RobotTrajectory:getWayPoint(index)
+  return f.getWayPoint(self.o, index)
 end
