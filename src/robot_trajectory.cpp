@@ -42,7 +42,7 @@ MOVIMP(int, RobotTrajectory,getWayPointCount)(RobotTrajectoryPtr *ptr)
   return (*ptr)->getWayPointCount();
  }
 
-MOVIMP(const robot_state::RobotState&, RobotTrajectory, getWayPoint)(RobotTrajectoryPtr *ptr,std::size_t index)
+MOVIMP(const robot_state::RobotState &, RobotTrajectory, getWayPoint)(RobotTrajectoryPtr *ptr, int index)
  {
   return (*ptr)->getWayPoint(index);
  }
@@ -93,7 +93,7 @@ MOVIMP(double, RobotTrajectory, getWayPointDurationFromPrevious)(RobotTrajectory
  return (*ptr)->getWayPointDurationFromPrevious(index);
  }
 
-MOVIMP(void, RobotTrajectory, setWayPointDurationFromPrevious)(RobotTrajectoryPtr *ptr, std::size_t index, double value)
+MOVIMP(void, RobotTrajectory, setWayPointDurationFromPrevious)(RobotTrajectoryPtr *ptr, int index, double value)
  {
   (*ptr)->setWayPointDurationFromPrevious(index, value);
  }
@@ -103,19 +103,19 @@ MOVIMP(void, RobotTrajectory, setWayPointDurationFromPrevious)(RobotTrajectoryPt
  * \param state - current robot state
  * \param dt - duration from previous
  */
-MOVIMP(void, RobotTrajectory, addSuffixWayPoint)(RobotTrajectoryPtr *ptr,const robot_state::RobotState &state, double dt)
+MOVIMP(void, RobotTrajectory, addSuffixWayPoint)(RobotTrajectoryPtr *ptr, RobotStatePtr *state, double dt)
 {
- (*ptr)->addSuffixWayPoint(state, dt);
+ (*ptr)->addSuffixWayPoint(**state, dt);
 }
 
-MOVIMP(void, RobotTrajectory, addPrefixWayPoint)(RobotTrajectoryPtr *ptr,const robot_state::RobotStatePtr &state, double dt)
+MOVIMP(void, RobotTrajectory, addPrefixWayPoint)(RobotTrajectoryPtr *ptr,RobotStatePtr *state, double dt)
  {
-  (*ptr)->addPrefixWayPoint(state, dt);
+  (*ptr)->addPrefixWayPoint(**state, dt);
  }
 
-MOVIMP(void , RobotTrajectory,insertWayPoint)(RobotTrajectoryPtr *ptr,std::size_t index, const robot_state::RobotState &state, double dt)
+MOVIMP(void , RobotTrajectory,insertWayPoint)(RobotTrajectoryPtr *ptr,int index, RobotStatePtr *state, double dt)
  {
-  (*ptr)->insertWayPoint(index, state, dt);
+  (*ptr)->insertWayPoint(index, **state, dt);
  }
 
  /**
@@ -128,9 +128,9 @@ MOVIMP(void, RobotTrajectory, append)(RobotTrajectoryPtr *ptr, const RobotTrajec
  (*ptr)->append(**source,dt);
 }
 
-MOVIMP(void, RobotTrajectory, swap)(RobotTrajectoryPtr *ptr,robot_trajectory::RobotTrajectory &other)
+MOVIMP(void, RobotTrajectory, swap)(RobotTrajectoryPtr *ptr,const RobotTrajectoryPtr *other)
 {
- (*ptr)->swap(other);
+ (*ptr)->swap(**other);
 }
 
 MOVIMP(void, RobotTrajectory, clear)(RobotTrajectoryPtr *ptr)

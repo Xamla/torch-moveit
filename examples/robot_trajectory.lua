@@ -12,4 +12,6 @@ traj = moveit.RobotTrajectory(kinematic_model, "manipulator")
 
 print(traj:getGroupName())
 
+print("Waypoint count: " .. traj:getWayPointCount())
+
 ros.shutdown()

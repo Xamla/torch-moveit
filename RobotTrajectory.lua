@@ -18,7 +18,18 @@ function init()
     "getGroupName",
     "setGroupName",
     "getWayPointCount",
-    "getWayPoint"
+    "getWayPoint",
+    "setWayPointDurationFromPrevious",
+    "addSuffixWayPoint",
+    "addPrefixWayPoint",
+    "insertWayPoint",
+    "append",
+    "swap",
+    "clear",
+    "getAverageSegmentDuration",
+    "reverse",
+    "unwind",
+    "findWayPointIndicesForDurationAfterStart"
   }
   f = utils.create_method_table("moveit_RobotTrajectory_", RobotTrajectory_method_names)
 end
@@ -55,4 +66,49 @@ end
 
 function RobotTrajectory:getWayPoint(index)
   return f.getWayPoint(self.o, index)
+end
+
+function RobotTrajectory:setWayPointDurationFromPrevious(index, value)
+  f.setWayPointDurationFromPrevious(self.o,index,value)
+end
+
+function RobotTrajectory:addSuffixWayPoint(state, dt)
+  f.addSuffixWayPoint(self.o,utils.cdata(state),dt)
+end
+
+function RobotTrajectory:addPrefixWayPoint(state, dt)
+  f.addPrefixWayPoint(self.o,utils.cdata(state),dt)
+end
+
+function RobotTrajectory:insertWayPoint(index,state, dt)
+  f.insertWayPoint(self.o,index, utils.cdata(state),dt)
+end
+
+function RobotTrajectory:append(state, dt)
+  return f.append(self.o, utils.cdata(state),dt)
+end
+
+function RobotTrajectory:swap(other)
+  return f.swap(self.o, utils.cdata(other))
+end
+
+function RobotTrajectory:clear()
+  return f.clear(self.o)
+end
+
+function RobotTrajectory:getAverageSegmentDuration()
+  return f.getAverageSegmentDuration(self.o)
+end
+
+function RobotTrajectory:reverse()
+  f.reverse(self.o)
+end
+
+function RobotTrajectory:unwind()
+  f.unwind(self.o)
+end
+
+function RobotTrajectory:findWayPointIndicesForDurationAfterStart(duration, before, after, blend)
+  f.findWayPointIndicesForDurationAfterStart(self.o,duration, before, after, blend)
+  return duration, before, after, blend
 end

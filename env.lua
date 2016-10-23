@@ -151,8 +151,19 @@ void moveit_RobotTrajectory_release(RobotTrajectoryPtr *ptr);
 const char *moveit_RobotTrajectory_getGroupName(RobotTrajectoryPtr *ptr);
 bool moveit_RobotTrajectory_empty(RobotTrajectoryPtr *ptr);
 void moveit_RobotTrajectory_setGroupName(RobotTrajectoryPtr *ptr, const char *group_name);
-int_moveit_RobotTrajectory_getWayPointCount(RobotTrajectoryPtr *ptr);
-const RobotState moveit_RobotTrajectory_getWayPoint(RobotTrajectoryPtr *ptr,int index)
+int moveit_RobotTrajectory_getWayPointCount(RobotTrajectoryPtr *ptr);
+void moveit_RobotTrajectory_setWayPointDurationFromPrevious(RobotTrajectoryPtr *ptr, int index, double value);
+void moveit_RobotTrajectory_addSuffixWayPoint(RobotTrajectoryPtr *ptr,RobotStatePtr *state, double dt);
+void moveit_RobotTrajectory_addPrefixWayPoint(RobotTrajectoryPtr *ptr,RobotStatePtr *state, double dt);
+void moveit_RobotTrajectory_insertWayPoint(RobotTrajectoryPtr *ptr,int index, RobotStatePtr *state, double dt);
+void moveit_RobotTrajectory_append(RobotTrajectoryPtr *ptr, const RobotTrajectoryPtr *source, double dt);
+void moveit_RobotTrajectory_swap(RobotTrajectoryPtr *ptr,RobotTrajectoryPtr *other);
+void moveit_RobotTrajectory_clear(RobotTrajectoryPtr *ptr);
+double moveit_RobotTrajectory_getAverageSegmentDuration(RobotTrajectoryPtr *ptr);
+void moveit_RobotTrajectory_reverse(RobotTrajectoryPtr *ptr);
+void moveit_RobotTrajectory_unwind(RobotTrajectoryPtr *ptr);
+void moveit_RobotTrajectory_findWayPointIndicesForDurationAfterStart(RobotTrajectoryPtr *ptr,const double &duration, int &before, int &after, double &blend);
+
 
 
 PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
