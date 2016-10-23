@@ -14,6 +14,7 @@ function init()
     "new",
     "delete",
     "release",
+    "empty",
     "getGroupName"
   }
   f = utils.create_method_table("moveit_RobotTrajectory_", RobotTrajectory_method_names)
@@ -21,8 +22,8 @@ end
 
 init()
 
-function RobotTrajectory:__init()
-  self.o = f.new()
+function RobotTrajectory:__init(kinematic_model, group)
+  self.o = f.new(kinematic_model:cdata(), group)
 end
 
 function RobotTrajectory:cdata()
@@ -33,6 +34,10 @@ function RobotTrajectory:release()
   f.release(self.o)
 end
 
+function RobotTrajectory:empty()
+  return f.empty(self.o)
+end
+
 function RobotTrajectory:getGroupName()
-  return ffi.string(f.getName(self.o))
+  return ffi.string(f.getGroupName(self.o))
 end

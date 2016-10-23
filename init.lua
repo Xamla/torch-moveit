@@ -13,5 +13,6 @@ require 'moveit.PlanningSceneInterface'
 require 'moveit.RobotModel'
 require 'moveit.RobotModelLoader'
 require 'moveit.PlanningScene'
+require 'moveit.RobotTrajectory'
 
 return moveit

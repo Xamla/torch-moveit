@@ -145,10 +145,11 @@ bool moveit_RobotModel_isEmpty(RobotModelPtr *ptr);
 void moveit_RobotModel_printModelInfo(RobotModelPtr *ptr, std_string *output);
 const char *moveit_RobotModel_getRootJointName(RobotModelPtr *ptr);
 
-RobotTrajectoryPtr *moveit_RobotTrajectory_new();
+RobotTrajectoryPtr *moveit_RobotTrajectory_new(RobotModelPtr* robot_model, const char *group);
 void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);
 void moveit_RobotTrajectory_release(RobotTrajectoryPtr *ptr);
 const char *moveit_RobotTrajectory_getGroupName(RobotTrajectoryPtr *ptr);
+bool moveit_RobotTrajectory_empty(RobotTrajectoryPtr *ptr);
 
 PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);

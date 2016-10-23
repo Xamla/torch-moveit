@@ -21,6 +21,7 @@ SET(src
   "${SOURCE_DIR}/planning_scene_interface.cpp"
   "${SOURCE_DIR}/robot_model_loader.cpp"
   "${SOURCE_DIR}/robot_model.cpp"
+  "${SOURCE_DIR}/robot_trajectory.cpp"
   "${SOURCE_DIR}/planning_scene.cpp"
 )
 
