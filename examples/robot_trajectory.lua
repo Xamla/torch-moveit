@@ -18,7 +18,7 @@ traj:addSuffixWayPoint(s,0.008)
 traj:addSuffixWayPoint(s,0.008)
 traj:addSuffixWayPoint(s,0.008)
 traj:addSuffixWayPoint(s,0.008)
-traj:addSuffixWayPoint(s,0.008)
+traj:addPrefixWayPoint(s,0.008)
 print(traj:getGroupName())
 
 print("Waypoint count: " .. traj:getWayPointCount())
