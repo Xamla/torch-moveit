@@ -42,34 +42,19 @@ MOVIMP(int, RobotTrajectory,getWayPointCount)(RobotTrajectoryPtr *ptr)
   return (*ptr)->getWayPointCount();
  }
 
-MOVIMP(const robot_state::RobotState &, RobotTrajectory, getWayPoint)(RobotTrajectoryPtr *ptr, int index)
+MOVIMP(void, RobotTrajectory, getWayPoint)(RobotTrajectoryPtr *ptr, int index, RobotStatePtr *out)
  {
-  return (*ptr)->getWayPoint(index);
+  out->reset(new robot_state::RobotState((*ptr)->getWayPoint(index)));
  }
 
-MOVIMP(const robot_state::RobotState &, RobotTrajectory, getLastWayPoint)(RobotTrajectoryPtr *ptr)
+MOVIMP(void, RobotTrajectory, getLastWayPoint)(RobotTrajectoryPtr *ptr, RobotStatePtr *out)
  {
-  return (*ptr)->getLastWayPoint();
+  out->reset(new robot_state::RobotState((*ptr)->getLastWayPoint()));
  }
 
-MOVIMP(const robot_state::RobotState &, RobotTrajectory, getFirstWayPoint)(RobotTrajectoryPtr *ptr)
+MOVIMP(void, RobotTrajectory, getFirstWayPoint)(RobotTrajectoryPtr *ptr, RobotStatePtr *out)
  {
-  return (*ptr)->getFirstWayPoint();
- }
-
-MOVIMP(const robot_state::RobotStatePtr &, RobotTrajectory, getWayPointPtr)(RobotTrajectoryPtr *ptr, std::size_t index)
- {
-  return (*ptr)->getWayPointPtr(index);
- }
-
-MOVIMP(robot_state::RobotStatePtr &, RobotTrajectory, getLastWayPointPtr)(RobotTrajectoryPtr *ptr)
- {
-  return (*ptr)->getLastWayPointPtr();
- }
-
-MOVIMP(robot_state::RobotStatePtr &, RobotTrajectory, getFirstWayPointPtr)(RobotTrajectoryPtr *ptr)
- {
-  return (*ptr)->getFirstWayPointPtr();
+  out->reset(new robot_state::RobotState((*ptr)->getFirstWayPoint()));
  }
 
 MOVIMP( void , RobotTrajectory, getWayPointDurations)(RobotTrajectoryPtr *ptr)
@@ -143,21 +128,31 @@ MOVIMP(double, RobotTrajectory, getAverageSegmentDuration)(RobotTrajectoryPtr *p
  return (*ptr)->getAverageSegmentDuration();
 }
 
-/*
-MOVIMP(void, getRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr, moveit_msgs::RobotTrajectory &trajectory)
+MOVIMP(void, RobotTrajectory,getRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr, THByteStorage *output)
 {
+  moveit_msgs::RobotTrajectory trajectory;
  (*ptr)->getRobotTrajectoryMsg(trajectory);
+
+ uint32_t length = ros::serialization::serializationLength(trajectory);
+ THByteStorage_resize(output, length + sizeof(uint32_t));
+ ros::serialization::OStream stream(THByteStorage_data(output), length + sizeof(uint32_t));
+ stream.next((uint32_t)length);
+ ros::serialization::serialize(stream, trajectory);
 }
 
-MOVIMP(void, setRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr,const robot_state::RobotState &reference_state,
-                            const trajectory_msgs::JointTrajectory &trajectory);
+MOVIMP(void, RobotTrajectory,setRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr,const RobotStatePtr reference_state, THByteStorage *serialized_msg)
+{
+  moveit_msgs::RobotTrajectory rt_msg;
+  // deserialize to moveit_msgs::RobotTrajectory message
+  long storage_size = THByteStorage_size(serialized_msg);
 
-MOVIMP(void, setRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr,const robot_state::RobotState &reference_state,
-                            const moveit_msgs::RobotTrajectory &trajectory);
+  uint8_t *data = THByteStorage_data(serialized_msg);
 
-MOVIMP(void, setRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr,const robot_state::RobotState &reference_state, const moveit_msgs::RobotState &state,
-                            const moveit_msgs::RobotTrajectory &trajectory);
-*/
+  ros::serialization::IStream stream(data+ sizeof(uint32_t), static_cast<uint32_t>(storage_size-sizeof(uint32_t)));
+  ros::serialization::Serializer<moveit_msgs::RobotTrajectory>::read(stream, rt_msg);
+  (*ptr)->setRobotTrajectoryMsg(*reference_state, rt_msg);
+}
+
 
 MOVIMP(void, RobotTrajectory, reverse)(RobotTrajectoryPtr *ptr)
 {

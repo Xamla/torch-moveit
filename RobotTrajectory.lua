@@ -1,8 +1,12 @@
+--- LUA wrapper for moveit planning environment
+-- dependency to tourch.ros
+-- @classmod RobotTrajectory
+
 local ffi = require 'ffi'
 local torch = require 'torch'
+local ros = require 'ros'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
-local ros = require 'ros'
 local std = ros.std
 
 local RobotTrajectory = torch.class('moveit.RobotTrajectory', moveit)
@@ -29,7 +33,12 @@ function init()
     "getAverageSegmentDuration",
     "reverse",
     "unwind",
-    "findWayPointIndicesForDurationAfterStart"
+    "findWayPointIndicesForDurationAfterStart",
+    "getRobotTrajectoryMsg",
+    "setRobotTrajectoryMsg",
+    "getWayPoint",
+    "getLastWayPoint",
+    "getFirstWayPoint"
   }
   f = utils.create_method_table("moveit_RobotTrajectory_", RobotTrajectory_method_names)
 end
@@ -38,6 +47,8 @@ init()
 
 function RobotTrajectory:__init(kinematic_model, group)
   self.o = f.new(kinematic_model:cdata(), group)
+  self.moveit_msgs_RobotStateSpec = ros.get_msgspec('moveit_msgs/RobotState')
+  self.moveit_msgs_RobotTrajectory = ros.get_msgspec('moveit_msgs/RobotTrajectory')
 end
 
 function RobotTrajectory:cdata()
@@ -73,18 +84,22 @@ function RobotTrajectory:setWayPointDurationFromPrevious(index, value)
 end
 
 function RobotTrajectory:addSuffixWayPoint(state, dt)
+  state = state or moveit.RobotState.createEmpty()
   f.addSuffixWayPoint(self.o,utils.cdata(state),dt)
 end
 
 function RobotTrajectory:addPrefixWayPoint(state, dt)
+  state = state or moveit.RobotState.createEmpty()
   f.addPrefixWayPoint(self.o,utils.cdata(state),dt)
 end
 
 function RobotTrajectory:insertWayPoint(index,state, dt)
+  state = state or moveit.RobotState.createEmpty()
   f.insertWayPoint(self.o,index, utils.cdata(state),dt)
 end
 
 function RobotTrajectory:append(state, dt)
+  state = state or moveit.RobotState.createEmpty()
   return f.append(self.o, utils.cdata(state),dt)
 end
 
@@ -111,4 +126,38 @@ end
 function RobotTrajectory:findWayPointIndicesForDurationAfterStart(duration, before, after, blend)
   f.findWayPointIndicesForDurationAfterStart(self.o,duration, before, after, blend)
   return duration, before, after, blend
+end
+
+function RobotTrajectory:getRobotTrajectoryMsg(output)
+  local msg_bytes = torch.ByteStorage()
+  f.getRobotTrajectoryMsg(self.o, msg_bytes:cdata())
+  local msg = output or ros.Message(self.moveit_msgs_RobotTrajectory, true)
+  msg:deserialize(msg_bytes)
+  return msg
+end
+
+function RobotTrajectory:setRobotTrajectoryMsg(reference_state, input)
+  if torch.isTypeOf(input, ros.Message) then
+    local msg_bytes = input:serialize()
+    msg_bytes:shrinkToFit()
+    f.setRobotTrajectoryMsg(self.o, reference_state, msg_bytes.storage:cdata())
+  end
+end
+
+function RobotTrajectory:getWayPoint(index,output)
+  output = output or moveit.RobotState.createEmpty()
+  f.getWayPoint(self.o,index, output:cdata())
+  return output
+end
+
+function RobotTrajectory:getLastWayPoint(output)
+  output = output or moveit.RobotState.createEmpty()
+  f.getLastWayPoint(self.o,output:cdata())
+  return output
+end
+
+function RobotTrajectory:getFirstWayPoint(output)
+  output = output or moveit.RobotState.createEmpty()
+  f.getFirstWayPoint(self.o, output:cdata())
+  return output
 end
