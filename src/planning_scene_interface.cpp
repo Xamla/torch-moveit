@@ -3,8 +3,8 @@
 #include <eigen_conversions/eigen_msg.h>
 #include "utils.h"
 
-typedef boost::shared_ptr<moveit::planning_interface::PlanningSceneInterface> PlanningSceneInterfacePtr;
-typedef boost::shared_ptr<moveit_msgs::CollisionObject> CollisionObjectPtr;
+typedef std::shared_ptr<moveit::planning_interface::PlanningSceneInterface> PlanningSceneInterfacePtr;
+typedef std::shared_ptr<moveit_msgs::CollisionObject> CollisionObjectPtr;
 
 MOVIMP(PlanningSceneInterfacePtr*, PlanningSceneInterface, new)()
 {

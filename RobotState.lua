@@ -3,9 +3,9 @@
 -- @classmod RobotState
 local ffi = require 'ffi'
 local torch = require 'torch'
+local ros = require 'ros'
 local moveit = require 'moveit.env'
 local utils = require 'moveit.utils'
-local ros = require 'ros'
 local std = ros.std
 local tf = ros.tf
 

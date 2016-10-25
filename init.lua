@@ -13,5 +13,7 @@ require 'moveit.PlanningSceneInterface'
 require 'moveit.RobotModel'
 require 'moveit.RobotModelLoader'
 require 'moveit.PlanningScene'
+require 'moveit.RobotTrajectory'
+require 'moveit.IterativeParabolicTimeParameterization'
 
 return moveit

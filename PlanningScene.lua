@@ -14,7 +14,8 @@ function init()
     "new",
     "delete",
     "release",
-    "checkSelfCollision"
+    "checkSelfCollision",
+    "isStateColliding"
   }
   f = utils.create_method_table("moveit_PlanningScene_", PlanningScene_method_names)
 end
@@ -33,6 +34,16 @@ function PlanningScene:release()
   f.release(self.o)
 end
 
+function PlanningScene:setCurrentState(robot_state)
+  return f.setCurrentState(self.o, utils.cdata(robot_state))
+end
+
 function PlanningScene:checkSelfCollision(robot_state)
   return f.checkSelfCollision(self.o, utils.cdata(robot_state))
+end
+
+function PlanningScene:isStateColliding(group_name, verbose)
+  local group_name  = group_name or ""
+  local verbose = verbose or false
+  return f.isStateColliding(group_name, verbose)
 end
