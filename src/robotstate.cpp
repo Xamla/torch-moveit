@@ -1,4 +1,5 @@
 #include "torch-moveit.h"
+ #include <moveit/robot_state/conversions.h>
 #include "utils.h"
 
 MOVIMP(RobotStatePtr *, RobotState, createEmpty)()
@@ -125,6 +126,18 @@ MOVIMP(void, RobotState, setVariablePositions)(RobotStatePtr *self, THDoubleTens
 
 MOVIMP(void, RobotState, updateLinkTransforms)(RobotStatePtr *self) {
   (*self)->updateLinkTransforms();
+}
+
+MOVIMP(void, RobotState, toRobotStateMsg)(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies) {
+  moveit_msgs::RobotState robot_state;
+
+  robot_state::robotStateToRobotStateMsg(**self, robot_state, copy_attached_bodies);
+
+  uint32_t length = ros::serialization::serializationLength(robot_state);
+    THByteStorage_resize(output, length + sizeof(uint32_t));
+    ros::serialization::OStream stream(THByteStorage_data(output), length + sizeof(uint32_t));
+    stream.next((uint32_t)length);
+    ros::serialization::serialize(stream, robot_state);
 }
 
 /*
