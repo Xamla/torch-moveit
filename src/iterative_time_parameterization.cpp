@@ -5,7 +5,7 @@ MOVIMP(IptPtr*, IterativeParabolicTimeParameterization, new)()
 {
   try
     {
-      return new IptPtr(new moveit::planning_interface::IterativeParabolicTimeParameterization());
+      return new IptPtr(new trajectory_processing::IterativeParabolicTimeParameterization());
     }
   catch (std::runtime_error& e)
     {
@@ -21,12 +21,10 @@ MOVIMP(void, IterativeParabolicTimeParameterization, delete)(IptPtr *ptr)
 
 MOVIMP(void, IterativeParabolicTimeParameterization, release)(IptPtr *ptr)
 {
-  ptr->reset ();
+  ptr->reset();
 }
 
-MOVIMP(bool,IterativeParabolicTimeParameterization , computeTimeStamps)(IptPtr *ptr)
+MOVIMP(bool,IterativeParabolicTimeParameterization , computeTimeStamps)(IptPtr *ptr, RobotTrajectoryPtr *rt)
 {
-  //TODO
-  //return ptr->computeTimeStamps ();
-	return false;
+  return (*ptr)->computeTimeStamps (**rt);
 }

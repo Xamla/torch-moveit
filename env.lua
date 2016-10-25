@@ -181,6 +181,8 @@ bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, const char gro
 IptPtr *moveit_IterativeParabolicTimeParameterization_new();
 void moveit_IterativeParabolicTimeParameterization_delete(IptPtr *ptr);
 void moveit_IterativeParabolicTimeParameterization_release(IptPtr *ptr);
+bool moveit_IterativeParabolicTimeParameterization_computeTimeStamps(IptPtr *ptr, RobotTrajectoryPtr *rt);
+
 ]]
 
 ffi.cdef(moveit_cdef)

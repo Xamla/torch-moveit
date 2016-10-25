@@ -18,11 +18,12 @@ SET(src
   "${SOURCE_DIR}/plan.cpp"
   "${SOURCE_DIR}/robotstate.cpp"
   "${SOURCE_DIR}/collision_object.cpp"
+  "${SOURCE_DIR}/planning_scene.cpp"
   "${SOURCE_DIR}/planning_scene_interface.cpp"
   "${SOURCE_DIR}/robot_model_loader.cpp"
   "${SOURCE_DIR}/robot_model.cpp"
   "${SOURCE_DIR}/robot_trajectory.cpp"
-  "${SOURCE_DIR}/planning_scene.cpp"
+  "${SOURCE_DIR}/iterative_time_parameterization.cpp"
 )
 
 include_directories(
