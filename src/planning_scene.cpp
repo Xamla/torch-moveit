@@ -44,8 +44,8 @@ MOVIMP(bool, PlanningScene, checkSelfCollision)(PlanningScenePtr *ptr, RobotStat
   return collision_result.collision;
 }
 
-MOVIMP(bool, PlanningScene, isStateColliding)(PlanningScenePtr *ptr, const char group_name, bool verbose)
+MOVIMP(bool, PlanningScene, isStateColliding)(PlanningScenePtr *ptr,RobotStatePtr *robot_state, const char *group_name, bool verbose)
 {
   //TODO
-  return false;//ptr->isStateColliding(group_name, verbose);
+  return (*ptr)->isStateColliding(**robot_state, group_name, verbose);
 }

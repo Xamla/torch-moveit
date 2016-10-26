@@ -14,6 +14,7 @@ function init()
     "new",
     "delete",
     "release",
+    "setCurrentState",
     "checkSelfCollision",
     "isStateColliding"
   }
@@ -42,8 +43,8 @@ function PlanningScene:checkSelfCollision(robot_state)
   return f.checkSelfCollision(self.o, utils.cdata(robot_state))
 end
 
-function PlanningScene:isStateColliding(group_name, verbose)
+function PlanningScene:isStateColliding(group_name,robot_state, verbose)
   local group_name  = group_name or ""
   local verbose = verbose or false
-  return f.isStateColliding(group_name, verbose)
+  return f.isStateColliding(self.o,robot_state:cdata(),group_name, verbose)
 end

@@ -177,8 +177,9 @@ PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);
 void moveit_PlanningScene_release(PlanningScenePtr *ptr);
 void moveit_PlanningScene_setCurrentState(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
+
 bool moveit_PlanningScene_checkSelfCollision(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
-bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, const char group_name, bool verbose);
+bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, RobotStatePtr *robot_state,const char *group_name, bool verbose);
 
 IptPtr *moveit_IterativeParabolicTimeParameterization_new();
 void moveit_IterativeParabolicTimeParameterization_delete(IptPtr *ptr);
