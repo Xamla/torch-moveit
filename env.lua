@@ -180,6 +180,10 @@ void moveit_PlanningScene_setCurrentState(PlanningScenePtr *ptr, RobotStatePtr *
 
 bool moveit_PlanningScene_checkSelfCollision(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
 bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, RobotStatePtr *robot_state,const char *group_name, bool verbose);
+bool moveit_PlanningScene_isPathValid(PlanningScenePtr *ptr,RobotStatePtr *start_state,RobotTrajectoryPtr *trajectory, const char *group_name, bool verbose);
+bool moveit_PlanningScene_setPlanningSceneMsg(PlanningScenePtr *ptr,THByteStorage *serialized_msg);
+bool moveit_PlanningScene_syncPlanningScene(PlanningScenePtr *ptr);
+
 
 IptPtr *moveit_IterativeParabolicTimeParameterization_new();
 void moveit_IterativeParabolicTimeParameterization_delete(IptPtr *ptr);
