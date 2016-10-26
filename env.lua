@@ -107,6 +107,8 @@ bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, cons
 void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
 void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
+void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
+
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);
@@ -175,8 +177,13 @@ PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);
 void moveit_PlanningScene_release(PlanningScenePtr *ptr);
 void moveit_PlanningScene_setCurrentState(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
+
 bool moveit_PlanningScene_checkSelfCollision(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
-bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, const char group_name, bool verbose);
+bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, RobotStatePtr *robot_state,const char *group_name, bool verbose);
+bool moveit_PlanningScene_isPathValid(PlanningScenePtr *ptr,RobotStatePtr *start_state,RobotTrajectoryPtr *trajectory, const char *group_name, bool verbose);
+bool moveit_PlanningScene_setPlanningSceneMsg(PlanningScenePtr *ptr,THByteStorage *serialized_msg);
+bool moveit_PlanningScene_syncPlanningScene(PlanningScenePtr *ptr);
+
 
 IptPtr *moveit_IterativeParabolicTimeParameterization_new();
 void moveit_IterativeParabolicTimeParameterization_delete(IptPtr *ptr);

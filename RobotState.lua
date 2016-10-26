@@ -34,7 +34,8 @@ function init()
     "setFromIK",
     "getGlobalLinkTransform",
     "setVariablePositions",
-    "updateLinkTransforms"
+    "updateLinkTransforms",
+    "toRobotStateMsg"
   }
 
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
@@ -54,6 +55,7 @@ function RobotState:__init(o)
   end
   self.o = o
   ffi.gc(o, f.delete)
+  self.moveit_msgs_RobotStateSpec = ros.get_msgspec('moveit_msgs/RobotState')
 end
 
 function RobotState:cdata()
@@ -196,3 +198,11 @@ function RobotState:updateLinkTransforms()
   f.updateLinkTransforms (self.o)
 end
 
+function RobotState:toRobotStateMsg(copy_attached_bodies)
+  copy_attached_bodies = copy_attached_bodies or false
+  local msg_bytes = torch.ByteStorage()
+  f.toRobotStateMsg(self.o, msg_bytes:cdata(),copy_attached_bodies)
+  local msg = ros.Message(self.moveit_msgs_RobotStateSpec, true)
+  msg:deserialize(msg_bytes)
+  return msg
+end
