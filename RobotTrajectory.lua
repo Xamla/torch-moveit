@@ -38,7 +38,8 @@ function init()
     "setRobotTrajectoryMsg",
     "getWayPoint",
     "getLastWayPoint",
-    "getFirstWayPoint"
+    "getFirstWayPoint",
+    "toTensor"
   }
   f = utils.create_method_table("moveit_RobotTrajectory_", RobotTrajectory_method_names)
 end
@@ -160,4 +161,19 @@ function RobotTrajectory:getFirstWayPoint(output)
   output = output or moveit.RobotState.createEmpty()
   f.getFirstWayPoint(self.o, output:cdata())
   return output
+end
+
+function RobotTrajectory:toTensor()
+  local count = self:getWayPointCount()
+  local waypoints
+  local robotState
+  if count > 0 then
+    local tmp = self:getWayPoint(1):getVariablePositions()
+    waypoints = torch.zeros(tmp:size(1),count)
+    for i = 0,count-1 do
+      robotState = self:getWayPoint(i)
+      waypoints[{{},i+1}]:copy(robotState:getVariablePositions())
+    end
+  end
+  return waypoints
 end

@@ -34,6 +34,9 @@ function init()
     "setFromIK",
     "getGlobalLinkTransform",
     "setVariablePositions",
+    "setVariableVelocities",
+    "setVariableAccelerations",
+    "setVariableEffort",
     "updateLinkTransforms",
     "toRobotStateMsg"
   }
@@ -190,6 +193,24 @@ end
 --
 function RobotState:setVariablePositions(group_variable_values)
   return f.setVariablePositions(self.o, group_variable_values:cdata())
+end
+
+---It is assumed positions is an array containing the new velocities for all variables in this state. Those values are copied into the state.
+--
+function RobotState:setVariableVelocities(group_variable_values)
+  return f.setVariableVelocities(self.o, group_variable_values:cdata())
+end
+
+---It is assumed positions is an array containing the new accelerations for all variables in this state. Those values are copied into the state.
+--
+function RobotState:setVariableAccelerations(group_variable_values)
+  return f.setVariableAccelerations(self.o, group_variable_values:cdata())
+end
+
+---It is assumed positions is an array containing the new effort for all variables in this state. Those values are copied into the state.
+--
+function RobotState:setVariableEffort(group_variable_values)
+  return f.setVariableEffort(self.o, group_variable_values:cdata())
 end
 
 ---Update the reference frame transforms for links. This call is needed before using the transforms of links for coordinate transforms.
