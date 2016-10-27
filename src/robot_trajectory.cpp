@@ -140,7 +140,7 @@ MOVIMP(void, RobotTrajectory,getRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr, THB
  ros::serialization::serialize(stream, trajectory);
 }
 
-MOVIMP(void, RobotTrajectory,setRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr,const RobotStatePtr reference_state, THByteStorage *serialized_msg)
+MOVIMP(void, RobotTrajectory,setRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr,const RobotStatePtr *reference_state, THByteStorage *serialized_msg)
 {
   moveit_msgs::RobotTrajectory rt_msg;
   // deserialize to moveit_msgs::RobotTrajectory message
@@ -150,7 +150,7 @@ MOVIMP(void, RobotTrajectory,setRobotTrajectoryMsg)(RobotTrajectoryPtr *ptr,cons
 
   ros::serialization::IStream stream(data+ sizeof(uint32_t), static_cast<uint32_t>(storage_size-sizeof(uint32_t)));
   ros::serialization::Serializer<moveit_msgs::RobotTrajectory>::read(stream, rt_msg);
-  (*ptr)->setRobotTrajectoryMsg(*reference_state, rt_msg);
+  (*ptr)->setRobotTrajectoryMsg(**reference_state, rt_msg);
 }
 
 

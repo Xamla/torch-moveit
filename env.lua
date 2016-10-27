@@ -106,9 +106,12 @@ void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
 bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, unsigned int attempts, double timeout, THDoubleTensor *result_joint_positions);
 void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
 void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
+void moveit_RobotState_setVariableVelocities(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableAccelerations(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
+
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
 void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
-
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);
@@ -166,12 +169,10 @@ void moveit_RobotTrajectory_reverse(RobotTrajectoryPtr *ptr);
 void moveit_RobotTrajectory_unwind(RobotTrajectoryPtr *ptr);
 void moveit_RobotTrajectory_findWayPointIndicesForDurationAfterStart(RobotTrajectoryPtr *ptr,const double &duration, int &before, int &after, double &blend);
 void moveit_RobotTrajectory_getRobotTrajectoryMsg(RobotTrajectoryPtr *ptr, THByteStorage *output);
-void moveit_RobotTrajectory_setRobotTrajectoryMsg(RobotTrajectoryPtr *ptr,const RobotStatePtr reference_state, THByteStorage *serialized_msg);
+void moveit_RobotTrajectory_setRobotTrajectoryMsg(RobotTrajectoryPtr *ptr,const RobotStatePtr *reference_state, THByteStorage *serialized_msg);
 void moveit_RobotTrajectory_getWayPoint(RobotTrajectoryPtr *ptr, int index, RobotStatePtr *out);
 void moveit_RobotTrajectory_getLastWayPoint(RobotTrajectoryPtr *ptr, RobotStatePtr *out);
 void moveit_RobotTrajectory_getFirstWayPoint(RobotTrajectoryPtr *ptr, RobotStatePtr *out);
-
-
 
 PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);
@@ -183,7 +184,6 @@ bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, RobotStatePtr 
 bool moveit_PlanningScene_isPathValid(PlanningScenePtr *ptr,RobotStatePtr *start_state,RobotTrajectoryPtr *trajectory, const char *group_name, bool verbose);
 bool moveit_PlanningScene_setPlanningSceneMsg(PlanningScenePtr *ptr,THByteStorage *serialized_msg);
 bool moveit_PlanningScene_syncPlanningScene(PlanningScenePtr *ptr);
-
 
 IptPtr *moveit_IterativeParabolicTimeParameterization_new();
 void moveit_IterativeParabolicTimeParameterization_delete(IptPtr *ptr);
