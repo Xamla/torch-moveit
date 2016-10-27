@@ -18,7 +18,7 @@ print('pose/pos/rot:'..tostring(pose:getOrigin())..tostring(pose:getRotation()))
 
 --pose:setOrigin({0.1, 0.2, 0.1})
 local end_pose = tf.Transform()
-end_pose:setOrigin(end_pose:getOrigin()-0.01)
+end_pose:setOrigin(pose:getOrigin()-0.1)
 end_pose:setRotation(pose:getRotation())
 print('end_pose:'..tostring(end_pose))
 
