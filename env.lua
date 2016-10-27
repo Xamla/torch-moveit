@@ -170,7 +170,7 @@ void moveit_RobotTrajectory_reverse(RobotTrajectoryPtr *ptr);
 void moveit_RobotTrajectory_unwind(RobotTrajectoryPtr *ptr);
 void moveit_RobotTrajectory_findWayPointIndicesForDurationAfterStart(RobotTrajectoryPtr *ptr,const double &duration, int &before, int &after, double &blend);
 void moveit_RobotTrajectory_getRobotTrajectoryMsg(RobotTrajectoryPtr *ptr, THByteStorage *output);
-void moveit_RobotTrajectory_setRobotTrajectoryMsg(RobotTrajectoryPtr *ptr,const RobotStatePtr reference_state, THByteStorage *serialized_msg);
+void moveit_RobotTrajectory_setRobotTrajectoryMsg(RobotTrajectoryPtr *ptr,const RobotStatePtr *reference_state, THByteStorage *serialized_msg);
 void moveit_RobotTrajectory_getWayPoint(RobotTrajectoryPtr *ptr, int index, RobotStatePtr *out);
 void moveit_RobotTrajectory_getLastWayPoint(RobotTrajectoryPtr *ptr, RobotStatePtr *out);
 void moveit_RobotTrajectory_getFirstWayPoint(RobotTrajectoryPtr *ptr, RobotStatePtr *out);

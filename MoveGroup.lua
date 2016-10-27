@@ -484,7 +484,7 @@ function MoveGroup:computeCartesianPath_Tensor(positions, orientations, eef_step
 
   local error_code = ffi.new 'int[1]'
   local status = f.computeCartesianPath_Tensor(self.o, positions_:cdata(), orientations_:cdata(), eef_step, jump_threshold, avoid_collisions, error_code, plan_output:cdata())
-  return status, plan_output, error_code
+  return status, plan_output, error_code[1]
 end
 
 --- Given the name of an object in the planning scene, make the object attached to a link of the robot.

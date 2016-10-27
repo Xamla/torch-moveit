@@ -141,7 +141,7 @@ function RobotTrajectory:setRobotTrajectoryMsg(reference_state, input)
   if torch.isTypeOf(input, ros.Message) then
     local msg_bytes = input:serialize()
     msg_bytes:shrinkToFit()
-    f.setRobotTrajectoryMsg(self.o, reference_state, msg_bytes.storage:cdata())
+    f.setRobotTrajectoryMsg(self.o, reference_state:cdata(), msg_bytes.storage:cdata())
   end
 end
 
