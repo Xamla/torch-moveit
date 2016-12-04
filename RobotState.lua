@@ -38,7 +38,8 @@ function init()
     "setVariableAccelerations",
     "setVariableEffort",
     "updateLinkTransforms",
-    "toRobotStateMsg"
+    "toRobotStateMsg",
+    "getJointTransform"
   }
 
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
@@ -169,14 +170,15 @@ end
 --@tparam[opt=10] int attempts
 --@tparam[opt=0.1] number timeout
 --@treturn boolean
-function RobotState:setFromIK(group_id, pose, attempts, timeout)
+function RobotState:setFromIK(group_id, pose, attempts, timeout, return_approximate_solution)
   attempts = attempts or 10
   timeout = timeout or 0.1
+  return_approximate_solution = return_approximate_solution or false
   if torch.isTensor(pose) then
     pose = tf.Transform():fromTensor(pose)
   end
   local result_joint_positions = torch.DoubleTensor()
-  local found_ik = f.setFromIK(self.o, group_id, pose:cdata(), attempts, timeout, result_joint_positions:cdata())
+  local found_ik = f.setFromIK(self.o, group_id, pose:cdata(), attempts, timeout, return_approximate_solution, result_joint_positions:cdata())
   return found_ik, result_joint_positions
 end
 
@@ -226,4 +228,11 @@ function RobotState:toRobotStateMsg(copy_attached_bodies)
   local msg = ros.Message(self.moveit_msgs_RobotStateSpec, true)
   msg:deserialize(msg_bytes)
   return msg
+end
+
+function RobotState:getJointTransform(joint_name)
+  assert(joint_name and type(joint_name) == 'string' and #joint_name >= 0, 'Invalid joint_name specified.')
+  local result = torch.DoubleTensor()
+  f.getJointTransform(self.o, joint_name, result:cdata())
+  return result
 end

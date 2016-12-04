@@ -112,6 +112,7 @@ MOVIMP(bool, RobotState, setFromIK)(
   const tf::Transform *pose,
   unsigned int attempts,
   double timeout,
+  bool return_approximate_solution,
   THDoubleTensor *result_joint_positions
 ) {
   const robot_state::JointModelGroup *group = (*self)->getJointModelGroup(group_id);
@@ -119,7 +120,13 @@ MOVIMP(bool, RobotState, setFromIK)(
   std::vector<double> joint_values;
   Eigen::Affine3d pose_;
   tf::poseTFToEigen(*pose, pose_);
-  bool found_ik = (*self)->setFromIK(group, pose_, attempts, timeout);
+
+  kinematics::KinematicsQueryOptions query_options;
+  if (return_approximate_solution) {
+    query_options.return_approximate_solution = true;
+  }
+
+  bool found_ik = (*self)->setFromIK(group, pose_, attempts, timeout, moveit::core::GroupStateValidityCallbackFn(), query_options);
   if (found_ik) {
     (*self)->copyJointGroupPositions(group, joint_values);
     vector2Tensor(joint_values, result_joint_positions);
@@ -136,7 +143,7 @@ MOVIMP(void, RobotState, getGlobalLinkTransform)(
   const char *link_name
 ) {
   Eigen::Affine3d pose = (*self)->getGlobalLinkTransform(link_name);
-  tf::poseEigenToTF(pose,*pose_);
+  tf::poseEigenToTF(pose, *pose_);
 }
 
 MOVIMP(void, RobotState, setVariablePositions)(RobotStatePtr *self, THDoubleTensor *t) {
@@ -149,7 +156,7 @@ MOVIMP(void, RobotState, updateLinkTransforms)(RobotStatePtr *self) {
   (*self)->updateLinkTransforms();
 }
 
-MOVIMP(void, RobotState, toRobotStateMsg)(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies) {
+MOVIMP(void, RobotState, toRobotStateMsg)(RobotStatePtr *self, THByteStorage *output, bool copy_attached_bodies) {
   moveit_msgs::RobotState robot_state;
 
   robot_state::robotStateToRobotStateMsg(**self, robot_state, copy_attached_bodies);
@@ -160,6 +167,12 @@ MOVIMP(void, RobotState, toRobotStateMsg)(RobotStatePtr *self,THByteStorage *out
     stream.next((uint32_t)length);
     ros::serialization::serialize(stream, robot_state);
 }
+
+MOVIMP(void, RobotState, getJointTransform)(RobotStatePtr *self, const char *joint_name, THDoubleTensor *result) {
+  const Eigen::Affine3d & pose = (*self)->getJointTransform (joint_name);
+  copyMatrix(pose.matrix(), result);
+}
+
 
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const

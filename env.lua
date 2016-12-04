@@ -103,12 +103,13 @@ bool moveit_RobotState_hasEffort(RobotStatePtr *self);
 void moveit_RobotState_getVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setToDefaultValues(RobotStatePtr *self);
 void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
-bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, unsigned int attempts, double timeout, THDoubleTensor *result_joint_positions);
+bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, unsigned int attempts, double timeout, bool return_approximate_solution, THDoubleTensor *result_joint_positions);
 void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
 void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
 void moveit_RobotState_setVariableVelocities(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setVariableAccelerations(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_getJointTransform(RobotStatePtr *self, const char *joint_name, THDoubleTensor *result);
 
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
 void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
