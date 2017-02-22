@@ -173,6 +173,16 @@ MOVIMP(void, RobotState, getJointTransform)(RobotStatePtr *self, const char *joi
   copyMatrix(pose.matrix(), result);
 }
 
+MOVIMP(void, RobotState, getJacobian)(RobotStatePtr *self, const char *group_id, THDoubleTensor *result) {
+  const robot_state::JointModelGroup *group = (*self)->getJointModelGroup(group_id);
+  Eigen::Vector3d linkOrigin = Eigen::Vector3d::Zero();
+  Eigen::MatrixXd jacobian = (*self)->getJacobian (group,linkOrigin);
+  THDoubleTensor_resize2d(result, jacobian.rows(), jacobian.cols());
+  THDoubleTensor* result_ = THDoubleTensor_newContiguous(result);
+  Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>> m (THDoubleTensor_data(result_),jacobian.rows(), jacobian.cols());
+  m = jacobian;
+  THDoubleTensor_freeCopyTo(result_, result);
+}
 
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const

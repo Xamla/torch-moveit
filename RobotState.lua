@@ -39,7 +39,8 @@ function init()
     "setVariableEffort",
     "updateLinkTransforms",
     "toRobotStateMsg",
-    "getJointTransform"
+    "getJointTransform",
+    "getJacobian"
   }
 
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
@@ -221,6 +222,8 @@ function RobotState:updateLinkTransforms()
   f.updateLinkTransforms (self.o)
 end
 
+---Convert Robotstate to Message format
+--@tparam boolean copy_attached_bodies
 function RobotState:toRobotStateMsg(copy_attached_bodies)
   copy_attached_bodies = copy_attached_bodies or false
   local msg_bytes = torch.ByteStorage()
@@ -230,9 +233,20 @@ function RobotState:toRobotStateMsg(copy_attached_bodies)
   return msg
 end
 
+---Determines joint transformation from joint name
+--@tparam string joint_name
 function RobotState:getJointTransform(joint_name)
   assert(joint_name and type(joint_name) == 'string' and #joint_name >= 0, 'Invalid joint_name specified.')
   local result = torch.DoubleTensor()
   f.getJointTransform(self.o, joint_name, result:cdata())
+  return result
+end
+
+---Determines Jacobian for move group name
+--@tparam string group_name
+function RobotState:getJacobian(group_name)
+  assert(group_name and type(group_name) == 'string' and #group_name >= 0, 'Invalid group_name specified.')
+  local result = torch.DoubleTensor()
+  f.getJacobian(self.o, group_name, result:cdata())
   return result
 end
