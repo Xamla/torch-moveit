@@ -135,7 +135,7 @@ void moveit_PlanningSceneInterface_addCollisionObject(PlanningSceneInterfacePtr 
 void moveit_PlanningSceneInterface_removeCollisionObjects(PlanningSceneInterfacePtr *self, std_StringVector *object_ids);
 void moveit_PlanningSceneInterface_getKnownObjectNames(PlanningSceneInterfacePtr *self, bool with_type, std_StringVector *result);
 void moveit_PlanningSceneInterface_getKnownObjectNamesInROI(PlanningSceneInterfacePtr *self, double minx, double miny, double minz, double maxx, double maxy, double maxz, bool with_type, std_StringVector* types, std_StringVector* result);
-void moveit_PlanningSceneInterfacePtr_getObjectPoses(PlanningSceneInterfacePtr *self, std_StringVector *object_ids, std_StringVector *found, THDoubleTensor *found_poses);
+void moveit_PlanningSceneInterface_getObjectPoses(PlanningSceneInterfacePtr *self, std_StringVector *object_ids, std_StringVector *found, THDoubleTensor *found_poses);
 
 RobotModelLoaderPtr *moveit_RobotModelLoader_new(const char *robot_description, bool load_kinematics_solvers);
 void moveit_RobotModelLoader_delete(RobotModelLoaderPtr *ptr);

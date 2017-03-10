@@ -41,7 +41,7 @@ MOVIMP(void, PlanningSceneInterface, getKnownObjectNamesInROI)(PlanningSceneInte
    *result = (*self)->getKnownObjectNamesInROI(minx, miny, minz, maxx, maxy, maxz, with_type);
 }
 
-MOVIMP(void, PlanningSceneInterfacePtr, getObjectPoses)(PlanningSceneInterfacePtr *self, std::vector<std::string> *object_ids, std::vector<std::string> *found, THDoubleTensor *found_poses)
+MOVIMP(void, PlanningSceneInterface, getObjectPoses)(PlanningSceneInterfacePtr *self, std::vector<std::string> *object_ids, std::vector<std::string> *found, THDoubleTensor *found_poses)
 {
   std::map<std::string, geometry_msgs::Pose> poses = (*self)->getObjectPoses(*object_ids);
   found->clear();
