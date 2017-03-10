@@ -140,7 +140,7 @@ end
 -- @tparam[opt] strings strings be empty
 -- @return moveit.Strings
 function MoveGroup:getJoints(strings)
-  strings = strings or moveit.Strings()
+  strings = strings or std.StringVector()
   f.getJoints(self.o, strings:cdata())
   return strings
 end
