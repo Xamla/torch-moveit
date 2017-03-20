@@ -1,6 +1,8 @@
 #include "torch-moveit.h"
 #include <moveit/robot_model/robot_model.h>
+#include <moveit/robot_model/joint_model_group.h>
 #include "utils.h"
+
 
 typedef robot_model::RobotModelPtr RobotModelPtr;
 
@@ -45,4 +47,11 @@ MOVIMP(void, RobotModel, printModelInfo)(RobotModelPtr *ptr, std::string *output
 MOVIMP(const char *, RobotModel, getRootJointName)(RobotModelPtr *ptr)
 {
   return (*ptr)->getRootJointName().c_str();
+}
+
+MOVIMP(void, RobotModel, getEndEffectorNames)(RobotModelPtr *ptr, StringVector *output)
+{
+  const std::vector<moveit::core::JointModelGroup*> jmg = (*ptr)->getJointModelGroups();
+  for (std::vector<moveit::core::JointModelGroup*>::const_iterator it = jmg.begin(); it != jmg.end(); it++)
+    output->push_back((*it)->getEndEffectorName());
 }
