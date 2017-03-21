@@ -215,6 +215,7 @@ const char *moveit_RobotModel_getModelFrame(RobotModelPtr *ptr);
 bool moveit_RobotModel_isEmpty(RobotModelPtr *ptr);
 void moveit_RobotModel_printModelInfo(RobotModelPtr *ptr, std_string *output);
 const char *moveit_RobotModel_getRootJointName(RobotModelPtr *ptr);
+void moveit_RobotModel_getEndEffectorNames(RobotModelPtr *ptr, std_StringVector *output);
 
 RobotTrajectoryPtr *moveit_RobotTrajectory_new(RobotModelPtr* robot_model, const char *group);
 void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);
