@@ -6,6 +6,7 @@ local moveit = {}
 local moveit_cdef = [[
 typedef struct MoveItModulePtr {} MoveItModulePtr;
 typedef struct MoveGroupPtr {} MoveGroupPtr;
+typedef struct MoveGroupInterfacePtr {} MoveGroupInterfacePtr;
 typedef struct PlanPtr {} PlanPtr;
 typedef struct RobotStatePtr {} RobotStatePtr;
 typedef struct IptPtr {} IptPtr;
@@ -79,6 +80,69 @@ void moveit_MoveGroup_setOrientationConstraint(MoveGroupPtr *self, const char *l
 void moveit_MoveGroup_clearPathConstraints(MoveGroupPtr *self);
 double moveit_MoveGroup_computeCartesianPath_Tensor(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
 void moveit_MoveGroup_pick(MoveGroupPtr *self, const char *object);
+
+MoveGroupInterfacePtr* moveit_MoveGroupInterface_new(const char *name);
+void moveit_MoveGroupInterface_delete(MoveGroupInterfacePtr *ptr);
+void moveit_MoveGroupInterface_release(MoveGroupInterfacePtr *ptr);
+const char *moveit_MoveGroupInterface_getName(MoveGroupInterfacePtr *self);
+const char *moveit_MoveGroupInterface_getPlanningFrame(MoveGroupInterfacePtr *self);
+const char *moveit_MoveGroupInterface_getEndEffectorLink(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setEndEffectorLink(MoveGroupInterfacePtr *self, const char *name);
+void moveit_MoveGroupInterface_getJoints(MoveGroupInterfacePtr *self, std_StringVector *strings);
+void moveit_MoveGroupInterface_setGoalTolerance(MoveGroupInterfacePtr *self, double tolerance);
+double moveit_MoveGroupInterface_getGoalJointTolerance(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setGoalJointTolerance(MoveGroupInterfacePtr *self, double tolerance);
+double moveit_MoveGroupInterface_getGoalOrientationTolerance(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setGoalOrientationTolerance(MoveGroupInterfacePtr *self, double tolerance);
+double moveit_MoveGroupInterface_getGoalPositionTolerance(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setGoalPositionTolerance(MoveGroupInterfacePtr *self, double tolerance);
+void moveit_MoveGroupInterface_setMaxVelocityScalingFactor(MoveGroupInterfacePtr *self, double factor);
+void moveit_MoveGroupInterface_setPlannerId(MoveGroupInterfacePtr *self, const char *planner_id);
+double moveit_MoveGroupInterface_getPlannigTime(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setPlanningTime(MoveGroupInterfacePtr *self, double seconds);
+int moveit_MoveGroupInterface_getVariableCount(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setNumPlanningAttempts(MoveGroupInterfacePtr *self, unsigned int attempts);
+void moveit_MoveGroupInterface_setStartStateToCurrentState(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setSupportSurfaceName(MoveGroupInterfacePtr *self, const char *name);
+void moveit_MoveGroupInterface_setWorkspace(MoveGroupInterfacePtr *self, double minx, double miny, double minz, double maxx, double maxy, double maxz);
+void moveit_MoveGroupInterface_allowLooking(MoveGroupInterfacePtr *self, bool flag);
+void moveit_MoveGroupInterface_allowReplanning(MoveGroupInterfacePtr* self, bool flag);
+void moveit_MoveGroupInterface_setRandomTarget(MoveGroupInterfacePtr* self);
+bool moveit_MoveGroupInterface_setNamedTarget(MoveGroupInterfacePtr *self, const char *name);
+bool moveit_MoveGroupInterface_setPositionTarget(MoveGroupInterfacePtr *self, double x, double y, double z, const char *end_effector_link);
+bool moveit_MoveGroupInterface_setPositionTarget_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *t, const char *end_effector_link);
+void moveit_MoveGroupInterface_setJointPostureConstraint(MoveGroupInterfacePtr *self, const char *joint_name, double position,double tolerance_above,double tolerance_below , double weight);
+bool moveit_MoveGroupInterface_setOrientationTarget(MoveGroupInterfacePtr *self, double x, double y, double z, double w, const char *end_effector_link);
+bool moveit_MoveGroupInterface_setOrientationTarget_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *t, const char *end_effector_link);
+bool moveit_MoveGroupInterface_setRPYTarget(MoveGroupInterfacePtr *self, double roll, double pitch, double yaw, const char *end_effector_link);
+bool moveit_MoveGroupInterface_setPoseTarget_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *mat, const char *end_effector_link);
+bool moveit_MoveGroupInterface_setPoseTarget_Pose(MoveGroupInterfacePtr *self, tf_Transform *target, const char *end_effector_link);
+void moveit_MoveGroupInterface_setPoseReferenceFrame(MoveGroupInterfacePtr *self, const char *reference_frame);
+bool moveit_MoveGroupInterface_setJointValueTarget(MoveGroupInterfacePtr *self, THDoubleTensor *t);
+void moveit_MoveGroupInterface_getJointValueTarget(MoveGroupInterfacePtr *self, RobotStatePtr *ptr);
+void moveit_MoveGroupInterface_clearPoseTarget(MoveGroupInterfacePtr *self, const char *end_effector_link);
+void moveit_MoveGroupInterface_clearPoseTargets(MoveGroupInterfacePtr *self);
+int moveit_MoveGroupInterface_asyncMove(MoveGroupInterfacePtr *self);
+int moveit_MoveGroupInterface_move(MoveGroupInterfacePtr *self);
+int moveit_MoveGroupInterface_plan(MoveGroupInterfacePtr *self, PlanPtr *plan_output);
+int moveit_MoveGroupInterface_asyncExecute(MoveGroupInterfacePtr *self, PlanPtr *plan);
+int moveit_MoveGroupInterface_execute(MoveGroupInterfacePtr *self, PlanPtr *plan);
+bool moveit_MoveGroupInterface_attachObject(MoveGroupInterfacePtr *self, const char *object, const char *link);
+bool moveit_MoveGroupInterface_detachObject(MoveGroupInterfacePtr *self, const char *object);
+void moveit_MoveGroupInterface_stop(MoveGroupInterfacePtr *self);
+bool moveit_MoveGroupInterface_startStateMonitor(MoveGroupInterfacePtr *self, double wait);
+void moveit_MoveGroupInterface_setStartState(MoveGroupInterfacePtr *self, RobotStatePtr robot_state);
+RobotStatePtr *moveit_MoveGroupInterface_getCurrentState(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_getCurrentPose_Tensor(MoveGroupInterfacePtr *self, const char *end_effector_link, THDoubleTensor* output);
+void moveit_MoveGroupInterface_getCurrentPose_StampedTransform(MoveGroupInterfacePtr *self, const char *end_effector_link, tf_StampedTransform *pose);
+void moveit_MoveGroupInterface_getCurrentPose(MoveGroupInterfacePtr *self, const char *end_effector_link, tf_Transform *pose);
+
+void moveit_MoveGroupInterface_setOrientationConstraint(MoveGroupInterfacePtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight);
+void moveit_MoveGroupInterface_clearPathConstraints(MoveGroupInterfacePtr *self);
+double moveit_MoveGroupInterface_computeCartesianPath_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
+void moveit_MoveGroupInterface_pick(MoveGroupInterfacePtr *self, const char *object);
+
+
 PlanPtr *moveit_Plan_new();
 void moveit_Plan_delete(PlanPtr *ptr);
 void moveit_Plan_release(PlanPtr *ptr);

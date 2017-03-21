@@ -27,6 +27,7 @@ SET(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 SET(src
   "${SOURCE_DIR}/movegroup.cpp"
+  "${SOURCE_DIR}/movegroup_interface.cpp"
   "${SOURCE_DIR}/plan.cpp"
   "${SOURCE_DIR}/robotstate.cpp"
   "${SOURCE_DIR}/collision_object.cpp"
