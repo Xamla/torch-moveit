@@ -39,6 +39,7 @@ function init()
     "getWayPoint",
     "getLastWayPoint",
     "getFirstWayPoint",
+    "getWayPointDurations",
     "toTensor"
   }
   f = utils.create_method_table("moveit_RobotTrajectory_", RobotTrajectory_method_names)
@@ -160,6 +161,12 @@ end
 function RobotTrajectory:getFirstWayPoint(output)
   output = output or moveit.RobotState.createEmpty()
   f.getFirstWayPoint(self.o, output:cdata())
+  return output
+end
+
+function RobotTrajectory:getWayPointDurations(output)
+  output = output or torch.DoubleTensor()
+  f.getWayPointDurations(self.o, output:cdata())
   return output
 end
 

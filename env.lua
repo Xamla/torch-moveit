@@ -240,6 +240,7 @@ void moveit_RobotTrajectory_setRobotTrajectoryMsg(RobotTrajectoryPtr *ptr,const 
 void moveit_RobotTrajectory_getWayPoint(RobotTrajectoryPtr *ptr, int index, RobotStatePtr *out);
 void moveit_RobotTrajectory_getLastWayPoint(RobotTrajectoryPtr *ptr, RobotStatePtr *out);
 void moveit_RobotTrajectory_getFirstWayPoint(RobotTrajectoryPtr *ptr, RobotStatePtr *out);
+void moveit_RobotTrajectory_getWayPointDurations(RobotTrajectoryPtr *ptr, THDoubleTensor *output);
 
 PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);

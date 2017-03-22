@@ -57,10 +57,13 @@ MOVIMP(void, RobotTrajectory, getFirstWayPoint)(RobotTrajectoryPtr *ptr, RobotSt
   out->reset(new robot_state::RobotState((*ptr)->getFirstWayPoint()));
  }
 
-MOVIMP( void , RobotTrajectory, getWayPointDurations)(RobotTrajectoryPtr *ptr)
+MOVIMP( void , RobotTrajectory, getWayPointDurations)(RobotTrajectoryPtr *ptr, THDoubleTensor *output)
  {
- std::deque<double> test= (*ptr)->getWayPointDurations();
- //return
+  std::deque<double> v= (*ptr)->getWayPointDurations();
+  THDoubleTensor_resize1d(output, v.size());
+  THDoubleTensor* output_ = THDoubleTensor_newContiguous(output);
+  std::copy(v.begin(), v.end(), THDoubleTensor_data(output_));
+  THDoubleTensor_freeCopyTo(output_, output);
  }
 
 /** @brief  Returns the duration after start that a waypoint will be reached.
