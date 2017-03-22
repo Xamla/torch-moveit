@@ -178,6 +178,7 @@ void moveit_RobotState_getJacobian(RobotStatePtr *self, const char *group_id, TH
 
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
 void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
+void moveit_RobotState_fromRobotStateMsg(RobotStatePtr *self, THByteStorage *serialized_msg);
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);
@@ -216,6 +217,7 @@ bool moveit_RobotModel_isEmpty(RobotModelPtr *ptr);
 void moveit_RobotModel_printModelInfo(RobotModelPtr *ptr, std_string *output);
 const char *moveit_RobotModel_getRootJointName(RobotModelPtr *ptr);
 void moveit_RobotModel_getEndEffectorNames(RobotModelPtr *ptr, std_StringVector *output);
+void moveit_RobotModel_getJointModelGroupNames(RobotModelPtr *ptr, std_StringVector *output);
 
 RobotTrajectoryPtr *moveit_RobotTrajectory_new(RobotModelPtr* robot_model, const char *group);
 void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);

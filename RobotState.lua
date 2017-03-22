@@ -39,6 +39,7 @@ function init()
     "setVariableEffort",
     "updateLinkTransforms",
     "toRobotStateMsg",
+    "fromRobotStateMsg",
     "getJointTransform",
     "getJacobian"
   }
@@ -231,6 +232,18 @@ function RobotState:toRobotStateMsg(copy_attached_bodies)
   local msg = ros.Message(self.moveit_msgs_RobotStateSpec, true)
   msg:deserialize(msg_bytes)
   return msg
+end
+
+---Convert Message format to Robotstate
+--@tparam Robotstate_msg msg
+function RobotState:fromRobotStateMsg(msg)
+   if torch.isTypeOf(msg, ros.Message) then
+    local msg_bytes = msg:serialize()
+    msg_bytes:shrinkToFit()
+    f.fromRobotStateMsg(self.o, msg_bytes.storage:cdata())
+    return true
+  end
+  return false
 end
 
 ---Determines joint transformation from joint name

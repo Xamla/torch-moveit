@@ -162,10 +162,22 @@ MOVIMP(void, RobotState, toRobotStateMsg)(RobotStatePtr *self, THByteStorage *ou
   robot_state::robotStateToRobotStateMsg(**self, robot_state, copy_attached_bodies);
 
   uint32_t length = ros::serialization::serializationLength(robot_state);
-    THByteStorage_resize(output, length + sizeof(uint32_t));
-    ros::serialization::OStream stream(THByteStorage_data(output), length + sizeof(uint32_t));
-    stream.next((uint32_t)length);
-    ros::serialization::serialize(stream, robot_state);
+  THByteStorage_resize(output, length + sizeof(uint32_t));
+  ros::serialization::OStream stream(THByteStorage_data(output), length + sizeof(uint32_t));
+  stream.next((uint32_t)length);
+  ros::serialization::serialize(stream, robot_state);
+}
+
+MOVIMP(void, RobotState, fromRobotStateMsg)(RobotStatePtr *self, THByteStorage *serialized_msg)
+{
+  long storage_size = THByteStorage_size(serialized_msg);
+
+  uint8_t *data = THByteStorage_data(serialized_msg);
+
+  ros::serialization::IStream stream(data+ sizeof(uint32_t), static_cast<uint32_t>(storage_size-sizeof(uint32_t)));
+  moveit_msgs::RobotState rs_msg;
+  ros::serialization::Serializer<moveit_msgs::RobotState>::read(stream, rs_msg);
+  robot_state::robotStateMsgToRobotState(rs_msg, (**self));
 }
 
 MOVIMP(void, RobotState, getJointTransform)(RobotStatePtr *self, const char *joint_name, THDoubleTensor *result) {
