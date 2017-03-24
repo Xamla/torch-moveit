@@ -41,7 +41,10 @@ function init()
     "toRobotStateMsg",
     "fromRobotStateMsg",
     "getJointTransform",
-    "getJacobian"
+    "getJacobian",
+    "enforceBounds",
+    "distance",
+    "satisfiesBounds"
   }
 
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
@@ -262,4 +265,19 @@ function RobotState:getJacobian(group_name)
   local result = torch.DoubleTensor()
   f.getJacobian(self.o, group_name, result:cdata())
   return result
+end
+
+function RobotState:enforceBounds()
+  f.enforceBounds()
+end
+
+function RobotState:distance(other)
+  if torch.isTypeOf(other,moveit.RobotState) then
+    return f.distance(self.o,other:cdata())
+  end
+end
+
+function RobotState:satisfiesBounds(margin)
+  local margin = margin or 0.0
+  return f.satisfiesBounds(margin)
 end

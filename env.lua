@@ -179,6 +179,9 @@ void moveit_RobotState_getJacobian(RobotStatePtr *self, const char *group_id, TH
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
 void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
 void moveit_RobotState_fromRobotStateMsg(RobotStatePtr *self, THByteStorage *serialized_msg);
+void moveit_RobotState_enforceBounds(RobotStatePtr *self);
+double moveit_RobotState_distance(RobotStatePtr *self, RobotStatePtr *other);
+bool moveit_RobotState_satisfiesBounds(RobotStatePtr *self, double margin);
 
 void moveit_Pose_getRotation(THDoubleTensor* m, THDoubleTensor* quaternion_out);
 void moveit_Pose_setRotation(THDoubleTensor* m, THDoubleTensor* quaternion_in);

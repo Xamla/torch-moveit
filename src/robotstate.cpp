@@ -196,6 +196,17 @@ MOVIMP(void, RobotState, getJacobian)(RobotStatePtr *self, const char *group_id,
   THDoubleTensor_freeCopyTo(result_, result);
 }
 
+MOVIMP(void, RobotState, enforceBounds)(RobotStatePtr *self) {
+  (*self)->enforceBounds();
+}
+
+MOVIMP(double, RobotState, distance)(RobotStatePtr *self, RobotStatePtr *other) {
+  return (*self)->distance(**other);
+}
+
+MOVIMP(bool, RobotState, satisfiesBounds)(RobotStatePtr *self, double margin) {
+  (*self)->satisfiesBounds(margin);
+}
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const
 void 	printStateInfo (std::ostream &out=std::cout) const
