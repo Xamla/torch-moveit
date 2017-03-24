@@ -63,10 +63,12 @@ end
 
 function RobotModel:getEndEffectorNames(strings)
   strings = strings or std.StringVector()
-  return f.getEndEffectorNames(self.o, strings:cdata())
+  f.getEndEffectorNames(self.o, strings:cdata())
+  return strings
 end
 
 function RobotModel:getJointModelGroupNames(strings)
   strings = strings or std.StringVector()
-  return f.getJointModelGroupNames(self.o, strings:cdata())
+  f.getJointModelGroupNames(self.o, strings:cdata())
+  return strings
 end
