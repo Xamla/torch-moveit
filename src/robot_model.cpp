@@ -63,3 +63,9 @@ MOVIMP(void, RobotModel, getJointModelGroupNames)(RobotModelPtr *ptr, StringVect
     output->push_back((*it));
 }
 
+MOVIMP(void, RobotModel, getEndEffectorTips)(RobotModelPtr *ptr, StringVector *output)
+{
+  const StringVector jmg = (*ptr)->getJointModelNames();
+  for (StringVector::const_iterator it = jmg.begin(); it != jmg.end(); it++)
+    output->push_back((*it));
+}
