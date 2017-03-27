@@ -29,7 +29,7 @@ SET(src
   "${SOURCE_DIR}/movegroup.cpp"
   "${SOURCE_DIR}/movegroup_interface.cpp"
   "${SOURCE_DIR}/plan.cpp"
-  "${SOURCE_DIR}/robotstate.cpp"
+  "${SOURCE_DIR}/robot_state.cpp"
   "${SOURCE_DIR}/collision_object.cpp"
   "${SOURCE_DIR}/planning_scene.cpp"
   "${SOURCE_DIR}/planning_scene_interface.cpp"
