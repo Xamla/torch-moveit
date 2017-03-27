@@ -469,6 +469,7 @@ MOVIMP(bool, MoveGroup, startStateMonitor)(MoveGroupPtr *self, double wait_secon
 MOVIMP(RobotStatePtr *, MoveGroup, getCurrentState)(MoveGroupPtr *self)
   {
     robot_state::RobotStatePtr p = (*self)->getCurrentState();
+    p->enforceBounds();
     return new RobotStatePtr(p);
   }
 

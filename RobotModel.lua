@@ -20,6 +20,7 @@ function init()
     "printModelInfo",
     "getRootJointName",
     "getEndEffectorNames",
+    "getEndEffectorParentGroups",
     "getJointModelGroupNames"
   }
   f = utils.create_method_table("moveit_RobotModel_", RobotModel_method_names)
@@ -65,6 +66,13 @@ function RobotModel:getEndEffectorNames(strings)
   strings = strings or std.StringVector()
   f.getEndEffectorNames(self.o, strings:cdata())
   return strings
+end
+
+function RobotModel:getEndEffectorParentGroups()
+  local parent_move_group_names = std.StringVector()
+  local move_group_link_names = std.StringVector()
+  f.getEndEffectorParentGroups(self.o, parent_move_group_names:cdata(), move_group_link_names:cdata())
+  return parent_move_group_names, move_group_link_names
 end
 
 function RobotModel:getJointModelGroupNames(strings)

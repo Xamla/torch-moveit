@@ -58,14 +58,17 @@ MOVIMP(void, RobotModel, getEndEffectorNames)(RobotModelPtr *ptr, StringVector *
 
 MOVIMP(void, RobotModel, getJointModelGroupNames)(RobotModelPtr *ptr, StringVector *output)
 {
-  const StringVector jmg = (*ptr)->getJointModelNames();
+  const StringVector jmg = (*ptr)->getJointModelGroupNames();
   for (StringVector::const_iterator it = jmg.begin(); it != jmg.end(); it++)
     output->push_back((*it));
 }
 
-MOVIMP(void, RobotModel, getEndEffectorTips)(RobotModelPtr *ptr, StringVector *output)
+MOVIMP(void, RobotModel, getEndEffectorParentGroups)(RobotModelPtr *ptr, StringVector *output1, StringVector *output2)
 {
-  const StringVector jmg = (*ptr)->getJointModelNames();
-  for (StringVector::const_iterator it = jmg.begin(); it != jmg.end(); it++)
-    output->push_back((*it));
+  const std::vector<moveit::core::JointModelGroup*> jmg = (*ptr)->getJointModelGroups();
+  for (std::vector<moveit::core::JointModelGroup*>::const_iterator it = jmg.begin(); it != jmg.end(); it++){
+    const std::pair< std::string,std::string > info = (*it)->getEndEffectorParentGroup();
+    output1->push_back(info.first); // move group name
+    output2->push_back(info.second);// link name
+  }
 }
