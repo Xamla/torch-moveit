@@ -21,7 +21,8 @@ function init()
     "getRootJointName",
     "getEndEffectorNames",
     "getEndEffectorParentGroups",
-    "getJointModelGroupNames"
+    "getJointModelGroupNames",
+    "getJointModelSubGroupNames"
   }
   f = utils.create_method_table("moveit_RobotModel_", RobotModel_method_names)
 end
@@ -78,5 +79,11 @@ end
 function RobotModel:getJointModelGroupNames(strings)
   strings = strings or std.StringVector()
   f.getJointModelGroupNames(self.o, strings:cdata())
+  return strings
+end
+
+function RobotModel:getJointModelSubGroupNames(group_name, strings)
+  strings = strings or std.StringVector()
+  f.getJointModelSubGroupNames(self.o, group_name, strings:cdata())
   return strings
 end

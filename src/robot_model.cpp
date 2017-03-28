@@ -63,6 +63,15 @@ MOVIMP(void, RobotModel, getJointModelGroupNames)(RobotModelPtr *ptr, StringVect
     output->push_back((*it));
 }
 
+MOVIMP(void, RobotModel, getJointModelSubGroupNames)(RobotModelPtr *ptr, const char *groupname, StringVector *output)
+{
+  const moveit::core::JointModelGroup* jmgp = (*ptr)->getJointModelGroup(groupname);
+  std::vector<const moveit::core::JointModelGroup*> jmg;
+  jmgp->getSubgroups(jmg);
+  for (std::vector<const moveit::core::JointModelGroup*>::const_iterator it = jmg.begin(); it != jmg.end(); it++)
+    output->push_back((*it)->getName());
+}
+
 MOVIMP(void, RobotModel, getEndEffectorParentGroups)(RobotModelPtr *ptr, StringVector *output1, StringVector *output2)
 {
   const std::vector<moveit::core::JointModelGroup*> jmg = (*ptr)->getJointModelGroups();
