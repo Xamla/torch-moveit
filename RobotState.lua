@@ -268,16 +268,16 @@ function RobotState:getJacobian(group_name)
 end
 
 function RobotState:enforceBounds()
-  f.enforceBounds()
+  f.enforceBounds(self.o)
 end
 
 function RobotState:distance(other)
   if torch.isTypeOf(other,moveit.RobotState) then
-    return f.distance(self.o,other:cdata())
+    return f.distance(self.o, other:cdata())
   end
 end
 
 function RobotState:satisfiesBounds(margin)
   local margin = margin or 0.0
-  return f.satisfiesBounds(margin)
+  return f.satisfiesBounds(self.o, margin)
 end

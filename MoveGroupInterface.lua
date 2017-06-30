@@ -18,7 +18,10 @@ function init()
     "delete",
     "release",
     "getName",
+    "getActiveJoints",
     "getJoints",
+    "getJointNames",
+    "getLinkNames",
     "getPlanningFrame",
     "getEndEffectorLink",
     "setGoalTolerance",
@@ -130,6 +133,7 @@ function MoveGroupInterface:setJointValueTarget(group_variable_values)
 end
 
 --- Get the currently set joint state goal.
+-- @tparam[opt] robot_state_output robot_state_output can be empty or can be used as target for the result
 -- @treturn moveit.RobotState Joint value target as moveit.RobotState
 function MoveGroupInterface:getJointValueTarget(robot_state_output)
   robot_state_output = robot_state_output or moveit.RobotState.createEmpty()
@@ -137,13 +141,42 @@ function MoveGroupInterface:getJointValueTarget(robot_state_output)
   return robot_state_output
 end
 
---- Get all the joints this instance operates on (including fixed joints).
--- @tparam[opt] strings strings be empty
+--- Get only the active (actuated) joints this instance operates on.
+-- @tparam[opt] output output can be empty or can be used as target for the result
 -- @return moveit.Strings
-function MoveGroupInterface:getJoints(strings)
-  strings = strings or std.StringVector()
-  f.getJoints(self.o, strings:cdata())
-  return strings
+function MoveGroupInterface:getActiveJoints(output)
+  output = output or std.StringVector()
+  f.getActiveJoints(self.o, output:cdata())
+  return output
+end
+
+--- Get all the joints this instance operates on (including fixed joints).
+-- @tparam[opt] output output can be empty or can be used as target for the result
+-- @return moveit.Strings
+function MoveGroupInterface:getJoints(output)
+  output = output or std.StringVector()
+  f.getJoints(self.o, output:cdata())
+  return output
+end
+
+
+--- Get vector of names of joints available in move group.
+-- @tparam[opt] output output can be empty or can be used as target for the result
+-- @return moveit.Strings
+function MoveGroupInterface:getJointNames(output)
+  output = output or std.StringVector()
+  f.getJointNames(self.o, output:cdata())
+  return output
+end
+
+
+--- Get vector of names of links available in move group.
+-- @tparam[opt] output output can be empty or can be used as target for the result
+-- @return moveit.Strings
+function MoveGroupInterface:getLinkNames(output)
+  output = output or std.StringVector()
+  f.getLinkNames(self.o, output:cdata())
+  return output
 end
 
 --- Set the tolerance that is used for reaching the goal.

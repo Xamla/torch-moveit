@@ -51,9 +51,24 @@ MOVIMP(void, MoveGroupInterface, getJointValueTarget)(MoveGroupInterfacePtr *sel
   ptr->reset(new moveit::core::RobotState((*self)->getJointValueTarget()));
 }
 
+MOVIMP(void, MoveGroupInterface, getActiveJoints)(MoveGroupInterfacePtr *self, StringVector *output)
+{
+  *output = (*self)->getActiveJoints ();
+}
+
 MOVIMP(void, MoveGroupInterface, getJoints)(MoveGroupInterfacePtr *self, StringVector *output)
 {
   *output = (*self)->getJoints ();
+}
+
+MOVIMP(void, MoveGroupInterface, getJointNames)(MoveGroupInterfacePtr *self, StringVector *output)
+{
+  *output = (*self)->getJointNames();
+}
+
+MOVIMP(void, MoveGroupInterface, getLinkNames)(MoveGroupInterfacePtr *self, StringVector *output)
+{
+  *output = (*self)->getLinkNames();
 }
 
 /*MOVIMP(const char*, MoveGroupInterface, getDefaultPlannerId)(MoveGroupInterfacePtr *self, const char* group)
@@ -468,7 +483,7 @@ MOVIMP(bool, MoveGroupInterface, startStateMonitor)(MoveGroupInterfacePtr *self,
 
 MOVIMP(RobotStatePtr *, MoveGroupInterface, getCurrentState)(MoveGroupInterfacePtr *self)
   {
-    robot_state::RobotStatePtr p = (*self)->getCurrentState();
+    RobotStatePtr p = (*self)->getCurrentState();
     return new RobotStatePtr(p);
   }
 
