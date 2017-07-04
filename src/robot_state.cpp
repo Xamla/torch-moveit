@@ -207,6 +207,12 @@ MOVIMP(double, RobotState, distance)(RobotStatePtr *self, RobotStatePtr *other) 
 MOVIMP(bool, RobotState, satisfiesBounds)(RobotStatePtr *self, double margin) {
   (*self)->satisfiesBounds(margin);
 }
+
+MOVIMP(void, RobotState, copyJointGroupPositions)(RobotStatePtr *self, const char *group_id, THDoubleTensor *result) {
+  std::vector<double> joint_group_positions;
+  (*self)->copyJointGroupPositions(group_id, joint_group_positions);
+  vector2Tensor(joint_group_positions,result);
+}
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const
 void 	printStateInfo (std::ostream &out=std::cout) const

@@ -44,7 +44,8 @@ function init()
     "getJacobian",
     "enforceBounds",
     "distance",
-    "satisfiesBounds"
+    "satisfiesBounds",
+    "copyJointGroupPositions"
   }
 
   f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
@@ -280,4 +281,11 @@ end
 function RobotState:satisfiesBounds(margin)
   local margin = margin or 0.0
   return f.satisfiesBounds(self.o, margin)
+end
+
+function RobotState:copyJointGroupPositions(group_name)
+  assert(group_name and type(group_name) == 'string' and #group_name >= 0, 'Invalid group_name specified.')
+  local t = torch.DoubleTensor()
+  f.copyJointGroupPositions(self.o, group_name, t:cdata())
+  return t
 end

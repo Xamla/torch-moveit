@@ -181,6 +181,7 @@ void moveit_RobotState_setVariableAccelerations(RobotStatePtr *self, THDoubleTen
 void moveit_RobotState_setVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_getJointTransform(RobotStatePtr *self, const char *joint_name, THDoubleTensor *result);
 void moveit_RobotState_getJacobian(RobotStatePtr *self, const char *group_id, THDoubleTensor *result);
+void moveit_RobotState_copyJointGroupPositions(RobotStatePtr *self, const char *group_id, THDoubleTensor *result);
 
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
 void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
