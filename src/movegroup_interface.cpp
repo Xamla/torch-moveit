@@ -264,13 +264,6 @@ MOVIMP(void, MoveGroupInterface, setPoseReferenceFrame)(MoveGroupInterfacePtr *s
   (*self)->setPoseReferenceFrame (reference_frame);
 }
 
-/*MOVIMP(bool, MoveGroupInterface, setPoseTarget_PoseStamped)(MoveGroupInterfacePtr *self, const geometry_msgs::PoseStamped &target, const char *end_effector_link)
- {
- if (!end_effector_link)
- end_effector_link = "";
- return (*self)->setPoseTarget(target);
- }*/
-
 MOVIMP(void, MoveGroupInterface, setEndEffectorLink)(MoveGroupInterfacePtr *self, const char *name)
 {
   (*self)->setEndEffectorLink (name);
@@ -544,11 +537,38 @@ MOVIMP(void, MoveGroupInterface, getCurrentPose)(MoveGroupInterfacePtr *self, co
   *pose = static_cast<const tf::Transform&> (stamped_pose);
 }
 
-MOVIMP(void, MoveGroupInterface, pick)(MoveGroupInterfacePtr *self, const char *object)
+MOVIMP(int, MoveGroupInterface, pick)(MoveGroupInterfacePtr *self, const char *object)
 {
   std::string object_name;
   if (object)
     object_name = object;
 
-  (*self)->pick (object_name);
+  return (*self)->pick (object_name).val;
+}
+
+MOVIMP(int, MoveGroupInterface, place)(MoveGroupInterfacePtr *self, const char *object, const tf::Transform *target)
+{
+  std::vector< geometry_msgs::Pose >  poses;
+  geometry_msgs::Pose pose_msg;
+  tf::poseTFToMsg(*target, pose_msg);
+  poses.push_back(pose_msg);
+  std::string object_name;
+  if (object)
+    object_name = object;
+
+  return (*self)->place (object_name).val;
+}
+
+MOVIMP(int, MoveGroupInterface, planGraspsAndPick)(MoveGroupInterfacePtr *self, const char *object)
+{
+  std::string object_name;
+  if (object)
+    object_name = object;
+
+  return (*self)->planGraspsAndPick (object_name).val;
+}
+
+MOVIMP(void, MoveGroupInterface, rememberJointValues)(MoveGroupInterfacePtr *self, 	const char *name	)
+{
+  (*self)->rememberJointValues (name);
 }

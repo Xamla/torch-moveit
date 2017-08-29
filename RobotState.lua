@@ -34,6 +34,7 @@ function init()
     "setFromIK",
     "getGlobalLinkTransform",
     "setVariablePositions",
+    "setVariablePositions_",
     "setVariableVelocities",
     "setVariableAccelerations",
     "setVariableEffort",
@@ -199,8 +200,19 @@ end
 
 ---It is assumed positions is an array containing the new positions for all variables in this state. Those values are copied into the state.
 --
-function RobotState:setVariablePositions(group_variable_values)
-  return f.setVariablePositions(self.o, group_variable_values:cdata())
+function RobotState:setVariablePositions(group_variable_values, group_variable_names)
+  if group_variable_names then
+    if torch.type(group_variable_names) == 'table' then
+      group_variable_names = std.StringVector(group_variable_names)
+    end
+    if torch.type(group_variable_names) == 'std.StringVector' then
+      return f.setVariablePositions_(self.o, group_variable_values:cdata(), group_variable_names:cdata())
+    else
+      ros.ERROR("[RobotState:setVariablePositions] Could not set Positions ini robot state")
+    end
+  else
+    return f.setVariablePositions(self.o, group_variable_values:cdata())
+  end
 end
 
 ---It is assumed positions is an array containing the new velocities for all variables in this state. Those values are copied into the state.

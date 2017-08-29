@@ -115,6 +115,7 @@ void moveit_MoveGroupInterface_allowLooking(MoveGroupInterfacePtr *self, bool fl
 void moveit_MoveGroupInterface_allowReplanning(MoveGroupInterfacePtr* self, bool flag);
 void moveit_MoveGroupInterface_setRandomTarget(MoveGroupInterfacePtr* self);
 bool moveit_MoveGroupInterface_setNamedTarget(MoveGroupInterfacePtr *self, const char *name);
+void moveit_MoveGroupInterface_rememberJointValues(MoveGroupInterfacePtr *self, const char *name);
 bool moveit_MoveGroupInterface_setPositionTarget(MoveGroupInterfacePtr *self, double x, double y, double z, const char *end_effector_link);
 bool moveit_MoveGroupInterface_setPositionTarget_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *t, const char *end_effector_link);
 void moveit_MoveGroupInterface_setJointPostureConstraint(MoveGroupInterfacePtr *self, const char *joint_name, double position,double tolerance_above,double tolerance_below , double weight);
@@ -146,7 +147,8 @@ void moveit_MoveGroupInterface_getCurrentPose(MoveGroupInterfacePtr *self, const
 void moveit_MoveGroupInterface_setOrientationConstraint(MoveGroupInterfacePtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight);
 void moveit_MoveGroupInterface_clearPathConstraints(MoveGroupInterfacePtr *self);
 double moveit_MoveGroupInterface_computeCartesianPath_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
-void moveit_MoveGroupInterface_pick(MoveGroupInterfacePtr *self, const char *object);
+int moveit_MoveGroupInterface_pick(MoveGroupInterfacePtr *self, const char *object);
+int moveit_MoveGroupInterface_planGraspsAndPick(MoveGroupInterfacePtr *self, const char *object);
 
 
 PlanPtr *moveit_Plan_new();
@@ -176,6 +178,7 @@ void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
 bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, unsigned int attempts, double timeout, bool return_approximate_solution, THDoubleTensor *result_joint_positions);
 void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
 void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
+void moveit_RobotState_setVariablePositions_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableVelocities(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setVariableAccelerations(RobotStatePtr *self, THDoubleTensor *view);
 void moveit_RobotState_setVariableEffort(RobotStatePtr *self, THDoubleTensor *view);

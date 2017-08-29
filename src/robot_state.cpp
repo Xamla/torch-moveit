@@ -152,6 +152,12 @@ MOVIMP(void, RobotState, setVariablePositions)(RobotStatePtr *self, THDoubleTens
   (*self)->setVariablePositions(group_variable_values);
 }
 
+MOVIMP(void, RobotState, setVariablePositions_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariablePositions(*input, group_variable_values);
+}
+
 MOVIMP(void, RobotState, updateLinkTransforms)(RobotStatePtr *self) {
   (*self)->updateLinkTransforms();
 }
@@ -188,7 +194,8 @@ MOVIMP(void, RobotState, getJointTransform)(RobotStatePtr *self, const char *joi
 MOVIMP(void, RobotState, getJacobian)(RobotStatePtr *self, const char *group_id, THDoubleTensor *result) {
   const robot_state::JointModelGroup *group = (*self)->getJointModelGroup(group_id);
   Eigen::Vector3d linkOrigin = Eigen::Vector3d::Zero();
-  Eigen::MatrixXd jacobian = (*self)->getJacobian (group,linkOrigin);
+  Eigen::MatrixXd jacobian; //= (*self)->getJacobian (group,linkOrigin);
+  (*self)->getJacobian(group, (*self)->getLinkModel(group->getLinkModelNames().back()),linkOrigin, jacobian);
   THDoubleTensor_resize2d(result, jacobian.rows(), jacobian.cols());
   THDoubleTensor* result_ = THDoubleTensor_newContiguous(result);
   Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>> m (THDoubleTensor_data(result_),jacobian.rows(), jacobian.cols());
