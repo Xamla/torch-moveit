@@ -44,6 +44,7 @@ function init()
     "allowReplanning",
     "setRandomTarget",
     "setNamedTarget",
+    "rememberJointValues",
     "setPositionTarget",
     "setPositionTarget_Tensor",
     "setOrientationTarget",
@@ -75,7 +76,9 @@ function init()
     "getCurrentPose_Tensor",
     "getCurrentPose_StampedTransform",
     "getCurrentPose",
-    "pick"
+    "place",
+    "pick",
+    "planGraspsAndPick"
   }
 
   f = utils.create_method_table("moveit_MoveGroupInterface_", MoveGroupInterface_method_names)
@@ -320,7 +323,12 @@ end
 -- if not found, that are specified in the SRDF under the name name as a group state.
 -- @tparam string name
 function MoveGroupInterface:setNamedTarget(name)
-  f.setNamedTarget(self.o, name)
+  return f.setNamedTarget(self.o, name)
+end
+
+function MoveGroupInterface:rememberJointValues(name)
+  assert(name ~= nil, "Name needs to be set!")
+  f.rememberJointValues(self.o, name)
 end
 
 --- Set the goal position of the end-effector end_effector_link to be (x, y, z).
@@ -590,11 +598,31 @@ function MoveGroupInterface:getCurrentPose(end_effector_link, output)
   return output
 end
 
+--- Place an object at one of the specified possible locations.
+-- @tparam string object Name of the object
+-- @tparam tf.StampedTransform place target pose
+-- @treturn MoveItErrorCode
+function MoveGroupInterface:place(object, target)
+  error("NOT IMPLEMENTED YET")
+  if torch.isTypeOf(target, tf.StampedTransform) then
+    return f.place(self.o, object, target:cdata())
+  else
+    error('Invalid target type specified. Expected tf.StampedTransform.')
+  end
+end
+
 --- Pick up an object.
 -- @tparam string object Name of the object
 -- @treturn MoveItErrorCode
 function MoveGroupInterface:pick(object)
   --object needs to be string
-  print(object)
   return f.pick(self.o,object)
+end
+
+--- Plan a grasp and Pick up an object.
+-- @tparam string object Name of the object
+-- @treturn MoveItErrorCode
+function MoveGroupInterface:planGraspsAndPick(object)
+  --object needs to be string
+  return f.planGraspsAndPick(self.o,object)
 end
