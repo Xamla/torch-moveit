@@ -81,3 +81,23 @@ MOVIMP(void, RobotModel, getEndEffectorParentGroups)(RobotModelPtr *ptr, StringV
     output2->push_back(info.second);// link name
   }
 }
+
+MOVIMP(void, RobotModel, getJointModelNames)(RobotModelPtr *self, StringVector *output)
+{
+  *output = (*self)->getJointModelNames();
+}
+
+MOVIMP(void, RobotModel, getVariableNames)(RobotModelPtr *self, StringVector *output)
+{
+  *output = (*self)->getVariableNames();
+}
+
+MOVIMP(int, RobotModel, getVariableIndex)(RobotModelPtr *self, const char *name)
+{
+  return (*self)->getVariableIndex(name);
+}
+
+MOVIMP(void, RobotModel, getGroupJointNames)(RobotModelPtr *self, const char *name, StringVector *output)
+{
+  *output = (*self)->getJointModelGroup(name)->getActiveJointModelNames();
+}
