@@ -161,6 +161,7 @@ void moveit_Plan_setStartStateMsg(PlanPtr *ptr, THByteStorage *serialized_msg);
 double moveit_Plan_getPlanningTime(PlanPtr *ptr);
 
 RobotStatePtr *moveit_RobotState_createEmpty();
+RobotStatePtr *moveit_RobotState_createFromModel(RobotModelPtr *kinematic_model);
 RobotStatePtr *moveit_RobotState_clone(RobotStatePtr *ptr);
 void moveit_RobotState_delete(RobotStatePtr *ptr);
 void moveit_RobotState_release(RobotStatePtr *ptr);
@@ -187,6 +188,7 @@ void moveit_RobotState_getJacobian(RobotStatePtr *self, const char *group_id, TH
 void moveit_RobotState_copyJointGroupPositions(RobotStatePtr *self, const char *group_id, THDoubleTensor *result);
 
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
+void moveit_RobotState_update(RobotStatePtr *self);
 void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
 void moveit_RobotState_fromRobotStateMsg(RobotStatePtr *self, THByteStorage *serialized_msg);
 void moveit_RobotState_enforceBounds(RobotStatePtr *self);
@@ -237,6 +239,7 @@ void moveit_RobotModel_getJointModelNames(RobotModelPtr *self, std_StringVector 
 void moveit_RobotModel_getVariableNames(RobotModelPtr *self, std_StringVector *output);
 int  moveit_RobotModel_getVariableIndex(RobotModelPtr *self, const char *name);
 void moveit_RobotModel_getGroupJointNames(RobotModelPtr *self, const char *name, std_StringVector *output);
+void moveit_RobotModel_getGroupEndEffectorNames(RobotModelPtr *self, const char *name, std_StringVector *output);
 
 RobotTrajectoryPtr *moveit_RobotTrajectory_new(RobotModelPtr* robot_model, const char *group);
 void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);

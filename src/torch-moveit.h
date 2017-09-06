@@ -17,6 +17,7 @@ typedef std::shared_ptr<moveit::planning_interface::MoveGroupInterface> MoveGrou
 typedef std::shared_ptr<moveit::planning_interface::MoveGroup> MoveGroupPtr;
 typedef std::shared_ptr<moveit::planning_interface::MoveGroup::Plan> PlanPtr;
 typedef std::shared_ptr<moveit::core::RobotState> RobotStatePtr;
+typedef robot_model::RobotModelPtr RobotModelPtr;
 typedef std::shared_ptr<robot_trajectory::RobotTrajectory> RobotTrajectoryPtr;
 typedef std::shared_ptr<trajectory_processing::IterativeParabolicTimeParameterization> IptPtr;
 

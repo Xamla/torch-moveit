@@ -4,8 +4,6 @@
 #include "utils.h"
 
 
-typedef robot_model::RobotModelPtr RobotModelPtr;
-
 MOVIMP(RobotModelPtr*, RobotModel, new)()
 {
    return new RobotModelPtr();
@@ -54,6 +52,12 @@ MOVIMP(void, RobotModel, getEndEffectorNames)(RobotModelPtr *ptr, StringVector *
   const std::vector<moveit::core::JointModelGroup*> jmg = (*ptr)->getJointModelGroups();
   for (std::vector<moveit::core::JointModelGroup*>::const_iterator it = jmg.begin(); it != jmg.end(); it++)
     output->push_back((*it)->getEndEffectorName());
+}
+
+MOVIMP(void, RobotModel, getGroupEndEffectorNames)(RobotModelPtr *self, const char *name, StringVector *output)
+{
+  //*output = (*self)->getJointModelGroup(name)->getAttachedEndEffectorNames ();
+  (*self)->getJointModelGroup(name)->getEndEffectorTips(*output);
 }
 
 MOVIMP(void, RobotModel, getJointModelGroupNames)(RobotModelPtr *ptr, StringVector *output)

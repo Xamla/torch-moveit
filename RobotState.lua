@@ -17,6 +17,7 @@ local f
 function init()
   local RobotState_method_names = {
     "createEmpty",
+    "createFromModel",
     "clone",
     "delete",
     "release",
@@ -39,6 +40,7 @@ function init()
     "setVariableAccelerations",
     "setVariableEffort",
     "updateLinkTransforms",
+    "update",
     "toRobotStateMsg",
     "fromRobotStateMsg",
     "getJointTransform",
@@ -57,6 +59,15 @@ init()
 function RobotState.createEmpty()
   local c = torch.factory('moveit.RobotState')()
   rawset(c, 'o', f.createEmpty())
+  return c
+end
+
+function RobotState.createFromModel(kinematic_model)
+  if ffi.typeof(kinematic_model:cdata()) ~= ffi.typeof('RobotModelPtr*') then
+    error('RobotState object can only be initialized with existing RobotModel pointer.')
+  end
+  local c = torch.factory('moveit.RobotState')()
+  rawset(c, 'o',f.createFromModel(kinematic_model:cdata()))
   return c
 end
 
@@ -236,7 +247,13 @@ end
 ---Update the reference frame transforms for links. This call is needed before using the transforms of links for coordinate transforms.
 --
 function RobotState:updateLinkTransforms()
-  f.updateLinkTransforms (self.o)
+  f.updateLinkTransforms(self.o)
+end
+
+---Update all transforms.
+--
+function RobotState:update()
+  f.update(self.o)
 end
 
 ---Convert Robotstate to Message format

@@ -7,6 +7,13 @@ MOVIMP(RobotStatePtr *, RobotState, createEmpty)()
   return new RobotStatePtr();
 }
 
+MOVIMP(RobotStatePtr *, RobotState, createFromModel)(RobotModelPtr *kinematic_model)
+{
+  robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(*kinematic_model));
+  kinematic_state->setToDefaultValues();
+  return new RobotStatePtr(kinematic_state);
+}
+
 MOVIMP(RobotStatePtr *, RobotState, clone)(RobotStatePtr *ptr)
 {
   return new RobotStatePtr(new moveit::core::RobotState(**ptr));
@@ -160,6 +167,10 @@ MOVIMP(void, RobotState, setVariablePositions_)(RobotStatePtr *self, THDoubleTen
 
 MOVIMP(void, RobotState, updateLinkTransforms)(RobotStatePtr *self) {
   (*self)->updateLinkTransforms();
+}
+
+MOVIMP(void, RobotState, update)(RobotStatePtr *self) {
+  (*self)->update();
 }
 
 MOVIMP(void, RobotState, toRobotStateMsg)(RobotStatePtr *self, THByteStorage *output, bool copy_attached_bodies) {
