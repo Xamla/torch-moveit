@@ -51,7 +51,7 @@ MOVIMP(bool, PlanningScene, isStateColliding)(PlanningScenePtr *ptr,RobotStatePt
   return (*ptr)->isStateColliding(**robot_state, group_name, verbose);
 }
 
-MOVIMP(bool, PlanningScene, isPathValid)(PlanningScenePtr *ptr,RobotStatePtr *start_state,RobotTrajectoryPtr *trajectory, const char *group_name, bool verbose)
+MOVIMP(bool, PlanningScene, isPathValid)(PlanningScenePtr *ptr, RobotStatePtr *start_state, RobotTrajectoryPtr *trajectory, const char *group_name, bool verbose)
 {
   std::vector<std::size_t> invalid_index;
   moveit_msgs::RobotTrajectory trajectory_msg;
@@ -60,11 +60,11 @@ MOVIMP(bool, PlanningScene, isPathValid)(PlanningScenePtr *ptr,RobotStatePtr *st
   moveit_msgs::RobotState robot_state_msg;
   robot_state::robotStateToRobotStateMsg(**start_state, robot_state_msg, true);
 
-  return (*ptr)->isPathValid(robot_state_msg, trajectory_msg, group_name, verbose,&invalid_index);
+  return (*ptr)->isPathValid(robot_state_msg, trajectory_msg, group_name, verbose, &invalid_index);
 }
 
 
-MOVIMP(bool, PlanningScene, setPlanningSceneMsg)(PlanningScenePtr *ptr,THByteStorage *serialized_msg)
+MOVIMP(bool, PlanningScene, setPlanningSceneMsg)(PlanningScenePtr *ptr, THByteStorage *serialized_msg)
 {
   moveit_msgs::PlanningScene scene_msg;
   // deserialize to moveit_msgs::RobotTrajectory message
@@ -100,10 +100,18 @@ MOVIMP(bool, PlanningScene, syncPlanningScene)(PlanningScenePtr *ptr)
     ROS_WARN("Waiting for service `/get_planning_scene` to exist.");
     client_get_scene.waitForExistence(ros::Duration(5.0));
   }
+  if (!client_get_scene.exists())
+  {
+    ROS_ERROR("Service `/get_planning_scene` does not exist.");
+    return false;
+  }
   if (!client_get_scene.call(srv)){
      ROS_WARN("Failed to call service /get_planning_scene");
  }
   //return (*ptr)->usePlanningSceneMsg(srv.response.scene);
-  return (*ptr)->setPlanningSceneMsg(srv.response.scene);
+  bool suc = (*ptr)->setPlanningSceneMsg(srv.response.scene);
+  if (!suc){
+    ROS_ERROR("could not set planning scene from /get_planning_scene service");
+  }
+  return suc;
 }
-
