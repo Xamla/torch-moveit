@@ -73,7 +73,7 @@ bool moveit_MoveGroup_attachObject(MoveGroupPtr *self, const char *object, const
 bool moveit_MoveGroup_detachObject(MoveGroupPtr *self, const char *object);
 void moveit_MoveGroup_stop(MoveGroupPtr *self);
 bool moveit_MoveGroup_startStateMonitor(MoveGroupPtr *self, double wait);
-void moveit_MoveGroup_setStartState(MoveGroupPtr *self, RobotStatePtr robot_state);
+void moveit_MoveGroup_setStartState(MoveGroupPtr *self, RobotStatePtr* robot_state);
 RobotStatePtr *moveit_MoveGroup_getCurrentState(MoveGroupPtr *self);
 void moveit_MoveGroup_getCurrentPose_Tensor(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor* output);
 void moveit_MoveGroup_getCurrentPose_StampedTransform(MoveGroupPtr *self, const char *end_effector_link, tf_StampedTransform *pose);
@@ -109,6 +109,7 @@ void moveit_MoveGroupInterface_setPlanningTime(MoveGroupInterfacePtr *self, doub
 int moveit_MoveGroupInterface_getVariableCount(MoveGroupInterfacePtr *self);
 void moveit_MoveGroupInterface_setNumPlanningAttempts(MoveGroupInterfacePtr *self, unsigned int attempts);
 void moveit_MoveGroupInterface_setStartStateToCurrentState(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setStartState(MoveGroupInterfacePtr *self, RobotStatePtr* robot_state);
 void moveit_MoveGroupInterface_setSupportSurfaceName(MoveGroupInterfacePtr *self, const char *name);
 void moveit_MoveGroupInterface_setWorkspace(MoveGroupInterfacePtr *self, double minx, double miny, double minz, double maxx, double maxy, double maxz);
 void moveit_MoveGroupInterface_allowLooking(MoveGroupInterfacePtr *self, bool flag);

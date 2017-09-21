@@ -38,6 +38,7 @@ function init()
     "getVariableCount",
     "setNumPlanningAttempts",
     "setStartStateToCurrentState",
+    "setStartState",
     "setSupportSurfaceName",
     "setWorkspace",
     "allowLooking",
@@ -277,6 +278,14 @@ end
 --- Set the starting state for planning to be that reported by the robot's joint state publication.
 function MoveGroupInterface:setStartStateToCurrentState()
   f.setStartStateToCurrentState(self.o)
+end
+
+--- Set the starting state for planning to robot_state.
+function MoveGroupInterface:setStartState(robot_state)
+  if not torch.isTypeOf(robot_state, moveit.RobotState) then
+    error("robot_state should be type of moveit.RobotState but is type of: " .. torch.type(robot_state))
+  end
+  f.setStartState(self.o, robot_state:cdata())
 end
 
 --- For pick/place operations, the name of the support surface is used to specify the fact that attached objects are allowed to touch the support surface.
