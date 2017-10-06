@@ -73,7 +73,7 @@ bool moveit_MoveGroup_attachObject(MoveGroupPtr *self, const char *object, const
 bool moveit_MoveGroup_detachObject(MoveGroupPtr *self, const char *object);
 void moveit_MoveGroup_stop(MoveGroupPtr *self);
 bool moveit_MoveGroup_startStateMonitor(MoveGroupPtr *self, double wait);
-void moveit_MoveGroup_setStartState(MoveGroupPtr *self, RobotStatePtr robot_state);
+void moveit_MoveGroup_setStartState(MoveGroupPtr *self, RobotStatePtr* robot_state);
 RobotStatePtr *moveit_MoveGroup_getCurrentState(MoveGroupPtr *self);
 void moveit_MoveGroup_getCurrentPose_Tensor(MoveGroupPtr *self, const char *end_effector_link, THDoubleTensor* output);
 void moveit_MoveGroup_getCurrentPose_StampedTransform(MoveGroupPtr *self, const char *end_effector_link, tf_StampedTransform *pose);
@@ -109,12 +109,14 @@ void moveit_MoveGroupInterface_setPlanningTime(MoveGroupInterfacePtr *self, doub
 int moveit_MoveGroupInterface_getVariableCount(MoveGroupInterfacePtr *self);
 void moveit_MoveGroupInterface_setNumPlanningAttempts(MoveGroupInterfacePtr *self, unsigned int attempts);
 void moveit_MoveGroupInterface_setStartStateToCurrentState(MoveGroupInterfacePtr *self);
+void moveit_MoveGroupInterface_setStartState(MoveGroupInterfacePtr *self, RobotStatePtr* robot_state);
 void moveit_MoveGroupInterface_setSupportSurfaceName(MoveGroupInterfacePtr *self, const char *name);
 void moveit_MoveGroupInterface_setWorkspace(MoveGroupInterfacePtr *self, double minx, double miny, double minz, double maxx, double maxy, double maxz);
 void moveit_MoveGroupInterface_allowLooking(MoveGroupInterfacePtr *self, bool flag);
 void moveit_MoveGroupInterface_allowReplanning(MoveGroupInterfacePtr* self, bool flag);
 void moveit_MoveGroupInterface_setRandomTarget(MoveGroupInterfacePtr* self);
 bool moveit_MoveGroupInterface_setNamedTarget(MoveGroupInterfacePtr *self, const char *name);
+void moveit_MoveGroupInterface_rememberJointValues(MoveGroupInterfacePtr *self, const char *name);
 bool moveit_MoveGroupInterface_setPositionTarget(MoveGroupInterfacePtr *self, double x, double y, double z, const char *end_effector_link);
 bool moveit_MoveGroupInterface_setPositionTarget_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *t, const char *end_effector_link);
 void moveit_MoveGroupInterface_setJointPostureConstraint(MoveGroupInterfacePtr *self, const char *joint_name, double position,double tolerance_above,double tolerance_below , double weight);
@@ -146,7 +148,8 @@ void moveit_MoveGroupInterface_getCurrentPose(MoveGroupInterfacePtr *self, const
 void moveit_MoveGroupInterface_setOrientationConstraint(MoveGroupInterfacePtr *self, const char *link_name, const char *frame_id, double orientation_w, double absolute_x_axis_tolerance, double absolute_y_axis_tolerance, double absolute_z_axis_tolerance, double weight);
 void moveit_MoveGroupInterface_clearPathConstraints(MoveGroupInterfacePtr *self);
 double moveit_MoveGroupInterface_computeCartesianPath_Tensor(MoveGroupInterfacePtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
-void moveit_MoveGroupInterface_pick(MoveGroupInterfacePtr *self, const char *object);
+int moveit_MoveGroupInterface_pick(MoveGroupInterfacePtr *self, const char *object);
+int moveit_MoveGroupInterface_planGraspsAndPick(MoveGroupInterfacePtr *self, const char *object);
 
 
 PlanPtr *moveit_Plan_new();
@@ -159,6 +162,7 @@ void moveit_Plan_setStartStateMsg(PlanPtr *ptr, THByteStorage *serialized_msg);
 double moveit_Plan_getPlanningTime(PlanPtr *ptr);
 
 RobotStatePtr *moveit_RobotState_createEmpty();
+RobotStatePtr *moveit_RobotState_createFromModel(RobotModelPtr *kinematic_model);
 RobotStatePtr *moveit_RobotState_clone(RobotStatePtr *ptr);
 void moveit_RobotState_delete(RobotStatePtr *ptr);
 void moveit_RobotState_release(RobotStatePtr *ptr);
@@ -176,13 +180,19 @@ void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
 bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, unsigned int attempts, double timeout, bool return_approximate_solution, THDoubleTensor *result_joint_positions);
 void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
 void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
+void moveit_RobotState_setVariablePositions_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableVelocities(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableVelocities_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableAccelerations(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableAccelerations_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableEffort_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_getJointTransform(RobotStatePtr *self, const char *joint_name, THDoubleTensor *result);
 void moveit_RobotState_getJacobian(RobotStatePtr *self, const char *group_id, THDoubleTensor *result);
+void moveit_RobotState_copyJointGroupPositions(RobotStatePtr *self, const char *group_id, THDoubleTensor *result);
 
 void moveit_RobotState_updateLinkTransforms(RobotStatePtr *self);
+void moveit_RobotState_update(RobotStatePtr *self);
 void moveit_RobotState_toRobotStateMsg(RobotStatePtr *self,THByteStorage *output,bool copy_attached_bodies);
 void moveit_RobotState_fromRobotStateMsg(RobotStatePtr *self, THByteStorage *serialized_msg);
 void moveit_RobotState_enforceBounds(RobotStatePtr *self);
@@ -229,6 +239,11 @@ void moveit_RobotModel_getEndEffectorNames(RobotModelPtr *ptr, std_StringVector 
 void moveit_RobotModel_getEndEffectorParentGroups(RobotModelPtr *ptr, std_StringVector *output1, std_StringVector *output2);
 void moveit_RobotModel_getJointModelGroupNames(RobotModelPtr *ptr, std_StringVector *output);
 void moveit_RobotModel_getJointModelSubGroupNames(RobotModelPtr *ptr, const char *groupname, std_StringVector *output);
+void moveit_RobotModel_getJointModelNames(RobotModelPtr *self, std_StringVector *output);
+void moveit_RobotModel_getVariableNames(RobotModelPtr *self, std_StringVector *output);
+int  moveit_RobotModel_getVariableIndex(RobotModelPtr *self, const char *name);
+void moveit_RobotModel_getGroupJointNames(RobotModelPtr *self, const char *name, std_StringVector *output);
+void moveit_RobotModel_getGroupEndEffectorNames(RobotModelPtr *self, const char *name, std_StringVector *output);
 
 RobotTrajectoryPtr *moveit_RobotTrajectory_new(RobotModelPtr* robot_model, const char *group);
 void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);

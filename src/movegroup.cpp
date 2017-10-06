@@ -148,6 +148,11 @@ MOVIMP(void, MoveGroup, setStartStateToCurrentState)(MoveGroupPtr *self)
   (*self)->setStartStateToCurrentState ();
 }
 
+MOVIMP(void, MoveGroup, setStartState)(MoveGroupPtr *self, RobotStatePtr *robot_state)
+{
+  (*self)->setStartState (**robot_state);
+}
+
 MOVIMP(void, MoveGroup, setSupportSurfaceName)(MoveGroupPtr *self, const char *name)
 {
   (*self)->setSupportSurfaceName (name);

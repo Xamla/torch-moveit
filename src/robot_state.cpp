@@ -7,6 +7,13 @@ MOVIMP(RobotStatePtr *, RobotState, createEmpty)()
   return new RobotStatePtr();
 }
 
+MOVIMP(RobotStatePtr *, RobotState, createFromModel)(RobotModelPtr *kinematic_model)
+{
+  robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(*kinematic_model));
+  kinematic_state->setToDefaultValues();
+  return new RobotStatePtr(kinematic_state);
+}
+
 MOVIMP(RobotStatePtr *, RobotState, clone)(RobotStatePtr *ptr)
 {
   return new RobotStatePtr(new moveit::core::RobotState(**ptr));
@@ -58,6 +65,12 @@ MOVIMP(void, RobotState, setVariableVelocities)(RobotStatePtr *self, THDoubleTen
   return (*self)->setVariableVelocities (group_variable_values);
 }
 
+MOVIMP(void, RobotState, setVariableVelocities_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariableVelocities(*input, group_variable_values);
+}
+
 MOVIMP(bool, RobotState, hasAccelerations)(RobotStatePtr *self)
 {
   return (*self)->hasAccelerations();
@@ -74,7 +87,13 @@ MOVIMP(void, RobotState, setVariableAccelerations)(RobotStatePtr *self, THDouble
 {
   std::vector<double> group_variable_values;
   Tensor2vector(view,group_variable_values);
-  return (*self)->setVariableVelocities (group_variable_values);
+  return (*self)->setVariableAccelerations (group_variable_values);
+}
+
+MOVIMP(void, RobotState, setVariableAccelerations_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariableAccelerations(*input, group_variable_values);
 }
 
 MOVIMP(bool, RobotState, hasEffort)(RobotStatePtr *self)
@@ -94,6 +113,12 @@ MOVIMP(void, RobotState, setVariableEffort)(RobotStatePtr *self, THDoubleTensor 
   std::vector<double> group_variable_values;
   Tensor2vector(view,group_variable_values);
   return (*self)->setVariableEffort (group_variable_values);
+}
+
+MOVIMP(void, RobotState, setVariableEffort_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariableEffort(*input, group_variable_values);
 }
 
 MOVIMP(void, RobotState, setToDefaultValues)(RobotStatePtr *self)
@@ -152,8 +177,18 @@ MOVIMP(void, RobotState, setVariablePositions)(RobotStatePtr *self, THDoubleTens
   (*self)->setVariablePositions(group_variable_values);
 }
 
+MOVIMP(void, RobotState, setVariablePositions_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariablePositions(*input, group_variable_values);
+}
+
 MOVIMP(void, RobotState, updateLinkTransforms)(RobotStatePtr *self) {
   (*self)->updateLinkTransforms();
+}
+
+MOVIMP(void, RobotState, update)(RobotStatePtr *self) {
+  (*self)->update();
 }
 
 MOVIMP(void, RobotState, toRobotStateMsg)(RobotStatePtr *self, THByteStorage *output, bool copy_attached_bodies) {
@@ -188,7 +223,8 @@ MOVIMP(void, RobotState, getJointTransform)(RobotStatePtr *self, const char *joi
 MOVIMP(void, RobotState, getJacobian)(RobotStatePtr *self, const char *group_id, THDoubleTensor *result) {
   const robot_state::JointModelGroup *group = (*self)->getJointModelGroup(group_id);
   Eigen::Vector3d linkOrigin = Eigen::Vector3d::Zero();
-  Eigen::MatrixXd jacobian = (*self)->getJacobian (group,linkOrigin);
+  Eigen::MatrixXd jacobian; //= (*self)->getJacobian (group,linkOrigin);
+  (*self)->getJacobian(group, (*self)->getLinkModel(group->getLinkModelNames().back()),linkOrigin, jacobian);
   THDoubleTensor_resize2d(result, jacobian.rows(), jacobian.cols());
   THDoubleTensor* result_ = THDoubleTensor_newContiguous(result);
   Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>> m (THDoubleTensor_data(result_),jacobian.rows(), jacobian.cols());
@@ -206,6 +242,12 @@ MOVIMP(double, RobotState, distance)(RobotStatePtr *self, RobotStatePtr *other) 
 
 MOVIMP(bool, RobotState, satisfiesBounds)(RobotStatePtr *self, double margin) {
   (*self)->satisfiesBounds(margin);
+}
+
+MOVIMP(void, RobotState, copyJointGroupPositions)(RobotStatePtr *self, const char *group_id, THDoubleTensor *result) {
+  std::vector<double> joint_group_positions;
+  (*self)->copyJointGroupPositions(group_id, joint_group_positions);
+  vector2Tensor(joint_group_positions,result);
 }
 /*
 void 	printDirtyInfo (std::ostream &out=std::cout) const

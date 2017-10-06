@@ -9,7 +9,6 @@ local utils = require 'moveit.utils'
 local std = ros.std
 local tf = ros.tf
 
-
 local RobotState = torch.class('moveit.RobotState', moveit)
 
 local f
@@ -17,6 +16,7 @@ local f
 function init()
   local RobotState_method_names = {
     "createEmpty",
+    "createFromModel",
     "clone",
     "delete",
     "release",
@@ -34,20 +34,26 @@ function init()
     "setFromIK",
     "getGlobalLinkTransform",
     "setVariablePositions",
+    "setVariablePositions_",
     "setVariableVelocities",
+    "setVariableVelocities_",
     "setVariableAccelerations",
+    "setVariableAccelerations_",
     "setVariableEffort",
+    "setVariableEffort_",
     "updateLinkTransforms",
+    "update",
     "toRobotStateMsg",
     "fromRobotStateMsg",
     "getJointTransform",
     "getJacobian",
     "enforceBounds",
     "distance",
-    "satisfiesBounds"
+    "satisfiesBounds",
+    "copyJointGroupPositions"
   }
 
-  f = utils.create_method_table("moveit_RobotState_", RobotState_method_names)
+  f = utils.create_method_table('moveit_RobotState_', RobotState_method_names)
 end
 
 init()
@@ -55,6 +61,15 @@ init()
 function RobotState.createEmpty()
   local c = torch.factory('moveit.RobotState')()
   rawset(c, 'o', f.createEmpty())
+  return c
+end
+
+function RobotState.createFromModel(kinematic_model)
+  if ffi.typeof(kinematic_model:cdata()) ~= ffi.typeof('RobotModelPtr*') then
+    error('RobotState object can only be initialized with existing RobotModel pointer.')
+  end
+  local c = torch.factory('moveit.RobotState')()
+  rawset(c, 'o', f.createFromModel(kinematic_model:cdata()))
   return c
 end
 
@@ -180,10 +195,19 @@ function RobotState:setFromIK(group_id, pose, attempts, timeout, return_approxim
   timeout = timeout or 0.1
   return_approximate_solution = return_approximate_solution or false
   if torch.isTensor(pose) then
-    pose = tf.Transform():fromTensor(pose)
+      pose = tf.Transform():fromTensor(pose)
   end
   local result_joint_positions = torch.DoubleTensor()
-  local found_ik = f.setFromIK(self.o, group_id, pose:cdata(), attempts, timeout, return_approximate_solution, result_joint_positions:cdata())
+  local found_ik =
+    f.setFromIK(
+    self.o,
+    group_id,
+    pose:cdata(),
+    attempts,
+    timeout,
+    return_approximate_solution,
+    result_joint_positions:cdata()
+  )
   return found_ik, result_joint_positions
 end
 
@@ -198,20 +222,53 @@ end
 
 ---It is assumed positions is an array containing the new positions for all variables in this state. Those values are copied into the state.
 --
-function RobotState:setVariablePositions(group_variable_values)
-  return f.setVariablePositions(self.o, group_variable_values:cdata())
+function RobotState:setVariablePositions(group_variable_values, group_variable_names)
+    if group_variable_names then
+        if torch.type(group_variable_names) == 'table' then
+            group_variable_names = std.StringVector(group_variable_names)
+        end
+        if torch.type(group_variable_names) == 'std.StringVector' then
+            return f.setVariablePositions_(self.o, group_variable_values:cdata(), group_variable_names:cdata())
+        else
+            ros.ERROR('[RobotState:setVariablePositions] Could not set Positions ini robot state')
+        end
+    else
+        return f.setVariablePositions(self.o, group_variable_values:cdata())
+    end
 end
 
 ---It is assumed positions is an array containing the new velocities for all variables in this state. Those values are copied into the state.
 --
 function RobotState:setVariableVelocities(group_variable_values)
-  return f.setVariableVelocities(self.o, group_variable_values:cdata())
+  if group_variable_names then
+    if torch.type(group_variable_names) == 'table' then
+      group_variable_names = std.StringVector(group_variable_names)
+    end
+    if torch.type(group_variable_names) == 'std.StringVector' then
+      return f.setVariableVelocities_(self.o, group_variable_values:cdata(), group_variable_names:cdata())
+    else
+      ros.ERROR('[RobotState:setVariableVelocities] Could not set Positions ini robot state')
+    end
+  else
+    return f.setVariableVelocities(self.o, group_variable_values:cdata())
+  end
 end
 
 ---It is assumed positions is an array containing the new accelerations for all variables in this state. Those values are copied into the state.
 --
 function RobotState:setVariableAccelerations(group_variable_values)
-  return f.setVariableAccelerations(self.o, group_variable_values:cdata())
+  if group_variable_names then
+    if torch.type(group_variable_names) == 'table' then
+        group_variable_names = std.StringVector(group_variable_names)
+    end
+    if torch.type(group_variable_names) == 'std.StringVector' then
+        return f.setVariableAccelerations_(self.o, group_variable_values:cdata(), group_variable_names:cdata())
+    else
+        ros.ERROR('[RobotState:setVariableVelocities] Could not set Positions ini robot state')
+    end
+  else
+    return f.setVariableAccelerations(self.o, group_variable_values:cdata())
+  end
 end
 
 ---It is assumed positions is an array containing the new effort for all variables in this state. Those values are copied into the state.
@@ -223,7 +280,13 @@ end
 ---Update the reference frame transforms for links. This call is needed before using the transforms of links for coordinate transforms.
 --
 function RobotState:updateLinkTransforms()
-  f.updateLinkTransforms (self.o)
+  f.updateLinkTransforms(self.o)
+end
+
+---Update all transforms.
+--
+function RobotState:update()
+  f.update(self.o)
 end
 
 ---Convert Robotstate to Message format
@@ -231,7 +294,7 @@ end
 function RobotState:toRobotStateMsg(copy_attached_bodies)
   copy_attached_bodies = copy_attached_bodies or false
   local msg_bytes = torch.ByteStorage()
-  f.toRobotStateMsg(self.o, msg_bytes:cdata(),copy_attached_bodies)
+  f.toRobotStateMsg(self.o, msg_bytes:cdata(), copy_attached_bodies)
   local msg = ros.Message(self.moveit_msgs_RobotStateSpec, true)
   msg:deserialize(msg_bytes)
   return msg
@@ -240,7 +303,7 @@ end
 ---Convert Message format to Robotstate
 --@tparam Robotstate_msg msg
 function RobotState:fromRobotStateMsg(msg)
-   if torch.isTypeOf(msg, ros.Message) then
+  if torch.isTypeOf(msg, ros.Message) then
     local msg_bytes = msg:serialize()
     msg_bytes:shrinkToFit()
     f.fromRobotStateMsg(self.o, msg_bytes.storage:cdata())
@@ -272,7 +335,7 @@ function RobotState:enforceBounds()
 end
 
 function RobotState:distance(other)
-  if torch.isTypeOf(other,moveit.RobotState) then
+  if torch.isTypeOf(other, moveit.RobotState) then
     return f.distance(self.o, other:cdata())
   end
 end
@@ -280,4 +343,11 @@ end
 function RobotState:satisfiesBounds(margin)
   local margin = margin or 0.0
   return f.satisfiesBounds(self.o, margin)
+end
+
+function RobotState:copyJointGroupPositions(group_name)
+  assert(group_name and type(group_name) == 'string' and #group_name >= 0, 'Invalid group_name specified.')
+  local t = torch.DoubleTensor()
+  f.copyJointGroupPositions(self.o, group_name, t:cdata())
+  return t
 end
