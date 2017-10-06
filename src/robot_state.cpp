@@ -65,6 +65,12 @@ MOVIMP(void, RobotState, setVariableVelocities)(RobotStatePtr *self, THDoubleTen
   return (*self)->setVariableVelocities (group_variable_values);
 }
 
+MOVIMP(void, RobotState, setVariableVelocities_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariableVelocities(*input, group_variable_values);
+}
+
 MOVIMP(bool, RobotState, hasAccelerations)(RobotStatePtr *self)
 {
   return (*self)->hasAccelerations();
@@ -81,7 +87,13 @@ MOVIMP(void, RobotState, setVariableAccelerations)(RobotStatePtr *self, THDouble
 {
   std::vector<double> group_variable_values;
   Tensor2vector(view,group_variable_values);
-  return (*self)->setVariableVelocities (group_variable_values);
+  return (*self)->setVariableAccelerations (group_variable_values);
+}
+
+MOVIMP(void, RobotState, setVariableAccelerations_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariableAccelerations(*input, group_variable_values);
 }
 
 MOVIMP(bool, RobotState, hasEffort)(RobotStatePtr *self)
@@ -101,6 +113,12 @@ MOVIMP(void, RobotState, setVariableEffort)(RobotStatePtr *self, THDoubleTensor 
   std::vector<double> group_variable_values;
   Tensor2vector(view,group_variable_values);
   return (*self)->setVariableEffort (group_variable_values);
+}
+
+MOVIMP(void, RobotState, setVariableEffort_)(RobotStatePtr *self, THDoubleTensor *t, StringVector *input) {
+  std::vector<double> group_variable_values;
+  Tensor2vector(t,group_variable_values);
+  (*self)->setVariableEffort(*input, group_variable_values);
 }
 
 MOVIMP(void, RobotState, setToDefaultValues)(RobotStatePtr *self)

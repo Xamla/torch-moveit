@@ -182,8 +182,11 @@ void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform 
 void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
 void moveit_RobotState_setVariablePositions_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableVelocities(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableVelocities_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableAccelerations(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableAccelerations_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableEffort(RobotStatePtr *self, THDoubleTensor *view);
+void moveit_RobotState_setVariableEffort_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_getJointTransform(RobotStatePtr *self, const char *joint_name, THDoubleTensor *result);
 void moveit_RobotState_getJacobian(RobotStatePtr *self, const char *group_id, THDoubleTensor *result);
 void moveit_RobotState_copyJointGroupPositions(RobotStatePtr *self, const char *group_id, THDoubleTensor *result);
