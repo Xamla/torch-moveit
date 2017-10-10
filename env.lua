@@ -244,6 +244,8 @@ void moveit_RobotModel_getVariableNames(RobotModelPtr *self, std_StringVector *o
 int  moveit_RobotModel_getVariableIndex(RobotModelPtr *self, const char *name);
 void moveit_RobotModel_getGroupJointNames(RobotModelPtr *self, const char *name, std_StringVector *output);
 void moveit_RobotModel_getGroupEndEffectorNames(RobotModelPtr *self, const char *name, std_StringVector *output);
+bool moveit_RobotModel_getGroupEndEffectorName(RobotModelPtr *ptr,  const char *groupname, std_string *output);
+bool moveit_RobotModel_getEndEffectorLinkName(RobotModelPtr *ptr,  const char *eef_name, std_string *output);
 
 RobotTrajectoryPtr *moveit_RobotTrajectory_new(RobotModelPtr* robot_model, const char *group);
 void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);

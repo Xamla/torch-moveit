@@ -27,7 +27,9 @@ function init()
     "getVariableNames",
     "getVariableIndex",
     "getGroupJointNames",
-    "getGroupEndEffectorNames"
+    "getGroupEndEffectorNames",
+    "getGroupEndEffectorName",
+    "getEndEffectorLinkName"
   }
   f = utils.create_method_table("moveit_RobotModel_", RobotModel_method_names)
 end
@@ -119,4 +121,29 @@ function RobotModel:getGroupEndEffectorNames(group_name, strings)
   strings = strings or std.StringVector()
   f.getGroupEndEffectorNames(self.o, group_name, strings:cdata())
   return strings
+end
+
+function RobotModel:getGroupEndEffectorName(groupname)
+  assert(groupname)
+  local output = std.String()
+  print("getGroupEndEffectorName", groupname)
+  local suc = f.getGroupEndEffectorName(self.o, groupname, output:cdata())
+  if suc then
+    print(output)
+    return output:get()
+  else
+    return ''
+  end
+end
+
+function RobotModel:getEndEffectorLinkName(eef_name)
+  assert(eef_name)
+  local output = std.String()
+  print("getEndEffectorLinkName", eef_name)
+  local suc = f.getEndEffectorLinkName(self.o, eef_name, output:cdata())
+  if suc then
+    return output:get()
+  else
+    return ''
+  end
 end
