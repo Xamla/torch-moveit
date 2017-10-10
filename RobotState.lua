@@ -79,7 +79,7 @@ function RobotState:__init(o)
   end
   self.o = o
   ffi.gc(o, f.delete)
-  self.moveit_msgs_RobotStateSpec = ros.get_msgspec('moveit_msgs/RobotState')
+  self.moveit_msgs_RobotStateSpec = ros.MsgSpec('moveit_msgs/RobotState')
 end
 
 function RobotState:cdata()
@@ -295,7 +295,7 @@ function RobotState:toRobotStateMsg(copy_attached_bodies)
   copy_attached_bodies = copy_attached_bodies or false
   local msg_bytes = torch.ByteStorage()
   f.toRobotStateMsg(self.o, msg_bytes:cdata(), copy_attached_bodies)
-  local msg = ros.Message(self.moveit_msgs_RobotStateSpec, true)
+  local msg = ros.Message(self.moveit_msgs_RobotStateSpec or ros.MsgSpec('moveit_msgs/RobotState'), true)
   msg:deserialize(msg_bytes)
   return msg
 end
