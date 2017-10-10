@@ -54,6 +54,28 @@ MOVIMP(void, RobotModel, getEndEffectorNames)(RobotModelPtr *ptr, StringVector *
     output->push_back((*it)->getEndEffectorName());
 }
 
+MOVIMP(bool, RobotModel, getGroupEndEffectorName)(RobotModelPtr *ptr,  const char *groupname, std::string *output)
+{
+  const moveit::core::JointModelGroup* jmgp = (*ptr)->getJointModelGroup(groupname);
+  if (jmgp)
+  {
+    *output = jmgp->getEndEffectorName();
+    return true;
+  }
+  return false;
+}
+
+MOVIMP(bool, RobotModel, getEndEffectorLinkName)(RobotModelPtr *ptr,  const char *eef_name, std::string *output)
+{
+  const robot_model::JointModelGroup* jmg = (*ptr)->getEndEffector(eef_name);
+  if (jmg)
+  {
+    *output = jmg->getEndEffectorParentGroup().second;
+    return true;
+  }
+  return false;
+}
+
 MOVIMP(void, RobotModel, getGroupEndEffectorNames)(RobotModelPtr *self, const char *name, StringVector *output)
 {
   //*output = (*self)->getJointModelGroup(name)->getAttachedEndEffectorNames ();
