@@ -239,7 +239,7 @@ end
 
 ---It is assumed positions is an array containing the new velocities for all variables in this state. Those values are copied into the state.
 --
-function RobotState:setVariableVelocities(group_variable_values)
+function RobotState:setVariableVelocities(group_variable_values, group_variable_names)
   if group_variable_names then
     if torch.type(group_variable_names) == 'table' then
       group_variable_names = std.StringVector(group_variable_names)
@@ -256,7 +256,7 @@ end
 
 ---It is assumed positions is an array containing the new accelerations for all variables in this state. Those values are copied into the state.
 --
-function RobotState:setVariableAccelerations(group_variable_values)
+function RobotState:setVariableAccelerations(group_variable_values, group_variable_names)
   if group_variable_names then
     if torch.type(group_variable_names) == 'table' then
         group_variable_names = std.StringVector(group_variable_names)
