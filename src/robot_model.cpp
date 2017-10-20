@@ -127,3 +127,60 @@ MOVIMP(void, RobotModel, getGroupJointNames)(RobotModelPtr *self, const char *na
 {
   *output = (*self)->getJointModelGroup(name)->getActiveJointModelNames();
 }
+
+MOVIMP(void, RobotModel, getVariableBounds)
+(RobotModelPtr *self, THDoubleTensor *limits_position,
+  THDoubleTensor *limits_velocity,
+  THDoubleTensor *limits_acceleration)
+{
+  std::vector<std::pair<double, double>> position_limits;
+  std::vector<std::pair<double, double>> velocity_limits;
+  std::vector<std::pair<double, double>> acceleration_limits;
+
+  StringVector names = (*self)->getVariableNames();
+  for (StringVector::const_iterator it = names.begin(); it != names.end();++it){
+    moveit::core::VariableBounds bounds = (*self)->getVariableBounds(*it);
+    std::pair<double, double> pos_limit;
+    std::pair<double, double> vel_limit;
+    std::pair<double, double> acc_limit;
+
+    if (bounds.position_bounded_)
+    {
+      pos_limit.first = bounds.max_position_;
+      pos_limit.second = bounds.min_position_;
+    }
+    else
+    {
+      pos_limit.first = std::numeric_limits<double>::infinity();
+      pos_limit.second = -std::numeric_limits<double>::infinity();
+    }
+
+    if (bounds.velocity_bounded_)
+    {
+      vel_limit.first = bounds.max_velocity_;
+      vel_limit.second = bounds.min_velocity_;
+    }
+    else
+    {
+      pos_limit.first = std::numeric_limits<double>::infinity();
+      pos_limit.second = -std::numeric_limits<double>::infinity();
+    }
+
+    if (bounds.acceleration_bounded_)
+    {
+      acc_limit.first = bounds.max_acceleration_;
+      acc_limit.second = bounds.min_acceleration_;
+    }
+    else
+    {
+      acc_limit.first = std::numeric_limits<double>::infinity();
+      acc_limit.second = -std::numeric_limits<double>::infinity();
+    }
+    position_limits.push_back(pos_limit);
+    velocity_limits.push_back(vel_limit);
+    acceleration_limits.push_back(acc_limit);
+  }
+  vectorPair2Tensor(position_limits, limits_position);
+  vectorPair2Tensor(velocity_limits, limits_velocity);
+  vectorPair2Tensor(acceleration_limits, limits_acceleration);
+}

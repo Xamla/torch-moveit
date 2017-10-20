@@ -246,6 +246,7 @@ void moveit_RobotModel_getGroupJointNames(RobotModelPtr *self, const char *name,
 void moveit_RobotModel_getGroupEndEffectorNames(RobotModelPtr *self, const char *name, std_StringVector *output);
 bool moveit_RobotModel_getGroupEndEffectorName(RobotModelPtr *ptr,  const char *groupname, std_string *output);
 bool moveit_RobotModel_getEndEffectorLinkName(RobotModelPtr *ptr,  const char *eef_name, std_string *output);
+void moveit_RobotModel_getVariableBounds(RobotModelPtr *self, THDoubleTensor *limits_position, THDoubleTensor *limits_velocity, THDoubleTensor *limits_acceleration);
 
 RobotTrajectoryPtr *moveit_RobotTrajectory_new(RobotModelPtr* robot_model, const char *group);
 void moveit_RobotTrajectory_delete(RobotTrajectoryPtr *ptr);
