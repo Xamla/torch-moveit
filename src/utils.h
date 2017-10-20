@@ -9,7 +9,7 @@ inline Eigen::Vector4d Tensor2Vec4d(THDoubleTensor *tensor)
 {
   if (!tensor || THDoubleTensor_nElement(tensor) < 4)
     throw MoveItWrapperException("A tensor with at least 4 elements was expected.");
-    
+
   THDoubleTensor *tensor_ = THDoubleTensor_newContiguous(tensor);
   double* data = THDoubleTensor_data(tensor_);
   Eigen::Vector4d v(data[0], data[1], data[2], data[3]);
@@ -21,7 +21,7 @@ inline Eigen::Vector3d Tensor2Vec3d(THDoubleTensor *tensor)
 {
   if (!tensor || THDoubleTensor_nElement(tensor) < 3)
     throw MoveItWrapperException("A Tensor with at least 3 elements was expected.");
-    
+
   THDoubleTensor *tensor_ = THDoubleTensor_newContiguous(tensor);
   double* data = THDoubleTensor_data(tensor_);
   Eigen::Vector3d v(data[0], data[1], data[2]);
@@ -47,7 +47,7 @@ template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<double, 
     storage = THDoubleStorage_newWithData(m.data(), (m.rows() * m.rowStride()));
   else
     storage = THDoubleStorage_newWithData(m.data(), (m.cols() * m.colStride()));
-    
+
   storage->flag = TH_STORAGE_REFCOUNTED;
   THDoubleTensor_setStorage2d(output, storage, 0, rows, m.rowStride(), cols, m.colStride());
   THDoubleStorage_free(storage);   // tensor took ownership
@@ -75,6 +75,21 @@ inline void vector2Tensor(const std::vector<double> &v, THDoubleTensor *output)
   THDoubleTensor_resize1d(output, v.size());
   THDoubleTensor* output_ = THDoubleTensor_newContiguous(output);
   std::copy(v.begin(), v.end(), THDoubleTensor_data(output_));
+  THDoubleTensor_freeCopyTo(output_, output);
+}
+
+
+inline void vectorPair2Tensor(const std::vector<std::pair<double, double> > &v, THDoubleTensor *output)
+{
+  THDoubleTensor_resize2d(output, v.size(), 2);
+  THDoubleTensor* output_ = THDoubleTensor_newContiguous(output);
+  double *begin = THDoubleTensor_data(output_);
+  for (auto it = v.begin() ; it != v.end(); ++it){
+    *begin = it->first;
+    begin++;
+    *begin = it->second;
+    begin++;
+  }
   THDoubleTensor_freeCopyTo(output_, output);
 }
 

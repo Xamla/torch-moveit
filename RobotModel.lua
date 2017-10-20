@@ -29,7 +29,8 @@ function init()
     "getGroupJointNames",
     "getGroupEndEffectorNames",
     "getGroupEndEffectorName",
-    "getEndEffectorLinkName"
+    "getEndEffectorLinkName",
+    "getVariableBounds"
   }
   f = utils.create_method_table("moveit_RobotModel_", RobotModel_method_names)
 end
@@ -108,7 +109,7 @@ function RobotModel:getVariableNames(strings)
 end
 
 function RobotModel:getVariableIndex(name)
-  return f.getVariableIndex(self.o,name)
+  return f.getVariableIndex(self.o,name) + 1 --compensate c++ vslua indexing
 end
 
 function RobotModel:getGroupJointNames(group_name, strings)
@@ -146,4 +147,12 @@ function RobotModel:getEndEffectorLinkName(eef_name)
   else
     return ''
   end
+end
+
+function RobotModel:getVariableBounds()
+  local pos_lim = torch.DoubleTensor()
+  local vel_lim = torch.DoubleTensor()
+  local acc_lim = torch.DoubleTensor()
+  f.getVariableBounds(self.o, pos_lim:cdata(),vel_lim:cdata(), acc_lim:cdata())
+  return pos_lim, vel_lim, acc_lim
 end
