@@ -241,7 +241,7 @@ MOVIMP(double, RobotState, distance)(RobotStatePtr *self, RobotStatePtr *other) 
 }
 
 MOVIMP(bool, RobotState, satisfiesBounds)(RobotStatePtr *self, double margin) {
-  (*self)->satisfiesBounds(margin);
+  return (*self)->satisfiesBounds(margin);
 }
 
 MOVIMP(void, RobotState, copyJointGroupPositions)(RobotStatePtr *self, const char *group_id, THDoubleTensor *result) {
