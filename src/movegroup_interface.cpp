@@ -306,17 +306,20 @@ MOVIMP(int, MoveGroupInterface, plan)(MoveGroupInterfacePtr *self, PlanPtr *resu
   if (!result || !*result)
     throw MoveItWrapperException ("Valid plan output argument has to be provided by caller.");
 
-  return (*self)->plan (**result);
+  moveit::planning_interface::MoveItErrorCode error = (*self)->plan (**result);
+  return error.val;
 }
 
 MOVIMP(int, MoveGroupInterface, asyncExecute)(MoveGroupInterfacePtr *self, PlanPtr *plan)
 {
-  return (*self)->asyncExecute (**plan);
+  moveit::planning_interface::MoveItErrorCode error = (*self)->asyncExecute (**plan);
+  return error.val;
 }
 
 MOVIMP(int, MoveGroupInterface, execute)(MoveGroupInterfacePtr *self, PlanPtr *plan)
 {
-  return (*self)->execute (**plan);
+  moveit::planning_interface::MoveItErrorCode error = (*self)->execute (**plan);
+  return error.val;
 }
 
 MOVIMP(void, MoveGroupInterface, setJointPostureConstraint)(

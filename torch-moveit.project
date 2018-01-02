@@ -32,6 +32,7 @@
       <File Name="src/planning_scene.cpp"/>
       <File Name="src/robot_model.cpp"/>
       <File Name="src/robot_model_loader.cpp"/>
+      <File Name="src/movegroup_interface.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="lua">
       <File Name="init.lua"/>
@@ -60,6 +61,10 @@
       <File Name="examples/move_random.lua"/>
       <File Name="examples/check_self_collision.lua"/>
     </VirtualDirectory>
+    <File Name="IterativeParabolicTimeParameterization.lua"/>
+    <File Name="RobotTrajectory.lua"/>
+    <File Name="LICENSE"/>
+    <File Name="MoveGroupInterface.lua"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -151,4 +156,13 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="examples">
+    <File Name="examples/iterativeParabolicTimeParameterizationTest.lua"/>
+    <File Name="examples/robot_trajectory.lua"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src">
+    <File Name="src/robot_state.cpp"/>
+    <File Name="src/iterative_time_parameterization.cpp"/>
+    <File Name="src/robot_trajectory.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>
