@@ -92,7 +92,6 @@ init()
 -- Throws an exception if there is an initialization error.
 -- @tparam string name of the kinematic move group
 function MoveGroupInterface:__init(name)
-  print('test')
   self.o = f.new(name)
 end
 

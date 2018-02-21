@@ -76,10 +76,14 @@ MOVIMP(bool, RobotModel, getEndEffectorLinkName)(RobotModelPtr *ptr,  const char
   return false;
 }
 
-MOVIMP(void, RobotModel, getGroupEndEffectorNames)(RobotModelPtr *self, const char *name, StringVector *output)
+MOVIMP(void, RobotModel, getAttachedEndEffectorNames)(RobotModelPtr *self, const char *name, StringVector *output)
 {
-  //*output = (*self)->getJointModelGroup(name)->getAttachedEndEffectorNames ();
-  (*self)->getJointModelGroup(name)->getEndEffectorTips(*output);
+  *output = (*self)->getJointModelGroup(name)->getAttachedEndEffectorNames ();
+}
+
+MOVIMP(bool, RobotModel, getGroupEndEffectorTipNames)(RobotModelPtr *self, const char *name, StringVector *output)
+{
+  return (*self)->getJointModelGroup(name)->getEndEffectorTips(*output);
 }
 
 MOVIMP(void, RobotModel, getJointModelGroupNames)(RobotModelPtr *ptr, StringVector *output)
@@ -126,6 +130,14 @@ MOVIMP(int, RobotModel, getVariableIndex)(RobotModelPtr *self, const char *name)
 MOVIMP(void, RobotModel, getGroupJointNames)(RobotModelPtr *self, const char *name, StringVector *output)
 {
   *output = (*self)->getJointModelGroup(name)->getActiveJointModelNames();
+}
+
+MOVIMP(void, RobotModel, getActiveJointNames)(RobotModelPtr *self, StringVector *output)
+{
+  const std::vector<moveit::core::JointModel*> result = (*self)->getActiveJointModels ();
+  for (std::vector<moveit::core::JointModel*>::const_iterator it = result.begin(); it != result.end(); it++){
+    output->push_back((*it)->getName()); // move group name
+  }
 }
 
 MOVIMP(void, RobotModel, getVariableBounds)

@@ -240,10 +240,12 @@ void moveit_RobotModel_getEndEffectorParentGroups(RobotModelPtr *ptr, std_String
 void moveit_RobotModel_getJointModelGroupNames(RobotModelPtr *ptr, std_StringVector *output);
 void moveit_RobotModel_getJointModelSubGroupNames(RobotModelPtr *ptr, const char *groupname, std_StringVector *output);
 void moveit_RobotModel_getJointModelNames(RobotModelPtr *self, std_StringVector *output);
+void moveit_RobotModel_getActiveJointNames(RobotModelPtr *self, std_StringVector *output);
 void moveit_RobotModel_getVariableNames(RobotModelPtr *self, std_StringVector *output);
 int  moveit_RobotModel_getVariableIndex(RobotModelPtr *self, const char *name);
 void moveit_RobotModel_getGroupJointNames(RobotModelPtr *self, const char *name, std_StringVector *output);
-void moveit_RobotModel_getGroupEndEffectorNames(RobotModelPtr *self, const char *name, std_StringVector *output);
+void moveit_RobotModel_getAttachedEndEffectorNames(RobotModelPtr *self, const char *name, std_StringVector *output);
+bool moveit_RobotModel_getGroupEndEffectorTipNames(RobotModelPtr *self, const char *name, std_StringVector *output);
 bool moveit_RobotModel_getGroupEndEffectorName(RobotModelPtr *ptr,  const char *groupname, std_string *output);
 bool moveit_RobotModel_getEndEffectorLinkName(RobotModelPtr *ptr,  const char *eef_name, std_string *output);
 void moveit_RobotModel_getVariableBounds(RobotModelPtr *self, THDoubleTensor *limits_position, THDoubleTensor *limits_velocity, THDoubleTensor *limits_acceleration);
