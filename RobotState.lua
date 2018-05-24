@@ -189,10 +189,12 @@ end
 --@tparam tf.Transform pose
 --@tparam[opt=10] int attempts
 --@tparam[opt=0.1] number timeout
+--@tparam[opt=''] string tip_link
 --@treturn boolean
-function RobotState:setFromIK(group_id, pose, attempts, timeout, return_approximate_solution)
+function RobotState:setFromIK(group_id, pose, attempts, timeout, return_approximate_solution, tip_link)
   attempts = attempts or 10
   timeout = timeout or 0.1
+  tip_link = tip_link or ''
   return_approximate_solution = return_approximate_solution or false
   if torch.isTensor(pose) then
       pose = tf.Transform():fromTensor(pose)
@@ -203,6 +205,7 @@ function RobotState:setFromIK(group_id, pose, attempts, timeout, return_approxim
     self.o,
     group_id,
     pose:cdata(),
+    tip_link,
     attempts,
     timeout,
     return_approximate_solution,

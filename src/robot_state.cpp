@@ -135,6 +135,7 @@ MOVIMP(bool, RobotState, setFromIK)(
   RobotStatePtr *self,
   const char *group_id,
   const tf::Transform *pose,
+  const char *tip,
   unsigned int attempts,
   double timeout,
   bool return_approximate_solution,
@@ -150,8 +151,16 @@ MOVIMP(bool, RobotState, setFromIK)(
   if (return_approximate_solution) {
     query_options.return_approximate_solution = true;
   }
+  std::string tip_link = std::string(tip);
+  bool found_ik = false;
+  if (tip_link.size() == 0 )
+  {
+    found_ik = (*self)->setFromIK(group, pose_, attempts, timeout, moveit::core::GroupStateValidityCallbackFn(), query_options);
+  } else {
+    found_ik = (*self)->setFromIK(group, pose_, tip_link, attempts, timeout, moveit::core::GroupStateValidityCallbackFn(), query_options);
+  }
 
-  bool found_ik = (*self)->setFromIK(group, pose_, attempts, timeout, moveit::core::GroupStateValidityCallbackFn(), query_options);
+
   if (found_ik) {
     (*self)->copyJointGroupPositions(group, joint_values);
     vector2Tensor(joint_values, result_joint_positions);
