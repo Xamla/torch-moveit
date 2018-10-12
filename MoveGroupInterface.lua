@@ -91,8 +91,10 @@ init()
 -- Specify the group name for which to construct this commander instance.
 -- Throws an exception if there is an initialization error.
 -- @tparam string name of the kinematic move group
-function MoveGroupInterface:__init(name)
-  self.o = f.new(name)
+-- @tparam[opt=-1.0] number timeout for connecting all necessary actions (e.g. /trajectory_execution). timeout < 0 deactivates the timeout.
+function MoveGroupInterface:__init(name, timeout)
+  local timeout = timeout or -1.0
+  self.o = f.new(name, timeout)
 end
 
 function MoveGroupInterface:release()

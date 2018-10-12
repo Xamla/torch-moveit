@@ -84,7 +84,7 @@ void moveit_MoveGroup_clearPathConstraints(MoveGroupPtr *self);
 double moveit_MoveGroup_computeCartesianPath_Tensor(MoveGroupPtr *self, THDoubleTensor *positions, THDoubleTensor *orientations, double eef_step, double jump_threshold, bool avoid_collisions, int *error_code,PlanPtr *plan);
 void moveit_MoveGroup_pick(MoveGroupPtr *self, const char *object);
 
-MoveGroupInterfacePtr* moveit_MoveGroupInterface_new(const char *name);
+MoveGroupInterfacePtr* moveit_MoveGroupInterface_new(const char *name, double timeout);
 void moveit_MoveGroupInterface_delete(MoveGroupInterfacePtr *ptr);
 void moveit_MoveGroupInterface_release(MoveGroupInterfacePtr *ptr);
 const char *moveit_MoveGroupInterface_getName(MoveGroupInterfacePtr *self);

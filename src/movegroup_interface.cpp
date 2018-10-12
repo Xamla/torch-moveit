@@ -1,11 +1,14 @@
 #include "torch-moveit.h"
 #include "utils.h"
 
-MOVIMP(MoveGroupInterfacePtr*, MoveGroupInterface, new)(const char *name)
+MOVIMP(MoveGroupInterfacePtr*, MoveGroupInterface, new)(const char *name, double timeout)
 {
   try
     {
-      return new MoveGroupInterfacePtr(new moveit::planning_interface::MoveGroupInterface(name, boost::shared_ptr<tf::Transformer>(), ros::WallDuration(2.0)));
+      ros::WallDuration timeout_duration = ros::WallDuration();
+      if (timeout > 0)
+        timeout_duration = ros::WallDuration(timeout);
+      return new MoveGroupInterfacePtr(new moveit::planning_interface::MoveGroupInterface(name, boost::shared_ptr<tf::Transformer>(), timeout_duration));
     }
   catch (std::runtime_error& e)
     {
