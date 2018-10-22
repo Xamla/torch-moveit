@@ -49,8 +49,8 @@ MOVIMP(const char *, RobotModel, getRootJointName)(RobotModelPtr *ptr)
 
 MOVIMP(void, RobotModel, getEndEffectorNames)(RobotModelPtr *ptr, StringVector *output)
 {
-  const std::vector< const moveit::core::JointModelGroup * > jmg = (*ptr)->getJointModelGroups();
-  for (std::vector<const moveit::core::JointModelGroup *>::const_iterator it = jmg.begin(); it != jmg.end(); it++)
+  const std::vector<  moveit::core::JointModelGroup* > jmg = (*ptr)->getJointModelGroups();
+  for (std::vector< moveit::core::JointModelGroup*>::const_iterator it = jmg.begin(); it != jmg.end(); it++)
     output->push_back((*it)->getEndEffectorName());
 }
 
