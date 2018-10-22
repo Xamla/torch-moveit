@@ -49,8 +49,8 @@ MOVIMP(const char *, RobotModel, getRootJointName)(RobotModelPtr *ptr)
 
 MOVIMP(void, RobotModel, getEndEffectorNames)(RobotModelPtr *ptr, StringVector *output)
 {
-  const std::vector<moveit::core::JointModelGroup*> jmg = (*ptr)->getJointModelGroups();
-  for (std::vector<moveit::core::JointModelGroup*>::const_iterator it = jmg.begin(); it != jmg.end(); it++)
+  const std::vector< const moveit::core::JointModelGroup * > jmg = (*ptr)->getJointModelGroups();
+  for (std::vector<const moveit::core::JointModelGroup *>::const_iterator it = jmg.begin(); it != jmg.end(); it++)
     output->push_back((*it)->getEndEffectorName());
 }
 
@@ -78,12 +78,21 @@ MOVIMP(bool, RobotModel, getEndEffectorLinkName)(RobotModelPtr *ptr,  const char
 
 MOVIMP(void, RobotModel, getAttachedEndEffectorNames)(RobotModelPtr *self, const char *name, StringVector *output)
 {
-  *output = (*self)->getJointModelGroup(name)->getAttachedEndEffectorNames ();
+  moveit::core::JointModelGroup* group = (*self)->getJointModelGroup(name);
+  if (group)
+  {
+    *output = (*self)->getJointModelGroup(name)->getAttachedEndEffectorNames ();
+  }
 }
 
 MOVIMP(bool, RobotModel, getGroupEndEffectorTipNames)(RobotModelPtr *self, const char *name, StringVector *output)
 {
-  return (*self)->getJointModelGroup(name)->getEndEffectorTips(*output);
+  moveit::core::JointModelGroup* group = (*self)->getJointModelGroup(name);
+  if (group==NULL)
+  {
+      return false;
+  }
+  return group->getEndEffectorTips(*output);
 }
 
 MOVIMP(void, RobotModel, getJointModelGroupNames)(RobotModelPtr *ptr, StringVector *output)
@@ -129,7 +138,11 @@ MOVIMP(int, RobotModel, getVariableIndex)(RobotModelPtr *self, const char *name)
 
 MOVIMP(void, RobotModel, getGroupJointNames)(RobotModelPtr *self, const char *name, StringVector *output)
 {
-  *output = (*self)->getJointModelGroup(name)->getActiveJointModelNames();
+  moveit::core::JointModelGroup* group = (*self)->getJointModelGroup(name);
+  if (group)
+  {
+      *output = group->getActiveJointModelNames();
+  }
 }
 
 MOVIMP(void, RobotModel, getActiveJointNames)(RobotModelPtr *self, StringVector *output)
