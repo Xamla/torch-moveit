@@ -171,13 +171,19 @@ MOVIMP(bool, RobotState, setFromIK)(
   return found_ik;
 }
 
-MOVIMP(void, RobotState, getGlobalLinkTransform)(
+MOVIMP(bool, RobotState, getGlobalLinkTransform)(
   RobotStatePtr *self,
   tf::Transform *pose_,
   const char *link_name
 ) {
-  Eigen::Affine3d pose = (*self)->getGlobalLinkTransform(link_name);
+  const moveit::core::LinkModel* model = (*self)->getLinkModel(link_name);
+  if (model == NULL)
+  {
+    return false;
+  }
+  Eigen::Affine3d pose = (*self)->getGlobalLinkTransform(model);
   tf::poseEigenToTF(pose, *pose_);
+  return true;
 }
 
 MOVIMP(void, RobotState, setVariablePositions)(RobotStatePtr *self, THDoubleTensor *t) {

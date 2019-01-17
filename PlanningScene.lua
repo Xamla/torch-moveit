@@ -15,6 +15,7 @@ function init()
         'delete',
         'release',
         'setCurrentState',
+        'getCurrentState',
         'checkSelfCollision',
         'isStateColliding',
         'isPathValid',
@@ -36,6 +37,12 @@ end
 
 function PlanningScene:release()
     f.release(self.o)
+end
+
+--- Get the current state of the robot.
+-- @treturn moveit.RobotState
+function PlanningScene:getCurrentState()
+    return moveit.RobotState(f.getCurrentState(self.o))
 end
 
 function PlanningScene:setCurrentState(robot_state)

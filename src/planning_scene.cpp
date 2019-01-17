@@ -31,7 +31,11 @@ MOVIMP(void, PlanningScene, setCurrentState)(PlanningScenePtr *ptr, RobotStatePt
 {
   if (robot_state != NULL && *robot_state != NULL)
     (*ptr)->setCurrentState(**robot_state);
+}
 
+MOVIMP(RobotStatePtr *, PlanningScene, getCurrentState)(PlanningScenePtr *self)
+{
+  return new RobotStatePtr(new moveit::core::RobotState((*self)->getCurrentState()));
 }
 
 MOVIMP(bool, PlanningScene, checkSelfCollision)(PlanningScenePtr *ptr, RobotStatePtr *robot_state)

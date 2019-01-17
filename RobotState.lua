@@ -219,10 +219,9 @@ end
 --@tparam string link name
 function RobotState:getGlobalLinkTransform(link_name, pose)
   pose = pose or tf.Transform()
-  f.getGlobalLinkTransform(self.o, pose:cdata(), link_name)
-  return pose
+  local success = f.getGlobalLinkTransform(self.o, pose:cdata(), link_name)
+  return success and pose or nil
 end
-
 ---It is assumed positions is an array containing the new positions for all variables in this state. Those values are copied into the state.
 --
 function RobotState:setVariablePositions(group_variable_values, group_variable_names)

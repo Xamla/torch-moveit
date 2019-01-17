@@ -178,7 +178,7 @@ void moveit_RobotState_getVariableEffort(RobotStatePtr *self, THDoubleTensor *vi
 void moveit_RobotState_setToDefaultValues(RobotStatePtr *self);
 void moveit_RobotState_setToRandomPositions(RobotStatePtr *self);
 bool moveit_RobotState_setFromIK(RobotStatePtr *self, const char *group_id, const tf_Transform *pose, const char *tip, unsigned int attempts, double timeout, bool return_approximate_solution, THDoubleTensor *result_joint_positions);
-void moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
+bool moveit_RobotState_getGlobalLinkTransform(RobotStatePtr *self, tf_Transform *pose, const char *link_name);
 void moveit_RobotState_setVariablePositions(RobotStatePtr *self, THDoubleTensor *t);
 void moveit_RobotState_setVariablePositions_(RobotStatePtr *self, THDoubleTensor *t, std_StringVector *input);
 void moveit_RobotState_setVariableVelocities(RobotStatePtr *self, THDoubleTensor *view);
@@ -279,6 +279,7 @@ PlanningScenePtr* moveit_PlanningScene_new(RobotModelPtr *robot_model);
 void moveit_PlanningScene_delete(PlanningScenePtr *ptr);
 void moveit_PlanningScene_release(PlanningScenePtr *ptr);
 void moveit_PlanningScene_setCurrentState(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
+RobotStatePtr * moveit_PlanningScene_getCurrentState(PlanningScenePtr *self);
 
 bool moveit_PlanningScene_checkSelfCollision(PlanningScenePtr *ptr, RobotStatePtr *robot_state);
 bool moveit_PlanningScene_isStateColliding(PlanningScenePtr *ptr, RobotStatePtr *robot_state,const char *group_name, bool verbose);
