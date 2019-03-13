@@ -70,7 +70,7 @@ MOVIMP(bool, RobotModel, getEndEffectorLinkName)(RobotModelPtr *ptr,  const char
   const robot_model::JointModelGroup* jmg = (*ptr)->getEndEffector(eef_name);
   if (jmg)
   {
-    *output = jmg->getEndEffectorParentGroup().second;
+    *output = jmg->getLinkModelNames().back();
     return true;
   }
   return false;

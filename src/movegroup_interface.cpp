@@ -8,7 +8,7 @@ MOVIMP(MoveGroupInterfacePtr*, MoveGroupInterface, new)(const char *name, double
       ros::WallDuration timeout_duration = ros::WallDuration();
       if (timeout > 0)
         timeout_duration = ros::WallDuration(timeout);
-      return new MoveGroupInterfacePtr(new moveit::planning_interface::MoveGroupInterface(name, boost::shared_ptr<tf::Transformer>(), timeout_duration));
+      return new MoveGroupInterfacePtr(new moveit::planning_interface::MoveGroupInterface(std::string(name), std::shared_ptr<tf2_ros::Buffer>(), timeout_duration));
     }
   catch (std::runtime_error& e)
     {
@@ -254,7 +254,7 @@ MOVIMP(bool, MoveGroupInterface, setPoseTarget_Tensor)(MoveGroupInterfacePtr *se
   if (!end_effector_link)
     end_effector_link = "";
 
-  Eigen::Affine3d t (Tensor2Mat<4, 4> (mat));
+  Eigen::Isometry3d t (Tensor2Mat<4, 4> (mat));
   return (*self)->setPoseTarget (t, end_effector_link);
 }
 

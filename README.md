@@ -5,7 +5,7 @@ It is currently used by the Xamla team to move a UR5 robot equipped with RGB and
 
 ## Functionality
 
-- Planning and execution of robot movements from start to goal poses/states can be carried out via a wrapper of the [MoveGroup](http://docs.ros.org/jade/api/moveit_ros_planning_interface/html/classmoveit_1_1planning__interface_1_1MoveGroup.html) class.
+- Planning and execution of robot movements from start to goal poses/states can be carried out via a wrapper of the [MoveGroupInterface](http://docs.ros.org/api/moveit_ros_planning_interface/html/move__group__interface_8h.html) class.
 - Wrappers for [PlanningScene](http://docs.ros.org/api/moveit_core/html/classplanning__scene_1_1PlanningScene.html) and [World](http://docs.ros.org/api/moveit_core/html/classcollision__detection_1_1World.html) are in preparation.
 
 
@@ -19,7 +19,7 @@ ros.init()
 local sp = ros.AsyncSpinner()
 sp:start()
 
-g = moveit.MoveGroup('arm')
+g = moveit.MoveGroupInterface('arm')
 pos, rot = g:getCurrentPose_Tensors()
 print('pose:'..tostring(pos)..tostring(rot))
 g:setPositionTarget(0.3, 0.5, 0.2)

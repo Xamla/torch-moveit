@@ -6,7 +6,7 @@
 
 MOVIMP(PlanPtr*, Plan, new)()
 {
-   return new PlanPtr(new moveit::planning_interface::MoveGroup::Plan());
+   return new PlanPtr(new moveit::planning_interface::MoveGroupInterface::Plan());
 }
 
 MOVIMP(void, Plan, delete)(PlanPtr *ptr)

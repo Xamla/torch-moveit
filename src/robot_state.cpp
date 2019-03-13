@@ -144,7 +144,7 @@ MOVIMP(bool, RobotState, setFromIK)(
   const robot_state::JointModelGroup *group = (*self)->getJointModelGroup(group_id);
 
   std::vector<double> joint_values;
-  Eigen::Affine3d pose_;
+  Eigen::Isometry3d pose_;
   tf::poseTFToEigen(*pose, pose_);
 
   kinematics::KinematicsQueryOptions query_options;
@@ -181,7 +181,7 @@ MOVIMP(bool, RobotState, getGlobalLinkTransform)(
   {
     return false;
   }
-  Eigen::Affine3d pose = (*self)->getGlobalLinkTransform(model);
+  Eigen::Isometry3d pose = (*self)->getGlobalLinkTransform(model);
   tf::poseEigenToTF(pose, *pose_);
   return true;
 }
