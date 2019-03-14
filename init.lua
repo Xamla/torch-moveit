@@ -6,7 +6,6 @@ local ros = require 'ros'
 -- moveit
 require 'moveit.status'
 require 'moveit.RobotState'
-require 'moveit.MoveGroup'
 require 'moveit.MoveGroupInterface'
 require 'moveit.Plan'
 require 'moveit.CollisionObject'
